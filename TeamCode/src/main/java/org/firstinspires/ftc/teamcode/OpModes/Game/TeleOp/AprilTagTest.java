@@ -28,6 +28,7 @@
  */
 
 package org.firstinspires.ftc.teamcode.OpModes.Game.TeleOp;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -48,6 +49,7 @@ public class AprilTagTest extends LinearOpMode {
     private static final boolean USE_WEBCAM = false;
 
     public Robot robot = new Robot(hardwareMap, false);
+    public Lift lift = new Lift();
 
     @Override
     public void runOpMode() {
@@ -76,16 +78,15 @@ public class AprilTagTest extends LinearOpMode {
                     robot.visionPortal.resumeStreaming();
                 }
 
-                // Share the CPU.
                 sleep(20);
             }
         }
 
-        // Save more CPU resources when camera is no longer needed.
         robot.visionPortal.close();
+        
 
-    }   // end method runOpMode()
+    }
 
 
 
-}   // end class
+}
