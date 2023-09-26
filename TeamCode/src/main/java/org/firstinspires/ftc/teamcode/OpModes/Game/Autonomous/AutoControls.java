@@ -118,34 +118,34 @@ public abstract class AutoControls extends LinearOpMode {
     }
 
     public double getAverageOdometerPosition() {
-        return ((Robot.odometerLeft.getCurrentPosition() + Robot.odometerRight.getCurrentPosition()) / 2.0) / Robot.odometerTicksPerInch;
+        return ((robot.odometerLeft.getCurrentPosition() + robot.odometerRight.getCurrentPosition()) / 2.0) / robot.odometerTicksPerInch;
     }
     public double GetAverageVelocity() {
         double averageVelocity = 0;
-        double left = Robot.odometerLeft.getVelocity();
-        double right =  Robot.odometerRight.getVelocity();
+        double left = robot.odometerLeft.getVelocity();
+        double right =  robot.odometerRight.getVelocity();
         averageVelocity = (left + right) / 2;
-        averageVelocity = (averageVelocity / Robot.odometerTicksPerInch) / 12;
+        averageVelocity = (averageVelocity / robot.odometerTicksPerInch) / 12;
         return averageVelocity;
     }
 
     public double GetAverageVelocityMecanum() {
         double averageVelocity;
 
-        double backLeft = Robot.backLeft.getVelocity();
-        double backRight = Robot.backRight.getVelocity();
-        double frontRight = Robot.frontRight.getVelocity();
-        double frontLeft = Robot.frontLeft.getVelocity();
+        double backLeft = robot.backLeft.getVelocity();
+        double backRight = robot.backRight.getVelocity();
+        double frontRight = robot.frontRight.getVelocity();
+        double frontLeft = robot.frontLeft.getVelocity();
 
         averageVelocity = (backLeft + backRight + frontRight + frontLeft) / 4;
-        averageVelocity = (averageVelocity / Robot.ticksPerInch) / 12;
+        averageVelocity = (averageVelocity / robot.ticksPerInch) / 12;
         return  averageVelocity;
     }
 
     public double GetTurningVelocity() {
         double turningVelocity = 0;
-        double left = Robot.odometerLeft.getVelocity();
-        double right =  Robot.odometerRight.getVelocity();
+        double left = robot.odometerLeft.getVelocity();
+        double right =  robot.odometerRight.getVelocity();
         turningVelocity = Math.abs(right - left) / 2;
         return turningVelocity;
     }
@@ -235,29 +235,29 @@ public abstract class AutoControls extends LinearOpMode {
     }
     */
 
-    public static void ResetEncoders() {
-        Robot.odometerRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Robot.odometerLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Robot.odometerRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Robot.odometerLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void ResetEncoders() {
+        robot.odometerRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.odometerLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.odometerRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.odometerLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public static void StopEncoders() {
-        Robot.odometerRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Robot.odometerLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public void StopEncoders() {
+        robot.odometerRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.odometerLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public static void ZeroPowerToBrake() {
-        Robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    public void ZeroPowerToBrake() {
+        robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-    public static void ZeroPowerToFloat() {
-        Robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        Robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        Robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        Robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    public void ZeroPowerToFloat() {
+        robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
 }
