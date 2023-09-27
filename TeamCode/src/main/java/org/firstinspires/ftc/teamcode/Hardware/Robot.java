@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -41,23 +42,27 @@ public class Robot {
     public static double workingEncoderVelocityDifference = 4;
 
     //Hardware Map
-    public HardwareMap hardwareMap;
+    public static HardwareMap hardwareMap;
 
 
     //---APRIL TAGS---//
-    public AprilTagProcessor aprilTag;
+    public static AprilTagProcessor aprilTag;
 
-    public VisionPortal visionPortal;
+    public static VisionPortal visionPortal;
+
+    public static boolean showCameraPreview = true;
 
     public String webCamName = "Webcam 1";
 
-    public Robot(HardwareMap robot_hardwareMap, boolean isTeleop) {
+    public Robot(HardwareMap robot_hardwareMap, boolean show_CameraPreview) {
         //Set Hardware map
         hardwareMap = robot_hardwareMap;
+        showCameraPreview = show_CameraPreview;
+
 
         //---Driving---//
 
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        /*backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
@@ -84,12 +89,14 @@ public class Robot {
 
         odometerRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);*/
+
 
 
     }
 
     public void initAprilTag() {
+
 
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
@@ -113,14 +120,16 @@ public class Robot {
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
 
-        builder.setCamera(BuiltinCameraDirection.BACK);
+
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
 
         // Choose a camera resolution. Not all cameras support all resolutions.
         //builder.setCameraResolution(new Size(640, 480));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        //builder.enableCameraMonitoring(true);
+        builder.enableLiveView(showCameraPreview);
+
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
@@ -161,13 +170,41 @@ public class Robot {
 
     public static class Lift {
 
+        public int currentLevel = 1;
+
         public Lift() {
 
         }
-        int currentLevel = 1;
+
 
         public void setPosition() {
 
+        }
+    }
+
+    public static class Grabber {
+
+        public boolean leftOpen = false;
+        public boolean rightOpen = false;
+
+        public String leftColor = "None";
+        public String rightColor = "None";
+        public Grabber() {
+
+        }
+
+        public void CloseLeftGrabber() {
+            leftOpen = false;
+        }
+        public void OpenLeftGrabber() {
+            leftOpen = true;
+        }
+
+        public void CloseRightGrabber() {
+            rightOpen = false;
+        }
+        public void OpenRightGrabber() {
+            rightOpen = true;
         }
     }
 }

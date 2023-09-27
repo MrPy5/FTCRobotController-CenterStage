@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Grabber;
 
 import java.util.List;
 
@@ -22,6 +24,9 @@ public class GameTeleop extends LinearOpMode {
 
         //---Start Robot---//
         Robot robot = new Robot(hardwareMap, true);
+        Lift lift = new Lift();
+        Grabber grabber = new Grabber();
+        robot.initAprilTag();
         waitForStart();
 
         //---Bulk Reads---//
@@ -51,8 +56,10 @@ public class GameTeleop extends LinearOpMode {
 
             //---Gamepad1 controls---//
             // driving -> joysticks
+            // lift -> bumpers
 
 
+            //---Driving---//
             double leftStickY = gamepad1.left_stick_y * -1;
             double leftStickX = gamepad1.left_stick_x * 0.8; // testing
 
@@ -96,6 +103,8 @@ public class GameTeleop extends LinearOpMode {
             robot.backRight.setPower(rrPower);
             robot.frontLeft.setPower(lfPower);
             robot.frontRight.setPower(rfPower);
+
+            telemetry.addData("ID", robot.getFirstAprilTagID());
 
 
         }

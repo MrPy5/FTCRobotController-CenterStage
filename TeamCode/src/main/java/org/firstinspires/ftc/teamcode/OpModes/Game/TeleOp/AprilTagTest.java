@@ -46,20 +46,15 @@ import java.util.List;
 
 public class AprilTagTest extends LinearOpMode {
 
-    private static final boolean USE_WEBCAM = false;
 
-    public Robot robot = new Robot(hardwareMap, false);
-    public Lift lift = new Lift();
+
 
     @Override
     public void runOpMode() {
-
+        Robot robot = new Robot(hardwareMap, true);
         robot.initAprilTag();
 
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
+
         waitForStart();
 
         if (opModeIsActive()) {
@@ -68,22 +63,12 @@ public class AprilTagTest extends LinearOpMode {
                 int id = robot.getFirstAprilTagID();
 
                 telemetry.addData("ID", id);
-                // Push telemetry to the Driver Station.
                 telemetry.update();
-
-                // Save CPU resources; can resume streaming when needed.
-                if (gamepad1.dpad_down) {
-                    robot.visionPortal.stopStreaming();
-                } else if (gamepad1.dpad_up) {
-                    robot.visionPortal.resumeStreaming();
-                }
-
-                sleep(20);
             }
         }
 
         robot.visionPortal.close();
-        
+
 
     }
 
