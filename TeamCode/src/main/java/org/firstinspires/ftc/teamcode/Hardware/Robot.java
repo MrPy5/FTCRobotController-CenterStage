@@ -16,6 +16,17 @@ import java.util.List;
 
 public class Robot {
 
+    //---Constants---//
+    public static double triggerSensitivity = 0.01;
+
+    //---INTAKE---//
+    public static DcMotor intakeMotor;
+    public static boolean intakeReset = true;
+
+    public static int intakeState = 0;
+
+    //---LIFT---//
+    public static DcMotor liftMotor;
 
     //---DRIVING---//
 
@@ -24,6 +35,7 @@ public class Robot {
     public static DcMotorEx backRight;
     public static DcMotorEx frontLeft;
     public static DcMotorEx frontRight;
+
     public static double wheelCountsPerRevolution = 537.6;
     public static double wheelDiameter = 3.77;
     public static double ticksPerInch = (wheelCountsPerRevolution) /
@@ -62,7 +74,7 @@ public class Robot {
 
         //---Driving---//
 
-        /*backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
@@ -79,6 +91,7 @@ public class Robot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //---Odometer---//
+        /*
         odometerLeft = hardwareMap.get(DcMotorEx.class, "odometerLeft");
         odometerRight = hardwareMap.get(DcMotorEx.class, "odometerRight");
 
@@ -89,10 +102,10 @@ public class Robot {
 
         odometerRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);*/
+        odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-
+        */
     }
 
     public void initAprilTag() {
@@ -165,31 +178,61 @@ public class Robot {
         return id;
 
 
-    }   // end method telemetryAprilTag()
+    }
 
 
+
+    public static class Intake {
+        public Intake() {
+            intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+            intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+
+        public void StartIntake() {
+            intakeMotor.setPower(0.3);
+            intakeState = 1;
+        }
+        public void StopIntake() {
+            intakeMotor.setPower(0);
+            intakeState = 0;
+        }
+    }
     public static class Lift {
 
         public int currentLevel = 1;
 
-        public Lift() {
+        public static double liftMotorTicksPerRevolution = 537;
+        public static double liftSpoolDiameter = 1;
+        public static double liftCascadeMultiplier = 3;
+        public static double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI * liftCascadeMultiplier);
 
+        public static double liftPower = 0.3;
+
+        public Lift() {
+            liftMotor = hardwareMap.get(DcMotor.class, "lift");
+            liftMotor.setDirection(DcMotor.Direction.FORWARD);
+            liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
 
-        public void setPosition() {
-
+        public void SetPosition(double liftTargetPosition) {
+            liftMotor.setPower(liftPower);
+            liftMotor.setTargetPosition((int) (liftTargetPosition * liftTicksPerInch));
+            currentLevel = 0; //edit this later;
         }
     }
 
-    public static class Grabber {
+    public static class Dropper {
 
         public boolean leftOpen = false;
         public boolean rightOpen = false;
 
         public String leftColor = "None";
         public String rightColor = "None";
-        public Grabber() {
+        public Dropper() {
 
         }
 

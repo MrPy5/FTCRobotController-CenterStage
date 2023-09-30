@@ -10,7 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.Grabber;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 
 import java.util.List;
 
@@ -24,9 +25,11 @@ public class GameTeleop extends LinearOpMode {
 
         //---Start Robot---//
         Robot robot = new Robot(hardwareMap, true);
-        Lift lift = new Lift();
-        Grabber grabber = new Grabber();
-        robot.initAprilTag();
+        //Lift lift = new Lift();
+        //Dropper dropper = new Dropper();
+        //Intake intake = new Intake();
+
+        //robot.initAprilTag();
         waitForStart();
 
         //---Bulk Reads---//
@@ -57,6 +60,7 @@ public class GameTeleop extends LinearOpMode {
             //---Gamepad1 controls---//
             // driving -> joysticks
             // lift -> bumpers
+            // intake -> leftTrigger
 
 
             //---Driving---//
@@ -104,8 +108,24 @@ public class GameTeleop extends LinearOpMode {
             robot.frontLeft.setPower(lfPower);
             robot.frontRight.setPower(rfPower);
 
-            telemetry.addData("ID", robot.getFirstAprilTagID());
+            //---Intake---//
+            /*
+            if (gamepad1.left_trigger > robot.triggerSensitivity) {
 
+                if (robot.intakeReset) {
+                    if (robot.intakeState == 0) {
+                        intake.StartIntake();
+                    }
+                    else if (robot.intakeState == 1) {
+                        intake.StopIntake();
+                    }
+                    robot.intakeReset = false;
+                }
+            }
+            else {
+                robot.intakeReset = true;
+            }
+            */
 
         }
     }
