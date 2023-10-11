@@ -4,13 +4,26 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,6 +40,13 @@ public class Robot {
 
     //---LIFT---//
     public static DcMotor liftMotor;
+
+    //---DRONE LAUNCHER---//
+    public static Servo droneReleaser;
+
+    //---DROPPER---//
+    public static Servo leftDropper;
+    public static Servo rightDropper;
 
     //---DRIVING---//
 
@@ -65,6 +85,18 @@ public class Robot {
     public static boolean showCameraPreview = true;
 
     public String webCamName = "Webcam 1";
+
+    //---EASY OPEN CV---//
+
+    public static OpenCvWebcam webcam;
+
+    public static ColorPipeline pipeline;
+
+    static int STREAM_WIDTH = 1280; // modify for your camera
+    static int STREAM_HEIGHT = 720; // modify for your camera
+
+    //http://192.168.43.1:8080/dash
+
 
     public Robot(HardwareMap robot_hardwareMap, boolean show_CameraPreview) {
         //Set Hardware map
@@ -107,7 +139,27 @@ public class Robot {
 
         */
     }
+    public void initEasyOpenCV() {
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webcamNamed = null;
+        webcamNamed = hardwareMap.get(WebcamName.class, webCamName); // put your camera's name here
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamNamed, cameraMonitorViewId);
+        pipeline = new ColorPipeline();
+        webcam.setPipeline(pipeline);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.startStreaming(STREAM_WIDTH, STREAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+            }
 
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
+    }
     public void initAprilTag() {
 
 
@@ -134,7 +186,7 @@ public class Robot {
 
 
 
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        builder.setCamera(hardwareMap.get(WebcamName.class, webCamName));
 
 
         // Choose a camera resolution. Not all cameras support all resolutions.
@@ -178,6 +230,39 @@ public class Robot {
         return id;
 
 
+    }
+
+    public double[] navigateToAprilTag(int targetId, int targetDistance) {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+
+        // Step through the list of detections and display info for each one.
+
+        AprilTagDetection currentDetection = null;
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+
+                if (detection.id == targetId) {
+                    currentDetection = detection;
+                    break;
+                }
+            }
+
+        }   // end for() loop
+        if (currentDetection != null) {
+            double distance = currentDetection.ftcPose.range;
+            double x = currentDetection.ftcPose.x;
+            double direction = (x / Math.abs(x));
+            double distanceFromTarget = Math.min(Math.abs(x), 12) / 12;
+            double driveDistanceFromTarget = Math.max(targetDistance, Math.min(Math.abs(distanceFromTarget), 60)) / 60;
+            double turnPower = Math.sqrt(distanceFromTarget) * direction;
+            double drivePower = Math.sqrt(driveDistanceFromTarget);
+
+            return new double[]{turnPower,drivePower};
+        }
+        else {
+            return new double[]{0,0};
+        }
     }
 
 
@@ -228,26 +313,91 @@ public class Robot {
     public static class Dropper {
 
         public boolean leftOpen = false;
-        public boolean rightOpen = false;
-
         public String leftColor = "None";
-        public String rightColor = "None";
-        public Dropper() {
+        public double openLeft = 0;
+        public double closedLeft = 0;
 
+        public boolean rightOpen = false;
+        public String rightColor = "None";
+        public double openRight = 0;
+        public double closedRight = 0;
+
+        public Dropper() {
+            leftDropper = hardwareMap.get(Servo.class, "leftDropper");
+            rightDropper = hardwareMap.get(Servo.class, "rightDropper");
         }
 
-        public void CloseLeftGrabber() {
+        public void ClosedLeftDropper() {
+            leftDropper.setPosition(closedLeft);
             leftOpen = false;
         }
-        public void OpenLeftGrabber() {
+        public void OpenLeftDropper() {
+            leftDropper.setPosition(openLeft);
             leftOpen = true;
         }
 
-        public void CloseRightGrabber() {
+        public void ClosedRightDropper() {
+            rightDropper.setPosition(closedRight);
             rightOpen = false;
         }
-        public void OpenRightGrabber() {
+        public void OpenRightDropper() {
+            rightDropper.setPosition(openRight);
             rightOpen = true;
         }
+    }
+
+    public static class DroneLauncher {
+        public double setPosition = 0;
+        public double releasedPosition = 0;
+        public DroneLauncher() {
+            droneReleaser = hardwareMap.get(Servo.class, "droneReleaser");
+        }
+
+        public void ReleaseDrone() {
+            droneReleaser.setPosition(releasedPosition);
+        }
+
+        public void Reset() {
+            droneReleaser.setPosition(setPosition);
+        }
+    }
+
+   public static class ColorPipeline extends OpenCvPipeline {
+
+        Mat YCrCb = new Mat();
+        Mat Y = new Mat();
+        public static int avg;
+
+
+        /*
+         * This function takes the RGB frame, converts to YCrCb,
+         * and extracts the Y channel to the 'Y' variable
+         */
+        void inputToY(Mat input) {
+            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+            ArrayList<Mat> yCrCbChannels = new ArrayList<Mat>(3);
+            Core.split(YCrCb, yCrCbChannels);
+            Y = yCrCbChannels.get(0);
+
+        }
+
+        @Override
+        public void init(Mat firstFrame) {
+            inputToY(firstFrame);
+        }
+
+        @Override
+        public Mat processFrame(Mat input) {
+            inputToY(input);
+
+            avg = (int) Core.mean(Y).val[0];
+            YCrCb.release(); // don't leak memory!
+            Y.release(); // don't leak memory!
+            return input;
+        }
+        public static double GetOutput() {
+            return avg;
+        }
+
     }
 }

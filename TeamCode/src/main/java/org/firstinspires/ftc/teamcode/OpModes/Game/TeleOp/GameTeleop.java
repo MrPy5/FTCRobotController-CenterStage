@@ -29,7 +29,7 @@ public class GameTeleop extends LinearOpMode {
         //Dropper dropper = new Dropper();
         //Intake intake = new Intake();
 
-        //robot.initAprilTag();
+        robot.initAprilTag();
         waitForStart();
 
         //---Bulk Reads---//
@@ -126,6 +126,16 @@ public class GameTeleop extends LinearOpMode {
                 robot.intakeReset = true;
             }
             */
+
+            //---AutoDrive---///
+
+            /*if (gamepad1.left_bumper == true) {
+                double[] wheelPowerAT = robot.navigateToAprilTag(5, 12);
+                robot.backRight.setPower(wheelPowerAT[1]);
+                robot.frontRight.setPower(wheelPowerAT[1]);
+                robot.backLeft.setPower(wheelPowerAT[1]);
+                robot.frontLeft.setPower(wheelPowerAT[1]);
+            }*/
 
         }
     }
