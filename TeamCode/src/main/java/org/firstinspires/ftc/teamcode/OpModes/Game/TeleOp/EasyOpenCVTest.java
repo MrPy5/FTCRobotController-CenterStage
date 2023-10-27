@@ -33,9 +33,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.ContourDetectionPipeline;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 
 
-@TeleOp(name = "OpenCVTEst")
+@TeleOp(name = "OpenCVTest")
 
 public class EasyOpenCVTest extends LinearOpMode {
 
@@ -45,6 +47,8 @@ public class EasyOpenCVTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         Robot robot = new Robot(hardwareMap, true);
+        ContourDetectionPipeline detection = robot.new ContourDetectionPipeline();
+        robot.alliance = "blue";
         robot.initEasyOpenCV();
 
 
@@ -52,7 +56,8 @@ public class EasyOpenCVTest extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                telemetry.addData("h", Robot.ColorPipeline.GetOutput());
+
+
                 telemetry.update();
 
             }

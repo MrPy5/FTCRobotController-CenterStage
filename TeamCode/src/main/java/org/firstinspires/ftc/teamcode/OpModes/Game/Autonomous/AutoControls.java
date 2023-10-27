@@ -33,7 +33,7 @@ public abstract class AutoControls extends LinearOpMode {
     Orientation angles;
     OpenCvWebcam webcam;
 
-    double countsPerInch = Robot.ticksPerInch;
+    double countsPerInch = robot.ticksPerInch;
 
     //lift
     static double liftSpeedUp = 1;

@@ -25,9 +25,9 @@ public class GameTeleop extends LinearOpMode {
 
         //---Start Robot---//
         Robot robot = new Robot(hardwareMap, true);
-        //Lift lift = new Lift();
-        //Dropper dropper = new Dropper();
-        //Intake intake = new Intake();
+        Lift lift = robot.new Lift();
+        Dropper dropper = robot.new Dropper();
+        Intake intake = robot.new Intake();
 
         robot.initAprilTag();
         waitForStart();
@@ -139,6 +139,7 @@ public class GameTeleop extends LinearOpMode {
 
         }
     }
+
 
 
 }

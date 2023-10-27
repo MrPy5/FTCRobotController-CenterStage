@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,17 +13,23 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.core.Scalar;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
+
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-import java.sql.Array;
+import org.opencv.core.*;
+
+import org.opencv.imgproc.Moments;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,70 +37,76 @@ import java.util.List;
 public class Robot {
 
     //---Constants---//
-    public static double triggerSensitivity = 0.01;
+    public double triggerSensitivity = 0.01;
 
     //---INTAKE---//
-    public static DcMotor intakeMotor;
-    public static boolean intakeReset = true;
+    public DcMotor intakeMotor;
+    public boolean intakeReset = true;
 
-    public static int intakeState = 0;
+    public int intakeState = 0;
 
     //---LIFT---//
-    public static DcMotor liftMotor;
+    public DcMotor liftMotor;
 
     //---DRONE LAUNCHER---//
-    public static Servo droneReleaser;
+    public Servo droneReleaser;
 
     //---DROPPER---//
-    public static Servo leftDropper;
-    public static Servo rightDropper;
+    public Servo leftDropper;
+    public Servo rightDropper;
 
     //---DRIVING---//
 
     //Motors
-    public static DcMotorEx backLeft;
-    public static DcMotorEx backRight;
-    public static DcMotorEx frontLeft;
-    public static DcMotorEx frontRight;
+    public DcMotorEx backLeft;
+    public DcMotorEx backRight;
+    public DcMotorEx frontLeft;
+    public DcMotorEx frontRight;
 
-    public static double wheelCountsPerRevolution = 537.6;
-    public static double wheelDiameter = 3.77;
-    public static double ticksPerInch = (wheelCountsPerRevolution) /
+    public double wheelCountsPerRevolution = 537.6;
+    public double wheelDiameter = 3.77;
+    public double ticksPerInch = (wheelCountsPerRevolution) /
             (wheelDiameter * Math.PI);
 
-    public static double deadStickZone = 0.01;
-    public static double wheelPowerMinToMove = 0.05;
+    public double deadStickZone = 0.01;
+    public double wheelPowerMinToMove = 0.05;
 
     //Odometer
-    public static DcMotorEx odometerLeft;
-    public static DcMotorEx odometerRight;
-    public static double odometerCountsPerRevolution = 8192;
-    public static double odometerWheelDiameter = 1.436;
-    public static double odometerTicksPerInch = (odometerCountsPerRevolution) /
+    public DcMotorEx odometerLeft;
+    public DcMotorEx odometerRight;
+    public double odometerCountsPerRevolution = 8192;
+    public double odometerWheelDiameter = 1.436;
+    public double odometerTicksPerInch = (odometerCountsPerRevolution) /
             (odometerWheelDiameter * Math.PI);
-    public static double workingEncoderVelocityDifference = 4;
+    public double workingEncoderVelocityDifference = 4;
 
     //Hardware Map
-    public static HardwareMap hardwareMap;
+    public HardwareMap hardwareMap;
 
 
     //---APRIL TAGS---//
-    public static AprilTagProcessor aprilTag;
+    public AprilTagProcessor aprilTag;
 
-    public static VisionPortal visionPortal;
+    public VisionPortal visionPortal;
 
-    public static boolean showCameraPreview = true;
+    public boolean showCameraPreview = true;
 
-    public String webCamName = "Webcam 1";
+    public String aprilTagWebCamName = "AprilTag";
+    public String openCVWebCamName = "OpenCV";
 
     //---EASY OPEN CV---//
 
-    public static OpenCvWebcam webcam;
+    public OpenCvWebcam webcam;
 
-    public static ColorPipeline pipeline;
+    public ContourDetectionPipeline pipeline;
 
-    static int STREAM_WIDTH = 1280; // modify for your camera
-    static int STREAM_HEIGHT = 720; // modify for your camera
+    public int STREAM_WIDTH = 1280; // modify for your camera
+    public int STREAM_HEIGHT = 720; // modify for your camera
+
+    public final double objectWidthInRealWorldUnits = 5.5;  // Replace with the actual width of the object in real-world units
+    public final double focalLength = 728;  // Replace with the focal length of the camera in pixels
+
+    public String alliance = "";
 
     //http://192.168.43.1:8080/dash
 
@@ -142,9 +155,9 @@ public class Robot {
     public void initEasyOpenCV() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamNamed = null;
-        webcamNamed = hardwareMap.get(WebcamName.class, webCamName); // put your camera's name here
+        webcamNamed = hardwareMap.get(WebcamName.class, openCVWebCamName); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamNamed, cameraMonitorViewId);
-        pipeline = new ColorPipeline();
+        pipeline = new ContourDetectionPipeline();
         webcam.setPipeline(pipeline);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -175,7 +188,7 @@ public class Robot {
                 // == CAMERA CALIBRATION ==
                 // If you do not manually specify calibration parameters, the SDK will attempt
                 // to load a predefined calibration for your camera.
-                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
+                .setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
 
                 // ... these parameters are fx, fy, cx, cy.
 
@@ -186,18 +199,18 @@ public class Robot {
 
 
 
-        builder.setCamera(hardwareMap.get(WebcamName.class, webCamName));
+        builder.setCamera(hardwareMap.get(WebcamName.class, aprilTagWebCamName));
 
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new android.util.Size(1280, 800));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableLiveView(showCameraPreview);
 
 
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+        // Set the stream format; MJPEG uses less bandwidtmh than default YUY2.
+        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
 
         // Choose whether or not LiveView stops if no processors are enabled.
         // If set "true", monitor shows solid orange screen if no processors enabled.
@@ -267,7 +280,7 @@ public class Robot {
 
 
 
-    public static class Intake {
+    public class Intake {
         public Intake() {
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
             intakeMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -283,16 +296,16 @@ public class Robot {
             intakeState = 0;
         }
     }
-    public static class Lift {
+    public class Lift {
 
         public int currentLevel = 1;
 
-        public static double liftMotorTicksPerRevolution = 537;
-        public static double liftSpoolDiameter = 1;
-        public static double liftCascadeMultiplier = 3;
-        public static double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI * liftCascadeMultiplier);
+        public double liftMotorTicksPerRevolution = 537;
+        public double liftSpoolDiameter = 1;
+        public double liftCascadeMultiplier = 3;
+        public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI * liftCascadeMultiplier);
 
-        public static double liftPower = 0.3;
+        public double liftPower = 0.3;
 
         public Lift() {
             liftMotor = hardwareMap.get(DcMotor.class, "lift");
@@ -304,13 +317,14 @@ public class Robot {
 
 
         public void SetPosition(double liftTargetPosition) {
-            liftMotor.setPower(liftPower);
             liftMotor.setTargetPosition((int) (liftTargetPosition * liftTicksPerInch));
+            liftMotor.setPower(liftPower);
+            
             currentLevel = 0; //edit this later;
         }
     }
 
-    public static class Dropper {
+    public class Dropper {
 
         public boolean leftOpen = false;
         public String leftColor = "None";
@@ -346,7 +360,7 @@ public class Robot {
         }
     }
 
-    public static class DroneLauncher {
+    public class DroneLauncher {
         public double setPosition = 0;
         public double releasedPosition = 0;
         public DroneLauncher() {
@@ -362,42 +376,110 @@ public class Robot {
         }
     }
 
-   public static class ColorPipeline extends OpenCvPipeline {
-
-        Mat YCrCb = new Mat();
-        Mat Y = new Mat();
-        public static int avg;
 
 
-        /*
-         * This function takes the RGB frame, converts to YCrCb,
-         * and extracts the Y channel to the 'Y' variable
-         */
-        void inputToY(Mat input) {
-            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            ArrayList<Mat> yCrCbChannels = new ArrayList<Mat>(3);
-            Core.split(YCrCb, yCrCbChannels);
-            Y = yCrCbChannels.get(0);
+    public class ContourDetectionPipeline extends OpenCvPipeline {
+        public double width;
+        public double cX = 0;
+        public double cY = 0;
 
-        }
 
-        @Override
-        public void init(Mat firstFrame) {
-            inputToY(firstFrame);
-        }
+        Mat hierarchy = new Mat();
+        Mat hsvFrame = new Mat();
+        Mat colorMask = new Mat();
+
+
+        // Calculate the distance using the formula
 
         @Override
         public Mat processFrame(Mat input) {
-            inputToY(input);
+            Mat colorMask = preprocessFrame(input);
 
-            avg = (int) Core.mean(Y).val[0];
-            YCrCb.release(); // don't leak memory!
-            Y.release(); // don't leak memory!
+            List<MatOfPoint> contours = new ArrayList<>();
+
+            Imgproc.findContours(colorMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            MatOfPoint largestContour = findLargestContour(contours);
+
+            if (largestContour != null) {
+                // Draw a red outline around the largest detected object
+                Imgproc.drawContours(input, contours, contours.indexOf(largestContour), new Scalar(255, 0, 0), 2);
+                // Calculate the width of the bounding box
+                width = calculateWidth(largestContour);
+
+                // Display the width next to the label
+                String widthLabel = "Width: " + (int) width + " pixels";
+                Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                //Display the Distance
+                String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
+                Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                // Calculate the centroid of the largest contour
+                Moments moments = Imgproc.moments(largestContour);
+                cX = moments.get_m10() / moments.get_m00();
+                cY = moments.get_m01() / moments.get_m00();
+
+                // Draw a dot at the centroid
+                String label = "(" + (int) cX + ", " + (int) cY + ")";
+                Imgproc.putText(input, label, new Point(cX + 10, cY), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                Imgproc.circle(input, new Point(cX, cY), 5, new Scalar(0, 255, 0), -1);
+
+            }
+
             return input;
         }
-        public static double GetOutput() {
-            return avg;
+
+        private Mat preprocessFrame(Mat frame) {
+
+            Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
+
+            Scalar lowerRed = new Scalar(100, 100, 100);
+            Scalar upperRed = new Scalar(180, 255, 255);
+            Scalar lowerBlue = new Scalar(0, 100, 100);
+            Scalar upperBlue = new Scalar(80, 255, 255);
+
+
+            if (alliance == "red") {
+                Core.inRange(hsvFrame, lowerRed, upperRed, colorMask);
+            }
+            if (alliance == "blue") {
+                Core.inRange(hsvFrame, lowerBlue, upperBlue, colorMask);
+            }
+
+            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+            Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_OPEN, kernel);
+            Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_CLOSE, kernel);
+
+            return colorMask;
+        }
+
+        private MatOfPoint findLargestContour(List<MatOfPoint> contours) {
+            double maxArea = 0;
+            MatOfPoint largestContour = null;
+
+            for (MatOfPoint contour : contours) {
+                double area = Imgproc.contourArea(contour);
+                if (area > maxArea) {
+                    maxArea = area;
+                    largestContour = contour;
+                }
+            }
+
+            return largestContour;
+        }
+        private double calculateWidth(MatOfPoint contour) {
+            Rect boundingRect = Imgproc.boundingRect(contour);
+            return boundingRect.width;
+        }
+        public double returnDistance() {
+
+            return getDistance(width);
         }
 
     }
+    private  double getDistance(double width){
+        double distance = (objectWidthInRealWorldUnits * focalLength) / width;
+        return distance;
+    }
+
+
 }
