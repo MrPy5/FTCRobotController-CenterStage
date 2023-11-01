@@ -59,9 +59,7 @@ public abstract class AutoControls extends LinearOpMode {
     public void init(HardwareMap hwMap) {
         Robot robot = new Robot(hwMap, false);
         initIMU();
-        initCamera();
-        telemetry.addData("here", "here");
-        telemetry.update();
+
 
         multiplier = getVoltageMultiplier();
     }
@@ -89,24 +87,7 @@ public abstract class AutoControls extends LinearOpMode {
 
     }
 
-    public void initCamera() {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
-
-    }
     public double getVoltageMultiplier() {
         double voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
         double multiplier = 1;
