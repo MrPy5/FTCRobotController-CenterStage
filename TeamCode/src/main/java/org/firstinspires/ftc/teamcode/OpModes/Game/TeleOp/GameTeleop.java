@@ -59,8 +59,13 @@ public class GameTeleop extends LinearOpMode {
 
             //---Gamepad1 controls---//
             // driving -> joysticks
+            // intake -> rightBumper
+            // outtake -> leftBumper
+
+            //---Gamepad2 controls---//
             // lift -> bumpers
-            // intake -> leftTrigger
+            // lift presets -> A, B, Y
+            // drop -> rightTrigger
 
 
             //---Driving---//

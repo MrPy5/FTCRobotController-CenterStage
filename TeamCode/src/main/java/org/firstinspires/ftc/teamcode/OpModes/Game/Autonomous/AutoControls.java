@@ -40,9 +40,9 @@ public abstract class AutoControls extends LinearOpMode {
     double liftSpeedDown = .5;
     double liftSpeedPower;
 
-    /*
-    static double liftTicksPerInch = Robot.liftTicksPerInch;
-    */
+
+    //static double liftTicksPerInch = Robot.liftTicksPerInch;
+
 
     //strafe per inch
     double strafeTicksPerInch = 100.0 / (7.0/4.0);

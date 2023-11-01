@@ -57,6 +57,8 @@ public class Robot {
     public Servo leftDropper;
     public Servo rightDropper;
 
+    public Servo pixelDropper; //Delete if two droppers
+
     //---DRIVING---//
 
     //Motors
@@ -310,8 +312,8 @@ public class Robot {
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
-        public void StartIntake() {
-            intakeMotor.setPower(0.3);
+        public void StartIntake(double power) {
+            intakeMotor.setPower(power);
             intakeState = 1;
         }
         public void StopIntake() {
@@ -349,6 +351,7 @@ public class Robot {
 
     public class Dropper {
 
+        /*
         public boolean leftOpen = false;
         public String leftColor = "None";
         public double openLeft = 0;
@@ -358,12 +361,21 @@ public class Robot {
         public String rightColor = "None";
         public double openRight = 0;
         public double closedRight = 0;
+        */
+
+        public boolean dropperOpen = false;
+        public String dropperColor = "None";
+        public double openDropper = 0;
+        public double closedDropper = 0;
 
         public Dropper() {
-            leftDropper = hardwareMap.get(Servo.class, "leftDropper");
-            rightDropper = hardwareMap.get(Servo.class, "rightDropper");
+            //leftDropper = hardwareMap.get(Servo.class, "leftDropper");
+            //rightDropper = hardwareMap.get(Servo.class, "rightDropper");
+
+            pixelDropper = hardwareMap.get(Servo.class, "pixelDropper");
         }
 
+        /*
         public void ClosedLeftDropper() {
             leftDropper.setPosition(closedLeft);
             leftOpen = false;
@@ -380,6 +392,16 @@ public class Robot {
         public void OpenRightDropper() {
             rightDropper.setPosition(openRight);
             rightOpen = true;
+        }
+        */
+
+        public void ClosedDropper() {
+            pixelDropper.setPosition(closedDropper);
+            dropperOpen = false;
+        }
+        public void OpenDropper() {
+            pixelDropper.setPosition(openDropper);
+            dropperOpen = true;
         }
     }
 
