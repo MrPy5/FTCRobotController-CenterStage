@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.TeleOp;
+/*package org.firstinspires.ftc.teamcode.OpModes.Game.TeleOp;
 
 import android.util.Log;
 
@@ -25,7 +25,7 @@ public class GameTeleop extends LinearOpMode {
 
         //---Start Robot---//
         Robot robot = new Robot(hardwareMap, true);
-        Lift lift = robot.new Lift();
+        //Lift lift = robot.new Lift();
         Dropper dropper = robot.new Dropper();
         Intake intake = robot.new Intake();
 
@@ -114,37 +114,52 @@ public class GameTeleop extends LinearOpMode {
             robot.frontRight.setPower(rfPower);
 
             //---Intake---//
-            /*
-            if (gamepad1.left_trigger > robot.triggerSensitivity) {
 
-                if (robot.intakeReset) {
-                    if (robot.intakeState == 0) {
-                        intake.StartIntake();
+            if (gamepad1.x) {
+
+                if (intake.intakeReset) {
+                    if (intake.intakeState == 0) {
+                        intake.StartIntake(0.9);
                     }
-                    else if (robot.intakeState == 1) {
+                    else if (intake.intakeState == 1) {
                         intake.StopIntake();
                     }
-                    robot.intakeReset = false;
+                    intake.intakeReset = false;
                 }
             }
             else {
-                robot.intakeReset = true;
+                intake.intakeReset = true;
             }
-            */
 
-            //---AutoDrive---///
 
-            /*if (gamepad1.left_bumper == true) {
-                double[] wheelPowerAT = robot.navigateToAprilTag(5, 12);
-                robot.backRight.setPower(wheelPowerAT[1]);
-                robot.frontRight.setPower(wheelPowerAT[1]);
-                robot.backLeft.setPower(wheelPowerAT[1]);
-                robot.frontLeft.setPower(wheelPowerAT[1]);
-            }*/
+            //---Lift---//
+            //if (gamepad2.right_bumper) {
+            //    lift.SetPosition(0);
+           // }
+           // if (gamepad2.y) {
+           //     lift.SetPosition(16);
+           // }
 
+            //---Dropper---//
+            if (gamepad2.right_trigger > robot.triggerSensitivity) {
+                if (dropper.resetDropper) {
+                    if (dropper.dropperOpen) {
+                        dropper.CloseDropper();
+                    }
+                    else {
+                        dropper.OpenDropper();
+                    }
+                    dropper.resetDropper = false;
+                }
+            }
+            else {
+                dropper.resetDropper = true;
+            }
         }
     }
 
 
 
 }
+/*
+ */

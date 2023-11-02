@@ -55,11 +55,11 @@ public class MotorTest extends LinearOpMode {
             } else {
                 intake.StopIntake();
             }
-            /*if (gamepad1.dpad_right) {
+            if (gamepad1.dpad_right) {
                 robot.liftMotor.setPower(speed);
             } else {
                 robot.liftMotor.setPower(0);
-            }*/
+            }
 
             if (gamepad1.dpad_up) {
                 speed += 0.01;

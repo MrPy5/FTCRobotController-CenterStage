@@ -33,54 +33,43 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
-import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
-@TeleOp(name = "MotorTest")
+@TeleOp(name = "TestMotor")
 
-public class MotorTest extends LinearOpMode {
+public class ServoTest extends LinearOpMode {
 
 
-    public DcMotor testMotor;
-    public double motorPower = 0;
-    public boolean motorLock = false;
+    public Servo testServo;
+
 
     @Override
     public void runOpMode() {
 
-        testMotor = hardwareMap.get(DcMotorEx.class, "testMotor");
+        testServo = hardwareMap.get(Servo.class, "testServo");
+
+        double currentPosition = 0;
 
         waitForStart();
 
 
         while (opModeIsActive()) {
 
+            if (gamepad1.right_bumper == true) {
 
-            if (gamepad1.left_bumper) {
-                testMotor.setDirection(DcMotor.Direction.REVERSE);
+                currentPosition += .01;
+                sleep(300);
             }
-            if (gamepad1.right_bumper) {
-                testMotor.setDirection(DcMotor.Direction.FORWARD);
+            if (gamepad1.left_bumper == true) {
+                currentPosition -= .01;
+                sleep(300);
             }
+            testServo.setPosition(currentPosition);
 
-            if (!motorLock) {
-                motorPower = gamepad1.right_stick_y;
-            }
 
-            if (gamepad1.dpad_up) {
-                motorLock = true;
-            }
-            if (gamepad1.dpad_down) {
-                motorLock = false;
-            }
 
-            testMotor.setPower(motorPower);
-
-            telemetry.addData("Speed: ", motorPower);
-            telemetry.addData("Direction: ", testMotor.getDirection().name());
-            telemetry.addData("Speed Lock: ", motorLock);
+            telemetry.addData("Servo Angle", currentPosition);
             telemetry.update();
 
 

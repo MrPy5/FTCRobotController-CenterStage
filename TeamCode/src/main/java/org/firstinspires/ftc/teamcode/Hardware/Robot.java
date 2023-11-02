@@ -43,20 +43,15 @@ public class Robot {
 
     //---INTAKE---//
     public DcMotor intakeMotor;
-    public boolean intakeReset = true;
-
-    public int intakeState = 0;
 
     //---LIFT---//
     public DcMotor liftMotor;
+
 
     //---DRONE LAUNCHER---//
     public Servo droneReleaser;
 
     //---DROPPER---//
-    public Servo leftDropper;
-    public Servo rightDropper;
-
     public Servo pixelDropper; //Delete if two droppers
 
     //---DRIVING---//
@@ -96,11 +91,13 @@ public class Robot {
     public boolean showCameraPreview = true;
 
     public String aprilTagWebCamName = "AprilTag";
-    public String openCVWebCamName = "OpenCV";
+
 
     //---EASY OPEN CV---//
 
     public OpenCvWebcam webcam;
+
+    public String openCVWebCamName = "OpenCV";
 
     public ContourDetectionPipeline pipeline;
 
@@ -140,7 +137,7 @@ public class Robot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //---Odometer---//
-        /*
+/*
         odometerLeft = hardwareMap.get(DcMotorEx.class, "odometerLeft");
         odometerRight = hardwareMap.get(DcMotorEx.class, "odometerRight");
 
@@ -151,10 +148,10 @@ public class Robot {
 
         odometerRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);*/
 
 
-        */
+
     }
     public void initEasyOpenCV() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -270,42 +267,9 @@ public class Robot {
 
     }
 
-    public double[] navigateToAprilTag(int targetId, int targetDistance) {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-
-
-        // Step through the list of detections and display info for each one.
-
-        AprilTagDetection currentDetection = null;
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-
-                if (detection.id == targetId) {
-                    currentDetection = detection;
-                    break;
-                }
-            }
-
-        }   // end for() loop
-        if (currentDetection != null) {
-            double distance = currentDetection.ftcPose.range;
-            double x = currentDetection.ftcPose.x;
-            double direction = (x / Math.abs(x));
-            double distanceFromTarget = Math.min(Math.abs(x), 12) / 12;
-            double driveDistanceFromTarget = Math.max(targetDistance, Math.min(Math.abs(distanceFromTarget), 60)) / 60;
-            double turnPower = Math.sqrt(distanceFromTarget) * direction;
-            double drivePower = Math.sqrt(driveDistanceFromTarget);
-
-            return new double[]{turnPower,drivePower};
-        }
-        else {
-            return new double[]{0,0};
-        }
-    }
-
-
-
     public class Intake {
+        public int intakeState = 0;
+        public boolean intakeReset = true;
         public Intake() {
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
             intakeMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -332,17 +296,20 @@ public class Robot {
 
         public double liftPower = 0.3;
 
+
+
         public Lift() {
             liftMotor = hardwareMap.get(DcMotor.class, "lift");
             liftMotor.setDirection(DcMotor.Direction.FORWARD);
             liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
 
         public void SetPosition(double liftTargetPosition) {
-            liftMotor.setTargetPosition((int) (liftTargetPosition * liftTicksPerInch));
+            //liftMotor.setTargetPosition((int) (liftTargetPosition * liftTicksPerInch));
+            //liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor.setPower(liftPower);
             
             currentLevel = 0; //edit this later;
@@ -365,8 +332,10 @@ public class Robot {
 
         public boolean dropperOpen = false;
         public String dropperColor = "None";
-        public double openDropper = 0;
-        public double closedDropper = 0;
+        public double openDropper = 0.19;
+        public double closedDropper = 0.31;
+
+        public boolean resetDropper = true;
 
         public Dropper() {
             //leftDropper = hardwareMap.get(Servo.class, "leftDropper");
@@ -395,7 +364,7 @@ public class Robot {
         }
         */
 
-        public void ClosedDropper() {
+        public void CloseDropper() {
             pixelDropper.setPosition(closedDropper);
             dropperOpen = false;
         }
