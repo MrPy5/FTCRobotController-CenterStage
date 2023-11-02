@@ -1,4 +1,4 @@
-/*package org.firstinspires.ftc.teamcode.OpModes.Game.TeleOp;
+package org.firstinspires.ftc.teamcode.OpModes.Game.TeleOp;
 
 import android.util.Log;
 
@@ -25,11 +25,11 @@ public class GameTeleop extends LinearOpMode {
 
         //---Start Robot---//
         Robot robot = new Robot(hardwareMap, true);
-        //Lift lift = robot.new Lift();
+        Lift lift = robot.new Lift();
         Dropper dropper = robot.new Dropper();
         Intake intake = robot.new Intake();
 
-        robot.initAprilTag();
+        //robot.initAprilTag();
         waitForStart();
 
         //---Bulk Reads---//
@@ -53,6 +53,8 @@ public class GameTeleop extends LinearOpMode {
 
         double avgWheelVelocityFPS;
 
+        //---Init Motion---//
+        robot.pixelDropper.setPosition(dropper.closedDropper);
 
         while (opModeIsActive()) {
 
@@ -115,7 +117,7 @@ public class GameTeleop extends LinearOpMode {
 
             //---Intake---//
 
-            if (gamepad1.x) {
+            if (gamepad1.a) {
 
                 if (intake.intakeReset) {
                     if (intake.intakeState == 0) {
@@ -133,12 +135,16 @@ public class GameTeleop extends LinearOpMode {
 
 
             //---Lift---//
-            //if (gamepad2.right_bumper) {
-            //    lift.SetPosition(0);
-           // }
-           // if (gamepad2.y) {
-           //     lift.SetPosition(16);
-           // }
+            if (gamepad2.right_bumper) {
+                lift.SetPosition(0);
+            }
+            if (gamepad2.y) {
+                lift.SetPosition(45);
+            }
+            if (gamepad2.left_stick_button) {
+                lift.SetPosition(gamepad2.right_stick_y * -30);
+            }
+
 
             //---Dropper---//
             if (gamepad2.right_trigger > robot.triggerSensitivity) {
@@ -155,11 +161,12 @@ public class GameTeleop extends LinearOpMode {
             else {
                 dropper.resetDropper = true;
             }
+
+            telemetry.addData("hello", gamepad2.right_trigger);
+            telemetry.update();
         }
     }
 
 
 
 }
-/*
- */

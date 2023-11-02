@@ -1,4 +1,4 @@
-/*package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -12,4 +12,4 @@ public abstract class AutoTest extends AutoControls {
         init(hardwareMap);
     }
 
-}*/
+}

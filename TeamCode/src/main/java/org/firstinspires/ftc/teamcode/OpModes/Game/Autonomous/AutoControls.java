@@ -1,4 +1,4 @@
-/*package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -215,7 +215,7 @@ public abstract class AutoControls extends LinearOpMode {
         Robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     */
-/*
+
     public void ResetEncoders() {
         robot.odometerRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.odometerLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -241,4 +241,4 @@ public abstract class AutoControls extends LinearOpMode {
         robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
-}*/
+}

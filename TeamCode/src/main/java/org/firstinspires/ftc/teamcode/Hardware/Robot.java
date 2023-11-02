@@ -137,7 +137,7 @@ public class Robot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //---Odometer---//
-/*
+
         odometerLeft = hardwareMap.get(DcMotorEx.class, "odometerLeft");
         odometerRight = hardwareMap.get(DcMotorEx.class, "odometerRight");
 
@@ -148,7 +148,7 @@ public class Robot {
 
         odometerRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);*/
+        odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -294,7 +294,7 @@ public class Robot {
         public double liftCascadeMultiplier = 3;
         public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI * liftCascadeMultiplier);
 
-        public double liftPower = 0.3;
+        public double liftPower = 0.7;
 
 
 
@@ -303,13 +303,13 @@ public class Robot {
             liftMotor.setDirection(DcMotor.Direction.FORWARD);
             liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            //liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
 
         public void SetPosition(double liftTargetPosition) {
-            //liftMotor.setTargetPosition((int) (liftTargetPosition * liftTicksPerInch));
-            //liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setTargetPosition((int) (liftTargetPosition * liftTicksPerInch));
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor.setPower(liftPower);
             
             currentLevel = 0; //edit this later;

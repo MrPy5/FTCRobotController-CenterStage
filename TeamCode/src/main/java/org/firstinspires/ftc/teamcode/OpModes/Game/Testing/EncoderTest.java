@@ -1,18 +1,15 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Testing;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 
-@TeleOp(name = "Motor Test")
-public class MotorTest extends LinearOpMode {
+@TeleOp(name = "Encoder Test")
+public class EncoderTest extends LinearOpMode {
 
     double triggerSensitivity = 0.01;
 
