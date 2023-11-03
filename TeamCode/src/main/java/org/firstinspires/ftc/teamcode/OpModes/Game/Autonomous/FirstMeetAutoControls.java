@@ -65,6 +65,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         return  averageVelocity;
     }
 
+    public double GetAverageWheelPositionInches() {
+        return ((((robot.frontLeft.getCurrentPosition() + robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4) / robot.ticksPerInch));
+    }
+
     public double headingAdjustment(double targetHeading, double distanceToX) {
         double adjustment;
         double currentHeading;
@@ -143,6 +147,38 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
+
+
+    public void Drive (double targetInches) {
+
+        double currentInches;
+        double distanceToTarget;
+
+        double lfPower = 0.5;
+        double rfPower = 0.5;
+        double lrPower = 0.5;
+        double rrPower = 0.5;
+
+        double reverse = 1;
+
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
+
+        if (distanceToTarget < 0) {
+            reverse = -1;
+        } else {
+            reverse = 1;
+        }
+
+        while (Math.abs(distanceToTarget) != 0) {
+            robot.frontLeft.setPower(lfPower * reverse);
+            robot.frontRight.setPower(rfPower * reverse);
+            robot.backRight.setPower(rrPower * reverse);
+            robot.backLeft.setPower(lrPower * reverse);
+        }
+
+
+    }
 
 
 }

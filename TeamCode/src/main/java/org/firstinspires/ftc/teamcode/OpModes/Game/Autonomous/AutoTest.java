@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
-public abstract class AutoTest extends AutoControls {
+public abstract class AutoTest extends FirstMeetAutoControls {
 
     public void startAuto() {
         init(hardwareMap);
