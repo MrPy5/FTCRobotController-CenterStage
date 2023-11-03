@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.TeleOp;
 
-import android.util.Log;
-
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 
 import java.util.List;
 
@@ -29,7 +26,9 @@ public class GameTeleop extends LinearOpMode {
         Dropper dropper = robot.new Dropper();
         Intake intake = robot.new Intake();
 
-        //robot.initAprilTag();
+        robot.gameTimer.startTime();
+
+
         waitForStart();
 
         //---Bulk Reads---//
@@ -38,6 +37,7 @@ public class GameTeleop extends LinearOpMode {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
 
 
         //--Driving--//
@@ -51,23 +51,34 @@ public class GameTeleop extends LinearOpMode {
         double lrPower;
         double rrPower;
 
-        double avgWheelVelocityFPS;
+        //---Lift---//
+        boolean manualLiftMode = false;
+        double liftCurrent = 0;
+        double liftPast = 0;
+        double lastManualIncrement = 0;
 
         //---Init Motion---//
         robot.pixelDropper.setPosition(dropper.closedDropper);
+        intake.StopIntake();
+        lift.SetPosition(0, 0);
+
 
         while (opModeIsActive()) {
 
 
             //---Gamepad1 controls---//
             // driving -> joysticks
-            // intake -> rightBumper
-            // outtake -> leftBumper
+            // intake -> Right trigger
+            // outtake -> Left trigger
+            // stop intake -> Right Bumper
 
             //---Gamepad2 controls---//
-            // lift -> bumpers
-            // lift presets -> A, B, Y
-            // drop -> rightTrigger
+            //
+            // lift presets -> Right Bumper, a, b, y
+            // D-Pad down -> Manual lift mode
+            // manual lift -> Bumpers
+            // Pixel Dropper -> Right trigger
+
 
 
             //---Driving---//
@@ -77,12 +88,12 @@ public class GameTeleop extends LinearOpMode {
 
             double rightStickX = gamepad1.right_stick_x * .8;
 
-
+            /*
             int frontLeft = robot.frontLeft.getCurrentPosition();
             int frontRight = robot.frontRight.getCurrentPosition();
             int backLeft = robot.backLeft.getCurrentPosition();
             int backRight = robot.backRight.getCurrentPosition();
-
+            */
 
             //---Driving Code---//
 
@@ -117,52 +128,63 @@ public class GameTeleop extends LinearOpMode {
 
             //---Intake---//
 
-            if (gamepad1.a) {
+            if (gamepad1.right_trigger > robot.triggerSensitivity) {
+                intake.StartIntake(1);
+            }
+            if (gamepad1.left_trigger > robot.triggerSensitivity) {
+                intake.StartIntake(-1);
+            }
+            if (gamepad1.right_bumper) {
+                intake.StopIntake();
+            }
 
-                if (intake.intakeReset) {
-                    if (intake.intakeState == 0) {
-                        intake.StartIntake(0.9);
-                    }
-                    else if (intake.intakeState == 1) {
-                        intake.StopIntake();
-                    }
-                    intake.intakeReset = false;
-                }
-            }
-            else {
-                intake.intakeReset = true;
-            }
 
 
             //---Lift---//
+
+
+            //Preset Positions
             if (gamepad2.right_bumper) {
-                lift.SetPosition(0);
+                lift.SetPosition(lift.liftBottom, liftCurrent);
+                liftCurrent = lift.liftBottom;
+                dropper.CloseDropper();
             }
-            if (gamepad2.y) {
-                lift.SetPosition(45);
+            if (gamepad2.cross) {
+                lift.SetPosition(lift.liftLow, liftCurrent);
+                liftCurrent = lift.liftLow;
             }
-            if (gamepad2.left_stick_button) {
-                lift.SetPosition(gamepad2.right_stick_y * -30);
+            if (gamepad2.circle) {
+                lift.SetPosition(lift.liftMedium, liftCurrent);
+                liftCurrent = lift.liftMedium;
+            }
+            if (gamepad2.triangle) {
+                lift.SetPosition(lift.liftHigh, liftCurrent);
+                liftCurrent = lift.liftHigh;
+            }
+
+            //Manual Control
+            if (gamepad2.dpad_up && lastManualIncrement + 250 < robot.gameTimer.milliseconds()) {
+
+                lift.SetPosition(liftCurrent + 3, liftCurrent);
+                liftCurrent = liftCurrent + 3;
+                lastManualIncrement = robot.gameTimer.milliseconds();
+            }
+            if (gamepad2.dpad_down && lastManualIncrement + 250 < robot.gameTimer.milliseconds()) {
+
+                lift.SetPosition(liftCurrent - 3, liftCurrent);
+                liftCurrent = liftCurrent - 3;
+                lastManualIncrement = robot.gameTimer.milliseconds();
             }
 
 
             //---Dropper---//
             if (gamepad2.right_trigger > robot.triggerSensitivity) {
-                if (dropper.resetDropper) {
-                    if (dropper.dropperOpen) {
-                        dropper.CloseDropper();
-                    }
-                    else {
-                        dropper.OpenDropper();
-                    }
-                    dropper.resetDropper = false;
-                }
-            }
-            else {
-                dropper.resetDropper = true;
+                dropper.OpenDropper();
             }
 
-            telemetry.addData("hello", gamepad2.right_trigger);
+            telemetry.addData("Manual Lift Mode: ", manualLiftMode);
+            telemetry.addData("Timer: ", robot.gameTimer.milliseconds());
+            telemetry.addData("LiftTarget: ", liftCurrent);
             telemetry.update();
         }
     }

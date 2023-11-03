@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -108,6 +109,9 @@ public class Robot {
     public final double focalLength = 728;  // Replace with the focal length of the camera in pixels
 
     public String alliance = "";
+
+    public ElapsedTime gameTimer = new ElapsedTime();
+
 
     //http://192.168.43.1:8080/dash
 
@@ -269,7 +273,6 @@ public class Robot {
 
     public class Intake {
         public int intakeState = 0;
-        public boolean intakeReset = true;
         public Intake() {
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
             intakeMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -289,12 +292,20 @@ public class Robot {
 
         public int currentLevel = 1;
 
-        public double liftMotorTicksPerRevolution = 537;
-        public double liftSpoolDiameter = 1;
-        public double liftCascadeMultiplier = 3;
-        public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI * liftCascadeMultiplier);
+        public double liftBottom = 0;
+        public double liftLow = 12;
+        public double liftMedium = 20;
+        public double liftHigh = 28;
 
-        public double liftPower = 0.7;
+        public double liftMotorTicksPerRevolution = 384.5;
+        public double liftSpoolDiameter = 7.0/8.0;
+        //public double liftCascadeMultiplier = 3;
+        public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI);
+
+        public double liftPowerUp = 1;
+        public double liftPowerDown = 0.7;
+
+
 
 
 
@@ -302,67 +313,43 @@ public class Robot {
             liftMotor = hardwareMap.get(DcMotor.class, "lift");
             liftMotor.setDirection(DcMotor.Direction.FORWARD);
             liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
 
-        public void SetPosition(double liftTargetPosition) {
+        public void SetPosition(double liftTargetPosition, double liftPastPosition) {
             liftMotor.setTargetPosition((int) (liftTargetPosition * liftTicksPerInch));
             liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor.setPower(liftPower);
-            
+            if (liftTargetPosition >= liftPastPosition) {
+                liftMotor.setPower(liftPowerUp);
+            }
+            else {
+                liftMotor.setPower(liftPowerDown);
+
+            }
+
             currentLevel = 0; //edit this later;
         }
     }
 
     public class Dropper {
 
-        /*
-        public boolean leftOpen = false;
-        public String leftColor = "None";
-        public double openLeft = 0;
-        public double closedLeft = 0;
-
-        public boolean rightOpen = false;
-        public String rightColor = "None";
-        public double openRight = 0;
-        public double closedRight = 0;
-        */
-
         public boolean dropperOpen = false;
-        public String dropperColor = "None";
-        public double openDropper = 0.19;
+        public double openDropper = 0.14;
         public double closedDropper = 0.31;
 
         public boolean resetDropper = true;
 
+        public double scoreTimer = 0;
+
+
         public Dropper() {
-            //leftDropper = hardwareMap.get(Servo.class, "leftDropper");
-            //rightDropper = hardwareMap.get(Servo.class, "rightDropper");
 
             pixelDropper = hardwareMap.get(Servo.class, "pixelDropper");
         }
 
-        /*
-        public void ClosedLeftDropper() {
-            leftDropper.setPosition(closedLeft);
-            leftOpen = false;
-        }
-        public void OpenLeftDropper() {
-            leftDropper.setPosition(openLeft);
-            leftOpen = true;
-        }
 
-        public void ClosedRightDropper() {
-            rightDropper.setPosition(closedRight);
-            rightOpen = false;
-        }
-        public void OpenRightDropper() {
-            rightDropper.setPosition(openRight);
-            rightOpen = true;
-        }
-        */
 
         public void CloseDropper() {
             pixelDropper.setPosition(closedDropper);
@@ -371,6 +358,12 @@ public class Robot {
         public void OpenDropper() {
             pixelDropper.setPosition(openDropper);
             dropperOpen = true;
+        }
+
+        public void Score() {
+            pixelDropper.setPosition(openDropper);
+            scoreTimer = gameTimer.milliseconds();
+
         }
     }
 

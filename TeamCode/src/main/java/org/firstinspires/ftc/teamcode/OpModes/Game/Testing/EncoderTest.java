@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 
 @TeleOp(name = "Encoder Test")
 public class EncoderTest extends LinearOpMode {
@@ -17,7 +18,7 @@ public class EncoderTest extends LinearOpMode {
     public void runOpMode() {
 
         Robot robot = new Robot(hardwareMap, true);
-        //Lift lift = robot.new Lift();
+        Lift lift = robot.new Lift();
         Intake intake = robot.new Intake();
 
         double speed = .3;
