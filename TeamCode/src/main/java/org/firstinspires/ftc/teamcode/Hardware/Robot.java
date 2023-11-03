@@ -110,6 +110,9 @@ public class Robot {
 
     public String alliance = "";
 
+    public double centerX = 0;
+    public double centerY = 0;
+
     public ElapsedTime gameTimer = new ElapsedTime();
 
 
@@ -425,7 +428,8 @@ public class Robot {
                 Moments moments = Imgproc.moments(largestContour);
                 cX = moments.get_m10() / moments.get_m00();
                 cY = moments.get_m01() / moments.get_m00();
-
+                //update Center Variables:
+                UpdateCenter(cX, cY);
                 // Draw a dot at the centroid
                 String label = "(" + (int) cX + ", " + (int) cY + ")";
                 Imgproc.putText(input, label, new Point(cX + 10, cY), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 255, 0), 2);
@@ -478,15 +482,26 @@ public class Robot {
             Rect boundingRect = Imgproc.boundingRect(contour);
             return boundingRect.width;
         }
-        public double returnDistance() {
 
-            return getDistance(width);
-        }
 
     }
     private  double getDistance(double width){
         double distance = (objectWidthInRealWorldUnits * focalLength) / width;
         return distance;
+    }
+    private void UpdateCenter(double cx, double cy) {
+        centerX = cx;
+        centerY = cy;
+    }
+    public int ScanForElement() {
+        int returnSpike = 1;
+        if (centerX > (STREAM_WIDTH / 3.0)) {
+            returnSpike = 2;
+            if (centerX > (STREAM_WIDTH * (2.0/3.0))) {
+                returnSpike = 3;
+            }
+        }
+        return returnSpike;
     }
 
 

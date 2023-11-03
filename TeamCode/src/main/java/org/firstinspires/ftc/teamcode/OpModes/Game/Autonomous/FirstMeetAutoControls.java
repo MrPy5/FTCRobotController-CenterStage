@@ -19,11 +19,13 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public abstract class FirstMeetAutoControls extends LinearOpMode {
 
     Robot robot;
+
     BNO055IMU imu;
     Orientation angles;
 
     public void init(HardwareMap hwMap) {
         Robot robot = new Robot(hwMap, false);
+        robot.initEasyOpenCV();
         initIMU();
     }
 
@@ -140,5 +142,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
+
+
 
 }
