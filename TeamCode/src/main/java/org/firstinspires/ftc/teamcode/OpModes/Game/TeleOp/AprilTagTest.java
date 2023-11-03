@@ -62,8 +62,11 @@ public class AprilTagTest extends LinearOpMode {
             while (opModeIsActive()) {
 
                 AprilTagPoseFtc pose = robot.getFirstAprilTagPose();
+                int aprilTagID = robot.getFirstAprilTagID();
+
                 if (pose != null ) {
                     telemetry.addData("Distance", pose.range);
+                    telemetry.addData("AprilTagID", aprilTagID);
                     telemetry.addData("x", pose.x);
                     telemetry.addData("y", pose.y);
                     telemetry.addData("z", pose.z);

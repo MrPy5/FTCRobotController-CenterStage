@@ -10,6 +10,11 @@ public abstract class AutoTest extends AutoControls {
 
     public void startAuto() {
         init(hardwareMap);
+
+        int spikeLocation = 1; //ScanForElement();
+
+
+
     }
 
 }

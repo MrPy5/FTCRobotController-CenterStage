@@ -208,7 +208,7 @@ public class Robot {
 
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new android.util.Size(1280, 800));
+        builder.setCameraResolution(new android.util.Size(1280, 720));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableLiveView(showCameraPreview);
@@ -249,6 +249,7 @@ public class Robot {
 
 
     }
+
     public AprilTagPoseFtc getFirstAprilTagPose() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();

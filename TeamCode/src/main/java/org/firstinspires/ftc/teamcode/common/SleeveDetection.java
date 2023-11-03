@@ -22,11 +22,11 @@ public class SleeveDetection extends OpenCvPipeline {
     }
 
     // TOPLEFT anchor point for the bounding box
-    private static final Point SLEEVE_TOPLEFT_ANCHOR_POINT = new Point(145, 168);
+    private static final Point SLEEVE_TOPLEFT_ANCHOR_POINT = new Point(45, 168);
 
     // Width and height for the bounding box
-    public static int REGION_WIDTH = 30;
-    public static int REGION_HEIGHT = 50;
+    public static int REGION_WIDTH = 50;
+    public static int REGION_HEIGHT = 80;
 
     // Color definitions
     private final Scalar
@@ -61,7 +61,7 @@ public class SleeveDetection extends OpenCvPipeline {
                     input,
                     sleeve_pointA,
                     sleeve_pointB,
-                    CYAN,
+                    CYAN   ,
                     2
             );
         } else if (sumColors.val[1] == minColor) {

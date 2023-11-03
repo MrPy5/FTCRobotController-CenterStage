@@ -32,9 +32,13 @@ package org.firstinspires.ftc.teamcode.OpModes.Game.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.ContourDetectionPipeline;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
+import org.firstinspires.ftc.teamcode.common.SleeveDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 
 
 @TeleOp(name = "OpenCVTest")
@@ -42,13 +46,11 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 public class EasyOpenCVTest extends LinearOpMode {
 
 
-
-
     @Override
     public void runOpMode() {
         Robot robot = new Robot(hardwareMap, true);
-        ContourDetectionPipeline detection = robot.new ContourDetectionPipeline();
-        robot.alliance = "blue";
+
+        robot.alliance = "red";
         robot.initEasyOpenCV();
 
 
@@ -56,7 +58,6 @@ public class EasyOpenCVTest extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-
 
                 telemetry.update();
 
