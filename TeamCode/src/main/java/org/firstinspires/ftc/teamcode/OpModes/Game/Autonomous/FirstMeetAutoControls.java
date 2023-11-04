@@ -34,7 +34,6 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         dropper = robot.new Dropper();
         lift = robot.new Lift();
         intake = robot.new Intake();
-        RunUsingEncoders();
         //robot.initEasyOpenCV();
 
         initIMU();
@@ -157,20 +156,9 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
-    
-    public void RunUsingEncoders() {
-
-        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-    }
-
 
 
     public void Drive (double targetInches) {
-        RunUsingEncoders();
         double currentInches;
         double distanceToTarget;
 
@@ -204,6 +192,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             robot.backRight.setPower(rrPower * reverse);
             robot.backLeft.setPower(lrPower * reverse);
         }
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
 
 
     }

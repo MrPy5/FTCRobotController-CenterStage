@@ -1,29 +1,29 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "Auto")
 public class AutoTest extends FirstMeetAutoControls {
 
     @Override
     public void runOpMode() {
-
         initMethods(hardwareMap);
         waitForStart();
         robot.gameTimer.startTime();
-        robot.frontLeft.setPower(1);
-        sleep(5000);
-        /*int spikeLocation = 2;//robot.ScanForElement();
+        int spikeLocation = robot.ScanForElement();
 
         if (spikeLocation == 2) {
-            Drive(30);
+            Drive(18);
+            sleep(1000);
+            Drive(25);
+
             sleep(500);
-            Drive(24);
-            sleep(500);
-            intake.StartIntake(0.5);
-            sleep(1);
+            intake.StartIntake(-0.3);
+            sleep(3000);
             intake.StopIntake();
-        }*/
+
+        }
 
 
 
