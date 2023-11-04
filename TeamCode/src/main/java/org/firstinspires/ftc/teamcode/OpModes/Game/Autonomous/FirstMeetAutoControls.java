@@ -14,18 +14,29 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public abstract class FirstMeetAutoControls extends LinearOpMode {
 
     Robot robot;
+    Dropper dropper;
+    Lift lift;
 
+    Intake intake;
     BNO055IMU imu;
     Orientation angles;
 
-    public void init(HardwareMap hwMap) {
-        Robot robot = new Robot(hwMap, false);
-        robot.initEasyOpenCV();
+    public void initMethods(HardwareMap hwMap) {
+        robot = new Robot(hwMap, false);
+        dropper = robot.new Dropper();
+        lift = robot.new Lift();
+        intake = robot.new Intake();
+        RunUsingEncoders();
+        //robot.initEasyOpenCV();
+
         initIMU();
     }
 
@@ -66,7 +77,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
     }
 
     public double GetAverageWheelPositionInches() {
-        return ((((robot.frontLeft.getCurrentPosition() + robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4) / robot.ticksPerInch));
+        return ((((robot.frontLeft.getCurrentPosition() + robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4.0) / robot.ticksPerInch));
     }
 
     public double headingAdjustment(double targetHeading, double distanceToX) {
@@ -146,11 +157,20 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
+    
+    public void RunUsingEncoders() {
+
+        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    }
 
 
 
     public void Drive (double targetInches) {
-
+        RunUsingEncoders();
         double currentInches;
         double distanceToTarget;
 
@@ -170,7 +190,15 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             reverse = 1;
         }
 
-        while (Math.abs(distanceToTarget) != 0) {
+        while (Math.abs(distanceToTarget) > 1) {
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            if (distanceToTarget < 0) {
+                reverse = -1;
+            } else {
+                reverse = 1;
+            }
             robot.frontLeft.setPower(lfPower * reverse);
             robot.frontRight.setPower(rfPower * reverse);
             robot.backRight.setPower(rrPower * reverse);
