@@ -9,6 +9,7 @@ public class AutoTest extends FirstMeetAutoControls {
     @Override
     public void runOpMode() {
         initMethods(hardwareMap);
+        robot.alliance = "red";
         waitForStart();
         robot.gameTimer.startTime();
         int spikeLocation = robot.ScanForElement();

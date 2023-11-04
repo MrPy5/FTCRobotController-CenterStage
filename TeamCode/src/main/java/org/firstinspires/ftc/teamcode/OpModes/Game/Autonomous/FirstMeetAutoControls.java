@@ -34,7 +34,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         dropper = robot.new Dropper();
         lift = robot.new Lift();
         intake = robot.new Intake();
-        //robot.initEasyOpenCV();
+        robot.initEasyOpenCV();
 
         initIMU();
     }
