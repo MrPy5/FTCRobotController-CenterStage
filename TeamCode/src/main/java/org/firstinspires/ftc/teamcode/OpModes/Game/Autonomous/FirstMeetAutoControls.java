@@ -154,14 +154,32 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
+    public void ResetEncoders() {
+
+        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
     public void Turn (double targetHeading) {
 
         double lfPower;
         double rfPower;
         double lrPower;
         double rrPower;
-
+        double currentHeading;
+        ElapsedTime turnTimer = new ElapsedTime();
+        double lastAngle = -1;
         while (degreesOff(targetHeading) > 0.5) {
+
             double adjustment = 0;
             adjustment = headingAdjustment(targetHeading, 0);
 
@@ -174,11 +192,31 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             robot.frontRight.setPower(rfPower);
             robot.backLeft.setPower(lrPower);
             robot.backRight.setPower(rrPower);
+
+
+            angles   = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            currentHeading = (360 + angles.firstAngle) % 360;
+            if (currentHeading == lastAngle) {
+                turnTimer.startTime();
+                if (turnTimer.milliseconds() >= 750) {
+
+                    robot.frontLeft.setPower(0);
+                    robot.frontRight.setPower(0);
+                    robot.backLeft.setPower(0);
+                    robot.backRight.setPower(0);
+                    break;
+                }
+            }
+
+            lastAngle = currentHeading;
+
         }
 
     }
 
     public void Drive (double targetInches) {
+        ResetEncoders();
         double currentInches;
         double distanceToTarget;
 
@@ -221,5 +259,30 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
 
     }
 
+    public void Strafe(long milliseconds, int direction) {
+        if (direction == 1) {
+            robot.frontLeft.setPower(0.2);
+            robot.backLeft.setPower(-0.2);
+            robot.frontRight.setPower(-0.2);
+            robot.backRight.setPower(0.2);
+        }
+        if (direction == 0) {
+            robot.frontLeft.setPower(-0.2);
+            robot.backLeft.setPower(0.2);
+            robot.frontRight.setPower(0.2);
+            robot.backRight.setPower(-0.3);
+        }
+        double startTime = robot.gameTimer.milliseconds();
+        while ((robot.gameTimer.milliseconds() < startTime + milliseconds)) {
+
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+
+    }
 
 }
