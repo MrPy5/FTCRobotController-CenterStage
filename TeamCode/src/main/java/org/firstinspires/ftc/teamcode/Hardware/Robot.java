@@ -113,6 +113,8 @@ public class Robot {
     public double centerX = 0;
     public double centerY = 0;
 
+    public double area = 0;
+
     public ElapsedTime gameTimer = new ElapsedTime();
 
 
@@ -186,7 +188,7 @@ public class Robot {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(STREAM_WIDTH, STREAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(STREAM_WIDTH, STREAM_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
@@ -405,6 +407,7 @@ public class Robot {
 
     public class ContourDetectionPipeline extends OpenCvPipeline {
         public double width;
+        public double area;
         public double cX = 0;
         public double cY = 0;
 
@@ -431,12 +434,13 @@ public class Robot {
                 Imgproc.drawContours(input, contours, contours.indexOf(largestContour), new Scalar(255, 0, 0), 2);
                 // Calculate the width of the bounding box
                 width = calculateWidth(largestContour);
-
+                area = calculateArea(largestContour);
+                UpdateArea(area);
                 // Display the width next to the label
                 String widthLabel = "Width: " + (int) width + " pixels";
                 Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 //Display the Distance
-                String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
+                String distanceLabel = "Area: " + String.format("%.2f", area) + " inches";
                 Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 // Calculate the centroid of the largest contour
                 Moments moments = Imgproc.moments(largestContour);
@@ -494,8 +498,15 @@ public class Robot {
         }
         private double calculateWidth(MatOfPoint contour) {
             Rect boundingRect = Imgproc.boundingRect(contour);
+
             return boundingRect.width;
         }
+        public double calculateArea(MatOfPoint contour) {
+            Rect boundingRect = Imgproc.boundingRect(contour);
+
+            return boundingRect.area();
+        }
+
 
 
     }
@@ -507,15 +518,23 @@ public class Robot {
         centerX = cx;
         centerY = cy;
     }
+
+    private void UpdateArea(double areaImport) {
+        area = areaImport;
+    }
     public int ScanForElement() {
         int returnSpike = 1;
-        if (centerX > (STREAM_WIDTH / 3.0)) {
+
+        if (centerX > (STREAM_WIDTH / 2.0)) {
             returnSpike = 2;
-            if (centerX > (STREAM_WIDTH * (2.0/3.0))) {
-                returnSpike = 3;
-            }
+        }
+        if (area < 40000) {
+            returnSpike = 3;
         }
         return returnSpike;
+    }
+    public double getCenter() {
+        return centerX;
     }
 
 

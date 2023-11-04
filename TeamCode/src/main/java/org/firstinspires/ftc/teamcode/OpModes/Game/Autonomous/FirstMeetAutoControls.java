@@ -54,11 +54,11 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        byte AXIS_MAP_SIGN_BYTE = 0x1; //This is what to write to the AXIS_MAP_SIGN register to negate the z axis
+        /*byte AXIS_MAP_SIGN_BYTE = 0x1; //This is what to write to the AXIS_MAP_SIGN register to negate the z axis
         imu.write8(BNO055IMU.Register.OPR_MODE, BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);  // puts it in config mode
         sleep(100);
         imu.write8(BNO055IMU.Register.AXIS_MAP_SIGN, AXIS_MAP_SIGN_BYTE & 0x0F);
-        imu.write8(BNO055IMU.Register.OPR_MODE, BNO055IMU.SensorMode.IMU.bVal & 0x0F);
+        imu.write8(BNO055IMU.Register.OPR_MODE, BNO055IMU.SensorMode.IMU.bVal & 0x0F);*/
 
     }
 
@@ -98,17 +98,14 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         }
 
         double speedMinimum;
-        double speedModifier = 7;
+        double speedModifier = 6;
 
         if (degreesOff > 10) {
-            speedModifier = 10;
+            speedModifier = 8;
         }
 
-        if (distanceToX == 0) {  // this????
-            speedMinimum = 15;
-        } else {
-            speedMinimum = 3;
-        }
+        speedMinimum = 3;
+
 
         if (degreesOff < .3) {
             adjustment = 0;
@@ -130,7 +127,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         double currentHeading;
         double degreesOff;
 
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles   = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         currentHeading = (360 + angles.firstAngle) % 360;
 
