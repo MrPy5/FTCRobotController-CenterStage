@@ -157,6 +157,29 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
+    public void Turn (double targetHeading) {
+
+        double lfPower;
+        double rfPower;
+        double lrPower;
+        double rrPower;
+
+        while (degreesOff(targetHeading) > 0.5) {
+            double adjustment = 0;
+            adjustment = headingAdjustment(targetHeading, 0);
+
+            lfPower = adjustment;
+            rfPower = -adjustment;
+            lrPower = adjustment;
+            rrPower = -adjustment;
+
+            robot.frontLeft.setPower(lfPower);
+            robot.frontRight.setPower(rfPower);
+            robot.backLeft.setPower(lrPower);
+            robot.backRight.setPower(rrPower);
+        }
+
+    }
 
     public void Drive (double targetInches) {
         double currentInches;
@@ -192,6 +215,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             robot.backRight.setPower(rrPower * reverse);
             robot.backLeft.setPower(lrPower * reverse);
         }
+
         robot.frontLeft.setPower(0);
         robot.frontRight.setPower(0);
         robot.backLeft.setPower(0);
