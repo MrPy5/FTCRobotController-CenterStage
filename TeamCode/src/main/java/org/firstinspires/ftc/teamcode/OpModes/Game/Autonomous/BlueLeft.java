@@ -23,6 +23,7 @@ public class BlueLeft extends FirstMeetAutoControls {
         telemetry.addData("center", robot.getCenter());
         telemetry.update();
 
+        //StrafeWithInches(10, 0);
 
         if (spikeLocation == 1) {
             Drive(18);
@@ -41,7 +42,7 @@ public class BlueLeft extends FirstMeetAutoControls {
             Turn(270);
             Strafe(750, 1);
             Drive(-5);
-            lift.SetPosition(lift.liftLow - 4, 0);
+            lift.SetPosition(lift.liftLow - 3.5, 0);
             sleep(2000);
             dropper.OpenDropper();
             sleep(1000);
@@ -64,8 +65,9 @@ public class BlueLeft extends FirstMeetAutoControls {
             Drive(35);
             Turn(270);
 
+            Strafe(500, 0);
             Drive(-5);
-            lift.SetPosition(lift.liftLow - 4.5, 0);
+            lift.SetPosition(lift.liftLow - 3.5, 0);
             sleep(2000);
             dropper.OpenDropper();
             sleep(1000);
@@ -94,7 +96,7 @@ public class BlueLeft extends FirstMeetAutoControls {
             Turn(90);
 
             Drive(-3);
-            lift.SetPosition(lift.liftLow - 4, 0);
+            lift.SetPosition(lift.liftLow - 3.5, 0);
             sleep(2000);
             dropper.OpenDropper();
             sleep(1000);
@@ -104,7 +106,6 @@ public class BlueLeft extends FirstMeetAutoControls {
             lift.SetPosition(lift.liftBottom, lift.liftLow);
             sleep(4000);
         }
-
 
 
 

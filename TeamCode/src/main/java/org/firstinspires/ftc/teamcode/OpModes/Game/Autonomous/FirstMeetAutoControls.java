@@ -79,6 +79,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         return ((((robot.frontLeft.getCurrentPosition() + robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4.0) / robot.ticksPerInch));
     }
 
+    public double GetAverageStrafePositionInches() {
+        return (((Math.abs(robot.frontLeft.getCurrentPosition()) + Math.abs(robot.frontRight.getCurrentPosition()) + Math.abs(robot.backLeft.getCurrentPosition()) + Math.abs(robot.backRight.getCurrentPosition())) / 4.0) / robot.strafeTicksPerInch);
+    }
+
     public double headingAdjustment(double targetHeading, double distanceToX) {
         double adjustment;
         double currentHeading;
@@ -270,7 +274,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             robot.frontLeft.setPower(-0.2);
             robot.backLeft.setPower(0.2);
             robot.frontRight.setPower(0.2);
-            robot.backRight.setPower(-0.3);
+            robot.backRight.setPower(-0.2);
         }
         double startTime = robot.gameTimer.milliseconds();
         while ((robot.gameTimer.milliseconds() < startTime + milliseconds)) {
@@ -283,6 +287,37 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.backRight.setPower(0);
 
 
+    }
+
+    public void StrafeWithInches(double targetStrafeInches, int direction) {
+        ResetEncoders();
+
+        double currentStrafeInches = GetAverageStrafePositionInches();
+        double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+
+        while (Math.abs(strafeDistanceToTarget) > 1) {
+            currentStrafeInches = GetAverageStrafePositionInches();
+            strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+
+            if (direction == 1) {
+                robot.frontLeft.setPower(0.2);
+                robot.backLeft.setPower(-0.2);
+                robot.frontRight.setPower(-0.2);
+                robot.backRight.setPower(0.2);
+            }
+            if (direction == 0) {
+                robot.frontLeft.setPower(-0.2);
+                robot.backLeft.setPower(0.2);
+                robot.frontRight.setPower(0.2);
+                robot.backRight.setPower(-0.2);
+            }
+        }
+
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
     }
 
 }
