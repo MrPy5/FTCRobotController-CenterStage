@@ -127,7 +127,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         double currentHeading;
         double degreesOff;
 
-        angles   = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         currentHeading = (360 + angles.firstAngle) % 360;
 
@@ -199,7 +199,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             currentHeading = (360 + angles.firstAngle) % 360;
             if (currentHeading == lastAngle) {
                 turnTimer.startTime();
-                if (turnTimer.milliseconds() >= 750) {
+                if (turnTimer.milliseconds() >= 1000) {
 
                     robot.frontLeft.setPower(0);
                     robot.frontRight.setPower(0);
@@ -212,6 +212,11 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             lastAngle = currentHeading;
 
         }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
 
     }
 

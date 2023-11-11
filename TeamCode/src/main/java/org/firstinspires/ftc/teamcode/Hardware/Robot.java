@@ -52,6 +52,9 @@ public class Robot {
     //---DRONE LAUNCHER---//
     public Servo droneReleaser;
 
+    //---DRONE LAUNCHER---//
+    public DcMotor suspensionMotor;
+
     //---DROPPER---//
     public Servo pixelDropper; //Delete if two droppers
 
@@ -356,7 +359,7 @@ public class Robot {
     public class Dropper {
 
         public boolean dropperOpen = false;
-        public double openDropper = 0.14;
+        public double openDropper = 0.12;
         public double closedDropper = 0.31;
 
         public boolean resetDropper = true;
@@ -391,6 +394,7 @@ public class Robot {
         public double setPosition = 0;
         public double releasedPosition = 0;
         public DroneLauncher() {
+
             droneReleaser = hardwareMap.get(Servo.class, "droneReleaser");
         }
 
@@ -401,6 +405,27 @@ public class Robot {
         public void Reset() {
             droneReleaser.setPosition(setPosition);
         }
+    }
+
+    public class Suspension {
+
+        public double suspensionTop = 30;
+        public double suspensionBottom = 0;
+
+        public double liftMotorTicksPerRevolution = 384.5;
+        public double liftSpoolDiameter = 7.0/8.0;
+        public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI);
+
+        public double liftPowerUp = 1;
+        public double liftPowerDown = 0.7;
+        public Suspension() {
+            suspensionMotor = hardwareMap.get(DcMotor.class, "suspension");
+            suspensionMotor.setDirection(DcMotor.Direction.FORWARD);
+            suspensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            suspensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            suspensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
     }
 
 

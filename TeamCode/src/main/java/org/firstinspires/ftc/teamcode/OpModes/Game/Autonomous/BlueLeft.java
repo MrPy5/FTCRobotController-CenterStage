@@ -20,26 +20,24 @@ public class BlueLeft extends FirstMeetAutoControls {
         waitForStart();
         robot.gameTimer.startTime();
 
-        telemetry.addData("center", robot.getCenter());
-        telemetry.update();
 
 
-        if (spikeLocation == 1) {
+        if (spikeLocation == 3) {
             Drive(18);
             sleep(1000);
             Drive(7);
             sleep(500);
-            Turn(60);
+            Turn(300);
             intake.StartIntake(-0.7);
             sleep(800);
             intake.StopIntake();
-            Turn(1);
-            Drive(-23);
-            Turn(90);
-            Drive(38);
+
 
             Turn(270);
-            Strafe(750, 1);
+            Drive(-38);
+
+            Turn(270);
+            //Strafe(1000, 0);
             Drive(-5);
             lift.SetPosition(lift.liftLow - 4, 0);
             sleep(2000);
@@ -47,7 +45,7 @@ public class BlueLeft extends FirstMeetAutoControls {
             sleep(1000);
             dropper.CloseDropper();
             Drive(3);
-            sleep(3000);
+            sleep(1000);
             lift.SetPosition(lift.liftBottom, lift.liftLow);
             sleep(4000);
         }
@@ -71,27 +69,26 @@ public class BlueLeft extends FirstMeetAutoControls {
             sleep(1000);
             dropper.CloseDropper();
             Drive(3);
-            sleep(3000);
+            sleep(1000);
             lift.SetPosition(lift.liftBottom, lift.liftLow);
             sleep(4000);
 
 
         }
-        if (spikeLocation == 3) {
+        if (spikeLocation == 1) {
             Turn(90);
             Drive(24);
             sleep(500);
-            Turn(1);
+            Turn(0);
             Drive(26);
             Turn(270);
-            Drive(-5);
+            Drive(1.5);
             intake.StartIntake(-0.7);
             sleep(800);
             intake.StopIntake();
             Drive(-12);
             sleep(500);
-            Strafe(1050, 0);
-            Turn(90);
+            Strafe(1150, 1);
 
             Drive(-3);
             lift.SetPosition(lift.liftLow - 4, 0);
@@ -99,8 +96,8 @@ public class BlueLeft extends FirstMeetAutoControls {
             dropper.OpenDropper();
             sleep(1000);
             dropper.CloseDropper();
-            Drive(3);
-            sleep(3000);
+            Drive(1.5);
+            sleep(1000);
             lift.SetPosition(lift.liftBottom, lift.liftLow);
             sleep(4000);
         }

@@ -11,6 +11,7 @@ public class RedRight extends FirstMeetAutoControls {
         robot.alliance = "red";
 
         int spikeLocation = robot.ScanForElement();
+        sleep(5000);
         while (opModeInInit()) {
 
             spikeLocation = robot.ScanForElement();
@@ -30,6 +31,7 @@ public class RedRight extends FirstMeetAutoControls {
             Drive(4);
             sleep(500);
             Turn(60);
+            Drive(-2);
             intake.StartIntake(-0.7);
             sleep(800);
             intake.StopIntake();
@@ -44,7 +46,7 @@ public class RedRight extends FirstMeetAutoControls {
             sleep(1000);
             dropper.CloseDropper();
             Drive(3);
-            sleep(3000);
+            sleep(1000);
             lift.SetPosition(lift.liftBottom, lift.liftLow);
             sleep(4000);
         }
@@ -67,7 +69,7 @@ public class RedRight extends FirstMeetAutoControls {
             sleep(1000);
             dropper.CloseDropper();
             Drive(3);
-            sleep(3000);
+            sleep(10000);
             lift.SetPosition(lift.liftBottom, lift.liftLow);
             sleep(4000);
 
@@ -79,13 +81,13 @@ public class RedRight extends FirstMeetAutoControls {
             Turn(1);
             Drive(26);
             Turn(90);
-            Drive(-5);
+            Drive(-3);
             intake.StartIntake(-0.7);
             sleep(800);
             intake.StopIntake();
             Drive(-12);
             sleep(1000);
-            Strafe(1050, 0);
+            Strafe(1150, 0);
             Turn(90);
 
             Drive(-3);
@@ -95,7 +97,7 @@ public class RedRight extends FirstMeetAutoControls {
             sleep(1000);
             dropper.CloseDropper();
             Drive(3);
-            sleep(3000);
+            sleep(1000);
             lift.SetPosition(lift.liftBottom, lift.liftLow);
             sleep(4000);
         }

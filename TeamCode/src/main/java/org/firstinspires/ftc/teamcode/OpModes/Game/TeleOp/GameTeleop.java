@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.DroneLauncher;
 
 import java.util.List;
 
@@ -25,11 +26,13 @@ public class GameTeleop extends LinearOpMode {
         Lift lift = robot.new Lift();
         Dropper dropper = robot.new Dropper();
         Intake intake = robot.new Intake();
+        DroneLauncher droneLauncher = robot.new DroneLauncher();
 
-        robot.gameTimer.startTime();
 
 
         waitForStart();
+
+        robot.gameTimer.startTime();
 
         //---Bulk Reads---//
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -61,6 +64,8 @@ public class GameTeleop extends LinearOpMode {
         robot.pixelDropper.setPosition(dropper.closedDropper);
         intake.StopIntake();
         lift.SetPosition(0, 0);
+        dropper.CloseDropper();
+        droneLauncher.Reset();
 
 
         while (opModeIsActive()) {
@@ -71,6 +76,7 @@ public class GameTeleop extends LinearOpMode {
             // intake -> Right trigger
             // outtake -> Left trigger
             // stop intake -> Right Bumper
+            // shoot drone -> D-Pad up
 
             //---Gamepad2 controls---//
             //
@@ -180,6 +186,11 @@ public class GameTeleop extends LinearOpMode {
             //---Dropper---//
             if (gamepad2.right_trigger > robot.triggerSensitivity) {
                 dropper.OpenDropper();
+            }
+
+            //---Drone---//
+            if (gamepad1.dpad_up && robot.gameTimer.seconds() > 120) {
+                droneLauncher.ReleaseDrone();
             }
 
             telemetry.addData("Manual Lift Mode: ", manualLiftMode);

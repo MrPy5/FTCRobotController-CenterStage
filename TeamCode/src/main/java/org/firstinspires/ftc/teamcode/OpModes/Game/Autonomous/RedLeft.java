@@ -37,7 +37,7 @@ public class RedLeft extends FirstMeetAutoControls {
             Drive(84);
         }
         if (spikeLocation == 2) {
-            Drive(18);
+            Drive(15);
             sleep(1000);
             Drive(5);
 
@@ -55,6 +55,7 @@ public class RedLeft extends FirstMeetAutoControls {
             Drive(7);
             sleep(500);
             Turn(300);
+            Drive(1);
             intake.StartIntake(-0.7);
             sleep(800);
             intake.StopIntake();

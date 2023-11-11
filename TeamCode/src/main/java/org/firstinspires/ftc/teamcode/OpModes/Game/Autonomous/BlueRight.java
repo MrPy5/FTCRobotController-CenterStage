@@ -23,13 +23,13 @@ public class BlueRight extends FirstMeetAutoControls {
         telemetry.addData("center", robot.getCenter());
         telemetry.update();
 
-
         if (spikeLocation == 1) {
-            Drive(18);
+            Drive(15);
             sleep(1000);
             Drive(5);
             sleep(500);
             Turn(60);
+            Drive(-2);
             intake.StartIntake(-0.7);
             sleep(800);
             intake.StopIntake();
@@ -39,7 +39,7 @@ public class BlueRight extends FirstMeetAutoControls {
             Drive(89);
         }
         if (spikeLocation == 2) {
-            Drive(18);
+            Drive(17);
             sleep(1000);
             Drive(5);
 
