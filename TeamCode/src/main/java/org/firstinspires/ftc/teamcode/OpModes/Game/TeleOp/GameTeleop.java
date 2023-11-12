@@ -26,7 +26,7 @@ public class GameTeleop extends LinearOpMode {
         Lift lift = robot.new Lift();
         Dropper dropper = robot.new Dropper();
         Intake intake = robot.new Intake();
-        DroneLauncher droneLauncher = robot.new DroneLauncher();
+        //DroneLauncher droneLauncher = robot.new DroneLauncher();
 
 
 
@@ -65,7 +65,7 @@ public class GameTeleop extends LinearOpMode {
         intake.StopIntake();
         lift.SetPosition(0, 0);
         dropper.CloseDropper();
-        droneLauncher.Reset();
+        //droneLauncher.Reset();
 
 
         while (opModeIsActive()) {
@@ -188,10 +188,13 @@ public class GameTeleop extends LinearOpMode {
                 dropper.OpenDropper();
             }
 
+            /*
             //---Drone---//
             if (gamepad1.dpad_up && robot.gameTimer.seconds() > 120) {
                 droneLauncher.ReleaseDrone();
             }
+
+             */
 
             telemetry.addData("Manual Lift Mode: ", manualLiftMode);
             telemetry.addData("Timer: ", robot.gameTimer.milliseconds());

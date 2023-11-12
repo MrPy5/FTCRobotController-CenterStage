@@ -165,7 +165,7 @@ public class Robot {
 
 
         //---Odometer---//
-
+        /*
         odometerLeft = hardwareMap.get(DcMotorEx.class, "odometerLeft");
         odometerRight = hardwareMap.get(DcMotorEx.class, "odometerRight");
 
@@ -177,6 +177,7 @@ public class Robot {
         odometerRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+         */
 
 
 
