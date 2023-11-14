@@ -177,8 +177,8 @@ public class Robot {
         odometerRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-         */
 
+         */
 
 
     }
@@ -314,6 +314,7 @@ public class Robot {
             intakeState = 0;
         }
     }
+
     public class Lift {
 
         public int currentLevel = 1;

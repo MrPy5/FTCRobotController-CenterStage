@@ -38,7 +38,8 @@ public class RedRight extends FirstMeetAutoControls {
             Turn(270);
             Drive(37);
             Turn(90);
-            Strafe(750,1);
+
+            StrafeWithInches(7, 1);
             Drive(-5);
             lift.SetPosition(lift.liftLow - 3, 0);
             sleep(2000);
@@ -79,18 +80,21 @@ public class RedRight extends FirstMeetAutoControls {
             Drive(24);
             sleep(500);
             Turn(1);
+            sleep(500);
             Drive(26);
+            sleep(500);
             Turn(90);
-            Drive(-3);
+            sleep(250);
+            Drive(-2);
             intake.StartIntake(-0.7);
             sleep(800);
             intake.StopIntake();
             Drive(-12);
             sleep(1000);
-            Strafe(1150, 0);
-            Turn(90);
 
-            Drive(-3);
+            StrafeWithInches(9.5, 0);
+            Turn(90);
+            Drive(-4);
             lift.SetPosition(lift.liftLow - 3, 0);
             sleep(2000);
             dropper.OpenDropper();

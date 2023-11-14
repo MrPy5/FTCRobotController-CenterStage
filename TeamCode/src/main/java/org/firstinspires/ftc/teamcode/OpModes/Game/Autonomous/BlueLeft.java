@@ -37,8 +37,8 @@ public class BlueLeft extends FirstMeetAutoControls {
             Turn(270);
             Drive(-38);
 
+            StrafeWithInches(5, 0);
             Turn(270);
-            //Strafe(1000, 0);
             Drive(-5);
             lift.SetPosition(lift.liftLow - 3.5, 0);
             sleep(2000);
@@ -63,7 +63,7 @@ public class BlueLeft extends FirstMeetAutoControls {
             Drive(35);
             Turn(270);
 
-            Strafe(500, 0);
+            StrafeWithInches(3, 0);
             Drive(-5);
             lift.SetPosition(lift.liftLow - 3.5, 0);
             sleep(2000);
@@ -90,8 +90,8 @@ public class BlueLeft extends FirstMeetAutoControls {
             intake.StopIntake();
             Drive(-12);
             sleep(500);
-            Strafe(1150, 1);
 
+            StrafeWithInches(10, 1);
             Drive(-3);
             lift.SetPosition(lift.liftLow - 3.5, 0);
             sleep(2000);
