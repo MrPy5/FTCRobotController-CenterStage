@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.message.redux.StopOpMode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public abstract class FirstMeetAutoControls extends LinearOpMode {
@@ -35,7 +37,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         lift = robot.new Lift();
         intake = robot.new Intake();
         robot.initEasyOpenCV();
-
+        robot.initAprilTag();
         initIMU();
     }
 
@@ -239,11 +241,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         currentInches = GetAverageWheelPositionInches();
         distanceToTarget = targetInches - currentInches;
 
-        if (distanceToTarget < 0) {
-            reverse = -1;
-        } else {
-            reverse = 1;
-        }
+
 
         while (Math.abs(distanceToTarget) > 1) {
             currentInches = GetAverageWheelPositionInches();
@@ -258,32 +256,6 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             robot.frontRight.setPower(rfPower * reverse);
             robot.backRight.setPower(rrPower * reverse);
             robot.backLeft.setPower(lrPower * reverse);
-        }
-
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
-
-
-    }
-
-    public void Strafe(long milliseconds, int direction) {
-        if (direction == 1) {
-            robot.frontLeft.setPower(0.2);
-            robot.backLeft.setPower(-0.2);
-            robot.frontRight.setPower(-0.2);
-            robot.backRight.setPower(0.2);
-        }
-        if (direction == 0) {
-            robot.frontLeft.setPower(-0.2);
-            robot.backLeft.setPower(0.2);
-            robot.frontRight.setPower(0.2);
-            robot.backRight.setPower(-0.2);
-        }
-        double startTime = robot.gameTimer.milliseconds();
-        while ((robot.gameTimer.milliseconds() < startTime + milliseconds)) {
-
         }
 
         robot.frontLeft.setPower(0);
@@ -325,6 +297,74 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.backRight.setPower(0);
     }
 
+    public String NavigateToAprilTag(int targetTag, double targetDistance) {
+        double lfPower;
+        double rfPower;
+        double lrPower;
+        double rrPower;
 
+        double wheelPower = 0.30;
+        double reverse;
+        double adjustment = 0;
+
+
+        robot.frontLeft.setPower(-0.15);
+        robot.frontRight.setPower(-0.15);
+        robot.backLeft.setPower(-0.15);
+        robot.backRight.setPower(-0.15);
+
+        AprilTagPoseFtc targetPose = robot.getTargetAprilTagPos(targetTag);
+        if (targetPose != null) {
+            reverse = targetPose.range < targetDistance ? 1 : -1;
+            adjustment =  (targetPose.x / Math.abs(targetPose.x)) * 0.08;
+
+            double turnAdjustment = headingAdjustment(90, 0) / 80;
+            telemetry.addData("turn", turnAdjustment);
+            telemetry.update();
+            lfPower = (wheelPower * reverse) + adjustment - turnAdjustment;
+            rfPower = (wheelPower * reverse) - adjustment + turnAdjustment;
+            lrPower = (wheelPower * reverse) - adjustment - turnAdjustment;
+            rrPower = (wheelPower * reverse) + adjustment + turnAdjustment;
+
+
+            robot.frontLeft.setPower(lfPower);
+            robot.frontRight.setPower(rfPower);
+            robot.backLeft.setPower(lrPower);
+            robot.backRight.setPower(rrPower);
+            if (targetPose.range < targetDistance) {
+
+                robot.frontLeft.setPower(0);
+                robot.frontRight.setPower(0);
+                robot.backLeft.setPower(0);
+                robot.backRight.setPower(0);
+
+                return "Done";
+            }
+            else {
+                return "Going";
+            }
+        }
+
+        return "Waiting";
+
+    }
+    public void Navigate(int targetId, double distance, double timeout) {
+        String navigationState = "Going";
+        double waitTimer = -1;
+        while ((navigationState.equals("Going") || navigationState.equals("Waiting")) && opModeIsActive()) {
+            navigationState = NavigateToAprilTag(6, distance);
+            if (navigationState == ("Waiting") && waitTimer == -1) {
+                waitTimer = robot.gameTimer.seconds();
+            }
+            telemetry.addData("current", robot.gameTimer.seconds());
+            telemetry.addData("waitTimer", waitTimer);
+            telemetry.addData("waitTimer+", waitTimer + timeout);
+            telemetry.update();
+            if (waitTimer != -1 && (robot.gameTimer.seconds() > waitTimer + timeout)) {
+                requestOpModeStop();
+            }
+        }
+
+    }
 
 }

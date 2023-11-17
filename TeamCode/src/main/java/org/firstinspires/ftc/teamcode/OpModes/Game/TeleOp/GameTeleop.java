@@ -9,7 +9,9 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Suspension;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.DroneLauncher;
+
 
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class GameTeleop extends LinearOpMode {
         Lift lift = robot.new Lift();
         Dropper dropper = robot.new Dropper();
         Intake intake = robot.new Intake();
+        Suspension suspension = robot.new Suspension();
         //DroneLauncher droneLauncher = robot.new DroneLauncher();
 
 
@@ -77,6 +80,8 @@ public class GameTeleop extends LinearOpMode {
             // outtake -> Left trigger
             // stop intake -> Right Bumper
             // shoot drone -> D-Pad up
+            // turn servo -> D-Pad Right
+            // lift robot -> D-Pad Down
 
             //---Gamepad2 controls---//
             //
@@ -195,6 +200,14 @@ public class GameTeleop extends LinearOpMode {
             }
 
              */
+
+            //---Suspension---//
+            if (gamepad1.dpad_right) {
+                suspension.ActivateSuspension();
+            }
+            if (gamepad1.dpad_down) {
+                suspension.RaiseRobot();
+            }
 
             telemetry.addData("Manual Lift Mode: ", manualLiftMode);
             telemetry.addData("Timer: ", robot.gameTimer.milliseconds());

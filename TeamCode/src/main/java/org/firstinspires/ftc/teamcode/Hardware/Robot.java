@@ -52,8 +52,9 @@ public class Robot {
     //---DRONE LAUNCHER---//
     public Servo droneReleaser;
 
-    //---DRONE LAUNCHER---//
+    //---SUSPENSION---//
     public DcMotor suspensionMotor;
+    public Servo suspensionServo;
 
     //---DROPPER---//
     public Servo pixelDropper; //Delete if two droppers
@@ -233,7 +234,7 @@ public class Robot {
 
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new android.util.Size(1280, 720));
+        builder.setCameraResolution(new android.util.Size(1280, 800));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableLiveView(showCameraPreview);
@@ -297,12 +298,36 @@ public class Robot {
 
     }
 
+    public AprilTagPoseFtc getTargetAprilTagPos(int targetID) {
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+
+        // Step through the list of detections and display info for each one.
+        AprilTagPoseFtc pose = null;
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                if (detection.id == targetID) {
+                    pose = detection.ftcPose;
+                }
+
+            }
+
+
+        }   // end for() loop
+
+        return pose;
+
+
+    }
+
     public class Intake {
         public int intakeState = 0;
         public Intake() {
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
             intakeMotor.setDirection(DcMotor.Direction.FORWARD);
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         public void StartIntake(double power) {
@@ -312,6 +337,24 @@ public class Robot {
         public void StopIntake() {
             intakeMotor.setPower(0);
             intakeState = 0;
+        }
+
+        public void RunToPosIntake(int ticks, double power) {
+            intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            intakeMotor.setTargetPosition(ticks);
+            intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            intakeMotor.setPower(power);
+
+            while (intakeMotor.isBusy()) {
+
+            }
+            intakeMotor.setPower(0);
+
+            intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -413,23 +456,35 @@ public class Robot {
 
     public class Suspension {
 
-        public double suspensionTop = 30;
-        public double suspensionBottom = 0;
+        public int suspensionTop = 30;
+        public int suspensionBottom = 0;
 
-        public double liftMotorTicksPerRevolution = 384.5;
-        public double liftSpoolDiameter = 7.0/8.0;
+        public double liftMotorTicksPerRevolution = 28;
+        public double liftSpoolDiameter = 0.314961;
         public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI);
 
         public double liftPowerUp = 1;
         public double liftPowerDown = 0.7;
+
+        public double servoUpPosition = 0;
+        public double servoDownPosition = 0;
         public Suspension() {
             suspensionMotor = hardwareMap.get(DcMotor.class, "suspension");
             suspensionMotor.setDirection(DcMotor.Direction.FORWARD);
             suspensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             suspensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            suspensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            suspensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            suspensionServo = hardwareMap.get(Servo.class, "suspensionServo");
         }
 
+        public void ActivateSuspension() {
+            suspensionServo.setPosition(servoUpPosition);
+        }
+        public void RaiseRobot() {
+            suspensionMotor.setTargetPosition(suspensionTop);
+            suspensionMotor.setPower(liftPowerUp);
+        }
     }
 
 
