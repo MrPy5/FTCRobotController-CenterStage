@@ -29,7 +29,7 @@ public class GameTeleop extends LinearOpMode {
         Dropper dropper = robot.new Dropper();
         Intake intake = robot.new Intake();
         Suspension suspension = robot.new Suspension();
-        //DroneLauncher droneLauncher = robot.new DroneLauncher();
+        DroneLauncher droneLauncher = robot.new DroneLauncher();
 
         waitForStart();
 
@@ -67,7 +67,6 @@ public class GameTeleop extends LinearOpMode {
         intake.StopIntake();
         lift.SetPosition(0, 0);
         dropper.CloseDropper();
-        //droneLauncher.Reset();
 
 
         while (opModeIsActive()) {
@@ -79,13 +78,13 @@ public class GameTeleop extends LinearOpMode {
             // outtake -> Left trigger
             // stop intake -> Right Bumper
             // shoot drone -> D-Pad up
-            // turn servo -> D-Pad Right
+            // turn servo -> D-Pad Left
             // lift robot -> D-Pad Down
+            // reverse lift robot -> D-Pad Up
 
             //---Gamepad2 controls---//
             //
             // lift presets -> Right Bumper, a, b, y
-            // D-Pad down -> Manual lift mode
             // manual lift -> Bumpers
             // Pixel Dropper -> Right trigger
 
@@ -125,10 +124,10 @@ public class GameTeleop extends LinearOpMode {
             cosAngleRadians = Math.cos(stickAngleRadians);
             factor = 1 / Math.max(Math.abs(sinAngleRadians), Math.abs(cosAngleRadians));
 
-            lfPower = (wheelPower * cosAngleRadians * factor + rightStickX) * liftUpModifier;
-            rfPower = wheelPower * sinAngleRadians * factor - rightStickX * liftUpModifier;
-            lrPower = wheelPower * sinAngleRadians * factor + rightStickX * liftUpModifier;
-            rrPower = wheelPower * cosAngleRadians * factor - rightStickX * liftUpModifier;
+            lfPower = wheelPower * cosAngleRadians * factor + rightStickX;
+            rfPower = wheelPower * sinAngleRadians * factor - rightStickX;
+            lrPower = wheelPower * sinAngleRadians * factor + rightStickX;
+            rrPower = wheelPower * cosAngleRadians * factor - rightStickX;
 
 
             robot.backLeft.setPower(lrPower);
@@ -172,12 +171,7 @@ public class GameTeleop extends LinearOpMode {
                 liftCurrent = lift.liftHigh;
             }
 
-            //Speed Modifier (if lift is up)
-            if (robot.liftMotor.getCurrentPosition() > 21) {
-                liftUpModifier = 0.7;
-            } else {
-                liftUpModifier = 1;
-            }
+
 
             //Manual Control
             if (gamepad2.dpad_up && lastManualIncrement + 250 < robot.gameTimer.milliseconds()) {
@@ -199,20 +193,25 @@ public class GameTeleop extends LinearOpMode {
                 dropper.OpenDropper();
             }
 
-            /*
+
             //---Drone---//
-            if (gamepad1.dpad_up && robot.gameTimer.seconds() > 120) {
+            if (gamepad1.triangle) {
                 droneLauncher.ReleaseDrone();
             }
 
-             */
-
             //---Suspension---//
-            if (gamepad1.dpad_right) {
+            if (gamepad1.dpad_left) {
                 suspension.ActivateSuspension();
             }
+
             if (gamepad1.dpad_down) {
-                suspension.RaiseRobot();
+                robot.suspensionMotor.setPower(1);
+            }
+            if (gamepad1.dpad_up) {
+                robot.suspensionMotor.setPower(-1);
+            }
+            if (!gamepad1.dpad_down && !gamepad1.dpad_up) {
+                robot.suspensionMotor.setPower(0);
             }
 
             telemetry.addData("Manual Lift Mode: ", manualLiftMode);

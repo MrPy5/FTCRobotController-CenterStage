@@ -27,51 +27,30 @@ public class RedRight extends FirstMeetAutoControls {
             Drive(6);
             sleep(500);
             Turn(90);
-            Drive(-2);
+            Drive(-4);
             intake.RunToPosIntake(1000, 1);
+            Navigate(4, 8, 5);
+            StrafeWithInches(2, 0);
 
-            Drive(-37);
-            Turn(90);
 
-            StrafeWithInches(7, 1);
-            Drive(-5);
-            lift.SetPosition(lift.liftLow - 3, 0);
-            sleep(2000);
-            dropper.OpenDropper();
-            sleep(1000);
-            dropper.CloseDropper();
-            Drive(3);
-            sleep(1000);
-            lift.SetPosition(lift.liftBottom, lift.liftLow);
-            sleep(4000);
         }
         if (spikeLocation == 2) {
             Drive(18);
             sleep(1000);
-            Drive(4);
+            Drive(3);
 
             sleep(500);
             intake.RunToPosIntake(1000, 1);
-            Turn(270);
-            Drive(37);
             Turn(90);
-            Drive(-5);
-            lift.SetPosition(lift.liftLow - 4, 0);
-            sleep(2000);
-            dropper.OpenDropper();
-            sleep(1000);
-            dropper.CloseDropper();
-            Drive(3);
-            sleep(1000);
-            lift.SetPosition(lift.liftBottom, lift.liftLow);
-            sleep(4000);
+            Navigate(5, 8, 5);
+            StrafeWithInches(2, 0);
 
         }
         if (spikeLocation == 3) {
             Turn(270);
             Drive(24);
             sleep(500);
-            Turn(1);
+            Turn(0);
             sleep(500);
             Drive(26);
             sleep(500);
@@ -79,25 +58,22 @@ public class RedRight extends FirstMeetAutoControls {
             sleep(250);
             Drive(-2);
             intake.RunToPosIntake(1000,1);
-            Drive(-12);
-            sleep(1000);
+            Navigate(6, 8, 5);
+            StrafeWithInches(2, 0);
 
-            StrafeWithInches(9.5, 0);
-            Turn(90);
-            Drive(-4);
-            lift.SetPosition(lift.liftLow - 3, 0);
-            sleep(2000);
-            dropper.OpenDropper();
-            sleep(1000);
-            dropper.CloseDropper();
-            Drive(3);
-            sleep(1000);
-            lift.SetPosition(lift.liftBottom, lift.liftLow);
-            sleep(4000);
         }
 
 
-
+        Drive(-2);
+        lift.SetPosition(lift.liftLow - 6, 0);
+        sleep(2000);
+        dropper.OpenDropper();
+        sleep(1000);
+        dropper.CloseDropper();
+        Drive(3);
+        sleep(1000);
+        lift.SetPosition(lift.liftBottom, lift.liftLow - 6);
+        sleep(4000);
 
 
     }

@@ -438,8 +438,8 @@ public class Robot {
     }
 
     public class DroneLauncher {
-        public double setPosition = 0;
-        public double releasedPosition = 0;
+        public double setPosition = 0.69;
+        public double releasedPosition = 0.2;
         public DroneLauncher() {
 
             droneReleaser = hardwareMap.get(Servo.class, "droneReleaser");
@@ -466,14 +466,14 @@ public class Robot {
         public double liftPowerUp = 1;
         public double liftPowerDown = 0.7;
 
-        public double servoUpPosition = 0;
-        public double servoDownPosition = 0;
+        public double servoUpPosition = 0.5;
+        public double servoDownPosition = 0.84;
         public Suspension() {
             suspensionMotor = hardwareMap.get(DcMotor.class, "suspension");
-            suspensionMotor.setDirection(DcMotor.Direction.FORWARD);
+            suspensionMotor.setDirection(DcMotor.Direction.REVERSE);
             suspensionMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             suspensionMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            suspensionMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            suspensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             suspensionServo = hardwareMap.get(Servo.class, "suspensionServo");
         }
@@ -481,10 +481,7 @@ public class Robot {
         public void ActivateSuspension() {
             suspensionServo.setPosition(servoUpPosition);
         }
-        public void RaiseRobot() {
-            suspensionMotor.setTargetPosition(suspensionTop);
-            suspensionMotor.setPower(liftPowerUp);
-        }
+
     }
 
 

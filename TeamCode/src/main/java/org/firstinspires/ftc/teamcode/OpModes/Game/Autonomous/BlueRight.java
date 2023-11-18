@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Red Left")
-public class RedLeft extends FirstMeetAutoControls {
+@Autonomous(name = "Blue Right")
+public class BlueRight extends FirstMeetAutoControls {
 
     @Override
     public void runOpMode() {
         initMethods(hardwareMap);
-        robot.alliance = "red";
+        robot.alliance = "blue";
 
         int spikeLocation = robot.ScanForElement();
         sleep(5000);
@@ -32,15 +32,17 @@ public class RedLeft extends FirstMeetAutoControls {
             Turn(0);
             sleep(500);
             Drive(24);
-            Turn(90);
+            Turn(270);
             Drive(-60);
-            StrafeWithInches(25, 0);
-            Navigate(4, 4, 5);
+            StrafeWithInches(25, 1);
+            Navigate(1, 4, 5);
+            StrafeWithInches(2, 1);
+
         }
         if (spikeLocation == 2) {
             Drive(5);
             sleep(1000);
-            Turn(90);
+            Turn(270);
             sleep(500);
             Drive(10);
             sleep(500);
@@ -48,16 +50,18 @@ public class RedLeft extends FirstMeetAutoControls {
             sleep(500);
             Drive(45);
             sleep(500);
-            Turn(90);
+            Turn(270);
             sleep(500);
             Drive(-15);
             sleep(500);
             Turn(180);
             intake.RunToPosIntake(1000, 1);
-            Turn(90);
+            Turn(270);
             Drive(-60);
-            StrafeWithInches(27, 0);
-            Navigate(5, 4, 5);
+            StrafeWithInches(27, 1);
+            Navigate(2, 4, 5);
+            StrafeWithInches(2, 1);
+
         }
         if (spikeLocation == 3) {
             Drive(18);
@@ -70,10 +74,12 @@ public class RedLeft extends FirstMeetAutoControls {
             Turn(0);
             sleep(500);
             Drive(24);
-            Turn(90);
+            Turn(270);
             Drive(-60);
-            StrafeWithInches(30, 0);
-            Navigate(6, 4, 5);
+            StrafeWithInches(30, 1);
+            Navigate(3, 4, 5);
+            StrafeWithInches(2, 0);
+
         }
 
 

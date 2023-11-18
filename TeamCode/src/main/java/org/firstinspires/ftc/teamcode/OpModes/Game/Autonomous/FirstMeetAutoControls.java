@@ -110,7 +110,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             speedModifier = 8;
         }
 
-        speedMinimum = 3;
+        speedMinimum = 4;
 
 
         if (degreesOff < .3) {
@@ -205,7 +205,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             currentHeading = (360 + angles.firstAngle) % 360;
             if (currentHeading == lastAngle) {
                 turnTimer.startTime();
-                if (turnTimer.milliseconds() >= 1000) {
+                if (turnTimer.milliseconds() >= 2000) {
 
                     robot.frontLeft.setPower(0);
                     robot.frontRight.setPower(0);
@@ -308,15 +308,13 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         double adjustment = 0;
 
 
-        robot.frontLeft.setPower(-0.15);
-        robot.frontRight.setPower(-0.15);
-        robot.backLeft.setPower(-0.15);
-        robot.backRight.setPower(-0.15);
 
+        lift.SetPosition(4, 0);
         AprilTagPoseFtc targetPose = robot.getTargetAprilTagPos(targetTag);
         if (targetPose != null) {
             reverse = targetPose.range < targetDistance ? 1 : -1;
-            adjustment =  (targetPose.x / Math.abs(targetPose.x)) * 0.08;
+
+            adjustment = ((targetPose.x) / Math.abs(targetPose.x)) * 0.08;
 
             double turnAdjustment = headingAdjustment(90, 0) / 80;
             telemetry.addData("turn", turnAdjustment);
@@ -344,17 +342,27 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
                 return "Going";
             }
         }
+        else {
 
-        return "Waiting";
+            robot.frontLeft.setPower(-0.15);
+            robot.frontRight.setPower(-0.15);
+            robot.backLeft.setPower(-0.15);
+            robot.backRight.setPower(-0.15);
+            return "Waiting";
+
+        }
 
     }
     public void Navigate(int targetId, double distance, double timeout) {
         String navigationState = "Going";
         double waitTimer = -1;
         while ((navigationState.equals("Going") || navigationState.equals("Waiting")) && opModeIsActive()) {
-            navigationState = NavigateToAprilTag(6, distance);
+            navigationState = NavigateToAprilTag(targetId, distance);
             if (navigationState == ("Waiting") && waitTimer == -1) {
                 waitTimer = robot.gameTimer.seconds();
+            }
+            if (navigationState == "Going") {
+                waitTimer = -1;
             }
             telemetry.addData("current", robot.gameTimer.seconds());
             telemetry.addData("waitTimer", waitTimer);
