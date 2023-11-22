@@ -31,10 +31,10 @@ public class BlueLeft extends FirstMeetAutoControls {
             sleep(500);
             Turn(270);
             sleep(250);
-            Drive(-2);
+            Drive(3);
             intake.RunToPosIntake(1000,1);
+            StrafeWithInches(7, 1);
             Navigate(1, 8, 5);
-            StrafeWithInches(2, 1);
 
 
         }
@@ -46,9 +46,9 @@ public class BlueLeft extends FirstMeetAutoControls {
             sleep(500);
             intake.RunToPosIntake(1000, 1);
             Turn(270);
+            //Navigate(2, 8, 5);
+            Drive(-15);
             Navigate(2, 8, 5);
-            StrafeWithInches(2, 1);
-
         }
         if (spikeLocation == 3) {
 
@@ -57,22 +57,24 @@ public class BlueLeft extends FirstMeetAutoControls {
             Drive(6);
             sleep(500);
             Turn(270);
-            Drive(-4);
+            Drive(-1);
             intake.RunToPosIntake(1000, 1);
+            Drive(-15);
             Navigate(3, 8, 5);
-            StrafeWithInches(2, 0);
         }
 
 
-        Drive(-2);
-        lift.SetPosition(lift.liftLow - 6, 0);
+        Drive(-1);
+        lift.SetPosition(lift.liftLow - 5, 0);
         sleep(2000);
         dropper.OpenDropper();
         sleep(1000);
         dropper.CloseDropper();
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        sleep(1000);
         Drive(3);
         sleep(1000);
-        lift.SetPosition(lift.liftBottom, lift.liftLow - 6);
+        lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(4000);
 
 

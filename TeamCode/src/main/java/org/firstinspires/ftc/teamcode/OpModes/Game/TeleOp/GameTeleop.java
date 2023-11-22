@@ -150,8 +150,6 @@ public class GameTeleop extends LinearOpMode {
 
 
             //---Lift---//
-
-
             //Preset Positions
             if (gamepad2.right_bumper) {
                 lift.SetPosition(lift.liftBottom, liftCurrent);
@@ -200,10 +198,14 @@ public class GameTeleop extends LinearOpMode {
             }
 
             //---Suspension---//
+            //Servo
             if (gamepad1.dpad_left) {
                 suspension.ActivateSuspension();
             }
-
+            if (gamepad1.dpad_right) {
+                suspension.DeactivateSuspension();
+            }
+            //Motor
             if (gamepad1.dpad_down) {
                 robot.suspensionMotor.setPower(1);
             }
@@ -215,8 +217,7 @@ public class GameTeleop extends LinearOpMode {
             }
 
             telemetry.addData("Manual Lift Mode: ", manualLiftMode);
-            telemetry.addData("Timer: ", robot.gameTimer.milliseconds());
-            telemetry.addData("LiftTarget: ", liftCurrent);
+            telemetry.addData("Timer: ", robot.gameTimer.seconds());
             telemetry.update();
         }
     }

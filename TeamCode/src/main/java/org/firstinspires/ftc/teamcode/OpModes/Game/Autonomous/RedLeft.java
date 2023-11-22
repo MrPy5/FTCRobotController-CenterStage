@@ -30,12 +30,12 @@ public class RedLeft extends FirstMeetAutoControls {
             Drive(-2);
             intake.RunToPosIntake(1000, 1);
             Turn(0);
-            sleep(500);
-            Drive(24);
-            Turn(90);
-            Drive(-60);
-            StrafeWithInches(25, 0);
-            Navigate(4, 4, 5);
+            //sleep(500);
+            //Drive(24);
+            //Turn(90);
+            //Drive(-60);
+            //StrafeWithInches(25, 0);
+            //Navigate(4, 4, 5);
         }
         if (spikeLocation == 2) {
             Drive(5);
@@ -55,9 +55,9 @@ public class RedLeft extends FirstMeetAutoControls {
             Turn(180);
             intake.RunToPosIntake(1000, 1);
             Turn(90);
-            Drive(-60);
-            StrafeWithInches(27, 0);
-            Navigate(5, 4, 5);
+            //Drive(-60);
+            //StrafeWithInches(27, 0);
+            //Navigate(5, 6, 5);
         }
         if (spikeLocation == 3) {
             Drive(18);
@@ -68,26 +68,29 @@ public class RedLeft extends FirstMeetAutoControls {
             Drive(-2);
             intake.RunToPosIntake(1000, 1);
             Turn(0);
-            sleep(500);
-            Drive(24);
-            Turn(90);
-            Drive(-60);
+            //sleep(500);
+            //Drive(24);
+            //Turn(90);
+            //Drive(-60);
             StrafeWithInches(30, 0);
-            Navigate(6, 4, 5);
+            //Navigate(6, 6, 5);
         }
 
-
+        /*
         Drive(-2);
-        lift.SetPosition(lift.liftLow - 6, 0);
+        lift.SetPosition(lift.liftLow - 5, 0);
         sleep(2000);
         dropper.OpenDropper();
         sleep(1000);
         dropper.CloseDropper();
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        sleep(1000);
+
         Drive(3);
         sleep(1000);
-        lift.SetPosition(lift.liftBottom, lift.liftLow - 6);
+        lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(4000);
-
+        */
 
     }
 

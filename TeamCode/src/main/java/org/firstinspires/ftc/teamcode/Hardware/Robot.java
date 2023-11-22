@@ -237,7 +237,7 @@ public class Robot {
         builder.setCameraResolution(new android.util.Size(1280, 800));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableLiveView(showCameraPreview);
+        builder.enableLiveView(false);
 
 
         // Set the stream format; MJPEG uses less bandwidtmh than default YUY2.
@@ -308,6 +308,7 @@ public class Robot {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 if (detection.id == targetID) {
+
                     pose = detection.ftcPose;
                 }
 
@@ -345,7 +346,7 @@ public class Robot {
             intakeMotor.setTargetPosition(ticks);
             intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            intakeMotor.setPower(power);
+            intakeMotor.setPower(0.7);
 
             while (intakeMotor.isBusy()) {
 
@@ -480,6 +481,9 @@ public class Robot {
 
         public void ActivateSuspension() {
             suspensionServo.setPosition(servoUpPosition);
+        }
+        public void DeactivateSuspension() {
+            suspensionServo.setPosition(servoDownPosition);
         }
 
     }

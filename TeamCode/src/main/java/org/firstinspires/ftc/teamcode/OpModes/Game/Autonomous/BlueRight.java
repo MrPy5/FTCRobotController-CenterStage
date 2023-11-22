@@ -36,7 +36,6 @@ public class BlueRight extends FirstMeetAutoControls {
             Drive(-60);
             StrafeWithInches(25, 1);
             Navigate(1, 4, 5);
-            StrafeWithInches(2, 1);
 
         }
         if (spikeLocation == 2) {
@@ -60,7 +59,6 @@ public class BlueRight extends FirstMeetAutoControls {
             Drive(-60);
             StrafeWithInches(27, 1);
             Navigate(2, 4, 5);
-            StrafeWithInches(2, 1);
 
         }
         if (spikeLocation == 3) {
@@ -78,20 +76,21 @@ public class BlueRight extends FirstMeetAutoControls {
             Drive(-60);
             StrafeWithInches(30, 1);
             Navigate(3, 4, 5);
-            StrafeWithInches(2, 0);
 
         }
 
 
         Drive(-2);
-        lift.SetPosition(lift.liftLow - 6, 0);
+        lift.SetPosition(lift.liftLow - 5, 0);
         sleep(2000);
         dropper.OpenDropper();
         sleep(1000);
         dropper.CloseDropper();
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        sleep(1000);
         Drive(3);
         sleep(1000);
-        lift.SetPosition(lift.liftBottom, lift.liftLow - 6);
+        lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(4000);
 
 

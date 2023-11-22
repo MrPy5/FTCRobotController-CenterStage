@@ -29,8 +29,8 @@ public class RedRight extends FirstMeetAutoControls {
             Turn(90);
             Drive(-4);
             intake.RunToPosIntake(1000, 1);
+            Drive(-15);
             Navigate(4, 8, 5);
-            StrafeWithInches(2, 0);
 
 
         }
@@ -41,9 +41,11 @@ public class RedRight extends FirstMeetAutoControls {
 
             sleep(500);
             intake.RunToPosIntake(1000, 1);
+            Drive(-2);
             Turn(90);
+            Drive(-15);
+            StrafeWithInches(5, 1);
             Navigate(5, 8, 5);
-            StrafeWithInches(2, 0);
 
         }
         if (spikeLocation == 3) {
@@ -58,21 +60,25 @@ public class RedRight extends FirstMeetAutoControls {
             sleep(250);
             Drive(-2);
             intake.RunToPosIntake(1000,1);
+            StrafeWithInches(7, 0);
             Navigate(6, 8, 5);
-            StrafeWithInches(2, 0);
 
         }
 
 
         Drive(-2);
-        lift.SetPosition(lift.liftLow - 6, 0);
+        lift.SetPosition(lift.liftLow - 5, 0);
         sleep(2000);
         dropper.OpenDropper();
         sleep(1000);
         dropper.CloseDropper();
+        sleep(500);
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        sleep(1000);
+
         Drive(3);
         sleep(1000);
-        lift.SetPosition(lift.liftBottom, lift.liftLow - 6);
+        lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(4000);
 
 

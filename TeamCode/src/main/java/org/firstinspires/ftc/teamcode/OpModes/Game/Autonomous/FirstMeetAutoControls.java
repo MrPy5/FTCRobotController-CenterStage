@@ -309,8 +309,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
 
 
 
-        lift.SetPosition(4, 0);
+        lift.SetPosition(6, 0);
+        //sleep(1000);
         AprilTagPoseFtc targetPose = robot.getTargetAprilTagPos(targetTag);
+
         if (targetPose != null) {
             reverse = targetPose.range < targetDistance ? 1 : -1;
 
@@ -319,10 +321,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             double turnAdjustment = headingAdjustment(90, 0) / 80;
             telemetry.addData("turn", turnAdjustment);
             telemetry.update();
-            lfPower = (wheelPower * reverse) + adjustment - turnAdjustment;
-            rfPower = (wheelPower * reverse) - adjustment + turnAdjustment;
-            lrPower = (wheelPower * reverse) - adjustment - turnAdjustment;
-            rrPower = (wheelPower * reverse) + adjustment + turnAdjustment;
+            lfPower = (wheelPower * reverse) + adjustment; // - turnAdjustment;
+            rfPower = (wheelPower * reverse) - adjustment; // + turnAdjustment;
+            lrPower = (wheelPower * reverse) - adjustment; // - turnAdjustment;
+            rrPower = (wheelPower * reverse) + adjustment; // + turnAdjustment;
 
 
             robot.frontLeft.setPower(lfPower);
@@ -344,19 +346,19 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         }
         else {
 
-            robot.frontLeft.setPower(-0.15);
-            robot.frontRight.setPower(-0.15);
-            robot.backLeft.setPower(-0.15);
-            robot.backRight.setPower(-0.15);
+            //robot.frontLeft.setPower(-0.05);
+            //robot.frontRight.setPower(-0.05);
+            //robot.backLeft.setPower(-0.05);
+            //robot.backRight.setPower(-0.05);
             return "Waiting";
 
         }
 
     }
     public void Navigate(int targetId, double distance, double timeout) {
-        String navigationState = "Going";
+        String navigationState;
         double waitTimer = -1;
-        while ((navigationState.equals("Going") || navigationState.equals("Waiting")) && opModeIsActive()) {
+        while ((NavigateToAprilTag(targetId, distance).equals("Going") || NavigateToAprilTag(targetId, distance).equals("Waiting")) && opModeIsActive()) {
             navigationState = NavigateToAprilTag(targetId, distance);
             if (navigationState == ("Waiting") && waitTimer == -1) {
                 waitTimer = robot.gameTimer.seconds();
@@ -364,12 +366,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             if (navigationState == "Going") {
                 waitTimer = -1;
             }
-            telemetry.addData("current", robot.gameTimer.seconds());
-            telemetry.addData("waitTimer", waitTimer);
-            telemetry.addData("waitTimer+", waitTimer + timeout);
+            telemetry.addData("state", navigationState);
             telemetry.update();
             if (waitTimer != -1 && (robot.gameTimer.seconds() > waitTimer + timeout)) {
-                requestOpModeStop();
+                break;
             }
         }
 
