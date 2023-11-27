@@ -137,10 +137,10 @@ public class GameTeleop extends LinearOpMode {
 
             //---Intake---//
 
-            if (gamepad1.right_trigger > robot.triggerSensitivity) {
+            if (gamepad1.left_trigger > robot.triggerSensitivity) {
                 intake.StartIntake(1);
             }
-            if (gamepad1.left_trigger > robot.triggerSensitivity) {
+            if (gamepad1.right_trigger > robot.triggerSensitivity) {
                 intake.StartIntake(-1);
             }
             if (gamepad1.right_bumper) {
@@ -206,10 +206,10 @@ public class GameTeleop extends LinearOpMode {
                 suspension.DeactivateSuspension();
             }
             //Motor
-            if (gamepad1.dpad_down) {
+            if (gamepad1.dpad_up) {
                 robot.suspensionMotor.setPower(1);
             }
-            if (gamepad1.dpad_up) {
+            if (gamepad1.dpad_down) {
                 robot.suspensionMotor.setPower(-1);
             }
             if (!gamepad1.dpad_down && !gamepad1.dpad_up) {
