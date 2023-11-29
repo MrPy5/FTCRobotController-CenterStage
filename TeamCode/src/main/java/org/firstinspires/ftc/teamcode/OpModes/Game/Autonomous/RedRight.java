@@ -67,7 +67,7 @@ public class RedRight extends FirstMeetAutoControls {
 
 
         Drive(-2);
-        lift.SetPosition(lift.liftLow - 5, 0);
+        lift.SetPosition(lift.liftLow - 4, 0);
         sleep(2000);
         dropper.OpenDropper();
         sleep(1000);

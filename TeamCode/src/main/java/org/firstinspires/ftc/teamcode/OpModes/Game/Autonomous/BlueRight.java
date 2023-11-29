@@ -33,9 +33,9 @@ public class BlueRight extends FirstMeetAutoControls {
             sleep(500);
             Drive(24);
             Turn(270);
-            Drive(-60);
-            StrafeWithInches(25, 1);
-            Navigate(1, 4, 5);
+            Drive(-64);
+            StrafeWithInches(30, 1);
+            Navigate(1, 6, 5);
 
         }
         if (spikeLocation == 2) {
@@ -43,7 +43,7 @@ public class BlueRight extends FirstMeetAutoControls {
             sleep(1000);
             Turn(270);
             sleep(500);
-            Drive(10);
+            Drive(13);
             sleep(500);
             Turn(0);
             sleep(500);
@@ -51,14 +51,16 @@ public class BlueRight extends FirstMeetAutoControls {
             sleep(500);
             Turn(270);
             sleep(500);
-            Drive(-15);
+            Drive(-13);
             sleep(500);
             Turn(180);
             intake.RunToPosIntake(1000, 1);
             Turn(270);
-            Drive(-60);
-            StrafeWithInches(27, 1);
-            Navigate(2, 4, 5);
+            Drive(-64);
+            StrafeWithInches(25, 1);
+            Drive(-5);
+            sleep(500);
+            Navigate(2, 5, 5);
 
         }
         if (spikeLocation == 3) {
@@ -73,8 +75,8 @@ public class BlueRight extends FirstMeetAutoControls {
             sleep(500);
             Drive(24);
             Turn(270);
-            Drive(-60);
-            StrafeWithInches(30, 1);
+            Drive(-64);
+            StrafeWithInches(20, 1);
             Navigate(3, 4, 5);
 
         }

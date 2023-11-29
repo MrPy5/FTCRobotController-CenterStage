@@ -13,16 +13,7 @@ public class TestAuto extends FirstMeetAutoControls {
         waitForStart();
         robot.gameTimer.startTime();
 
-        lift.SetPosition(lift.liftLow, 0);
-
-        while (!NavigateToAprilTag(6, 6).equals("Done")) {
-
-        }
-
-
-
-
-
+        DriveWithCorrection(20, 90);
     }
 
 }

@@ -266,6 +266,49 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
 
     }
 
+    public void DriveWithCorrection (double targetInches, double targetHeading) {
+        ResetEncoders();
+        double currentInches;
+        double distanceToTarget;
+
+        double lfPower = 0.2;
+        double rfPower = 0.2;
+        double lrPower = 0.2;
+        double rrPower = 0.2;
+
+        double reverse = 1;
+
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
+
+
+
+        while (Math.abs(distanceToTarget) > 1) {
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0) / 80;
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            if (distanceToTarget < 0) {
+                reverse = -1;
+            } else {
+                reverse = 1;
+            }
+            robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
+            robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
+            robot.backRight.setPower((rrPower * reverse) + turnAdjustment);
+            robot.backLeft.setPower((lrPower * reverse) - turnAdjustment);
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+
+    }
+
     public void StrafeWithInches(double targetStrafeInches, int direction) {
         ResetEncoders();
 
@@ -331,6 +374,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             robot.frontRight.setPower(rfPower);
             robot.backLeft.setPower(lrPower);
             robot.backRight.setPower(rrPower);
+
             if (targetPose.range < targetDistance) {
 
                 robot.frontLeft.setPower(0);
