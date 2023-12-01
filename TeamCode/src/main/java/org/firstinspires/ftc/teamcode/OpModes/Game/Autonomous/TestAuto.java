@@ -10,10 +10,32 @@ public class TestAuto extends FirstMeetAutoControls {
         initMethods(hardwareMap);
         robot.alliance = "red";
 
+
         waitForStart();
         robot.gameTimer.startTime();
 
-        DriveWithCorrection(20, 90);
+        while (opModeIsActive()) {
+            if (robot.getTargetAprilTagPos(2) != null) {
+                telemetry.addData("hi", "true");
+            }
+            else {
+                telemetry.addData("hi", "false");
+            }
+            telemetry.addData("First", robot.getFirstAprilTagID());
+            telemetry.update();
+
+            if (gamepad1.a) {
+                while (robot.getTargetAprilTagPos(2) == null) {
+
+                }
+            }
+        }
+
+
+
+
+
+
     }
 
 }

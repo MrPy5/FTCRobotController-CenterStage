@@ -28,39 +28,31 @@ public class BlueRight extends FirstMeetAutoControls {
             sleep(500);
             Turn(90);
             Drive(-2);
-            intake.RunToPosIntake(1000, 1);
+            intake.RunToPosIntake(-1000, 1);
             Turn(0);
             sleep(500);
             Drive(24);
             Turn(270);
             Drive(-64);
-            StrafeWithInches(30, 1);
-            Navigate(1, 6, 5);
+            StrafeWithInches(30, 1, 1);
+            Navigate(1, 9, 5);
 
         }
         if (spikeLocation == 2) {
             Drive(5);
             sleep(1000);
-            Turn(270);
-            sleep(500);
-            Drive(13);
-            sleep(500);
-            Turn(0);
-            sleep(500);
-            Drive(45);
-            sleep(500);
-            Turn(270);
-            sleep(500);
-            Drive(-13);
-            sleep(500);
             Turn(180);
-            intake.RunToPosIntake(1000, 1);
-            Turn(270);
-            Drive(-64);
-            StrafeWithInches(25, 1);
-            Drive(-5);
             sleep(500);
-            Navigate(2, 5, 5);
+            Drive(-43);
+            sleep(500);
+            intake.RunToPosIntake(-1000, 1);
+            sleep(500);
+            Drive(-3);
+            Turn(270);
+            Drive(-79);
+            StrafeWithInches(30, 1, 2);
+            sleep(500);
+            Navigate(2, 9, 5);
 
         }
         if (spikeLocation == 3) {
@@ -70,19 +62,19 @@ public class BlueRight extends FirstMeetAutoControls {
             sleep(500);
             Turn(270);
             Drive(-2);
-            intake.RunToPosIntake(1000, 1);
+            intake.RunToPosIntake(-1000, 1);
             Turn(0);
             sleep(500);
             Drive(24);
             Turn(270);
             Drive(-64);
-            StrafeWithInches(20, 1);
-            Navigate(3, 4, 5);
+            StrafeWithInches(20, 1, 3);
+            Navigate(3, 9, 5);
 
         }
 
-
-        Drive(-2);
+        sleep(1000);
+        Drive(-5);
         lift.SetPosition(lift.liftLow - 5, 0);
         sleep(2000);
         dropper.OpenDropper();

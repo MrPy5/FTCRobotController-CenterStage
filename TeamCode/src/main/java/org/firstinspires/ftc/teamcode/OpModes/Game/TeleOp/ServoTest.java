@@ -65,6 +65,9 @@ public class ServoTest extends LinearOpMode {
                 currentPosition -= .01;
                 sleep(300);
             }
+            if (gamepad1.a) {
+                testServo.getController().pwmDisable();
+            }
             testServo.setPosition(currentPosition);
 
 

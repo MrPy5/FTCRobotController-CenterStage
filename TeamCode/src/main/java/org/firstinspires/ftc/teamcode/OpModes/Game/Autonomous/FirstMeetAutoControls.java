@@ -107,10 +107,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         double speedModifier = 6;
 
         if (degreesOff > 10) {
-            speedModifier = 8;
+            speedModifier = 6;
         }
 
-        speedMinimum = 4;
+        speedMinimum = 6;
 
 
         if (degreesOff < .3) {
@@ -309,12 +309,12 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
 
     }
 
-    public void StrafeWithInches(double targetStrafeInches, int direction) {
+    public void StrafeWithInches(double targetStrafeInches, int direction, int targetTag) {
         ResetEncoders();
 
         double currentStrafeInches = GetAverageStrafePositionInches();
         double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
-
+        lift.SetPosition(lift.liftAprilTags, 0);
         while (Math.abs(strafeDistanceToTarget) > 1) {
             currentStrafeInches = GetAverageStrafePositionInches();
             strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
@@ -331,6 +331,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
                 robot.frontRight.setPower(0.2);
                 robot.backRight.setPower(-0.2);
             }
+
+            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 50 && robot.getTargetAprilTagPos(targetTag).x > -50)) {
+                break;
+            }
         }
 
 
@@ -340,7 +344,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.backRight.setPower(0);
     }
 
-    public String NavigateToAprilTag(int targetTag, double targetDistance) {
+    public NavigationState NavigateToAprilTag(int targetTag, double targetDistance) {
         double lfPower;
         double rfPower;
         double lrPower;
@@ -352,7 +356,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
 
 
 
-        lift.SetPosition(6, 0);
+        lift.SetPosition(lift.liftAprilTags, 0);
         //sleep(1000);
         AprilTagPoseFtc targetPose = robot.getTargetAprilTagPos(targetTag);
 
@@ -360,14 +364,21 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             reverse = targetPose.range < targetDistance ? 1 : -1;
 
             adjustment = ((targetPose.x) / Math.abs(targetPose.x)) * 0.08;
+            double turnAdjustment;
 
-            double turnAdjustment = headingAdjustment(90, 0) / 80;
+            if (robot.alliance == "blue") {
+                turnAdjustment = headingAdjustment(270, 0) / 2;
+            }
+            else {
+                turnAdjustment = headingAdjustment(90, 0) / 2;
+
+            }
             telemetry.addData("turn", turnAdjustment);
             telemetry.update();
-            lfPower = (wheelPower * reverse) + adjustment; // - turnAdjustment;
-            rfPower = (wheelPower * reverse) - adjustment; // + turnAdjustment;
-            lrPower = (wheelPower * reverse) - adjustment; // - turnAdjustment;
-            rrPower = (wheelPower * reverse) + adjustment; // + turnAdjustment;
+            lfPower = (wheelPower * reverse) + adjustment + turnAdjustment;
+            rfPower = (wheelPower * reverse) - adjustment - turnAdjustment;
+            lrPower = (wheelPower * reverse) - adjustment + turnAdjustment;
+            rrPower = (wheelPower * reverse) + adjustment - turnAdjustment;
 
 
             robot.frontLeft.setPower(lfPower);
@@ -382,10 +393,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
                 robot.backLeft.setPower(0);
                 robot.backRight.setPower(0);
 
-                return "Done";
+                return NavigationState.Done;
             }
             else {
-                return "Going";
+                return NavigationState.Going;
             }
         }
         else {
@@ -394,29 +405,35 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
             //robot.frontRight.setPower(-0.05);
             //robot.backLeft.setPower(-0.05);
             //robot.backRight.setPower(-0.05);
-            return "Waiting";
+            return NavigationState.Waiting;
 
         }
-
     }
+
+
     public void Navigate(int targetId, double distance, double timeout) {
-        String navigationState;
-        double waitTimer = -1;
-        while ((NavigateToAprilTag(targetId, distance).equals("Going") || NavigateToAprilTag(targetId, distance).equals("Waiting")) && opModeIsActive()) {
+        NavigationState navigationState = NavigationState.Waiting;
+        double lastGoingTime = robot.gameTimer.seconds();
+        boolean timedOut = (robot.gameTimer.seconds() - lastGoingTime > timeout);
+        while (!timedOut && navigationState != NavigationState.Done && opModeIsActive()) {
             navigationState = NavigateToAprilTag(targetId, distance);
-            if (navigationState == ("Waiting") && waitTimer == -1) {
-                waitTimer = robot.gameTimer.seconds();
+            telemetry.addData("state1", NavigateToAprilTag(targetId, distance));
+            if (navigationState != NavigationState.Waiting) {
+                lastGoingTime = robot.gameTimer.seconds();
             }
-            if (navigationState == "Going") {
-                waitTimer = -1;
-            }
+            timedOut = (robot.gameTimer.seconds() - lastGoingTime > timeout);
             telemetry.addData("state", navigationState);
             telemetry.update();
-            if (waitTimer != -1 && (robot.gameTimer.seconds() > waitTimer + timeout)) {
-                break;
-            }
         }
 
+        if (navigationState != NavigationState.Done) {
+            requestOpModeStop();
+        }
+    }
+    public enum NavigationState {
+            Going,
+            Waiting,
+            Done
     }
 
 }

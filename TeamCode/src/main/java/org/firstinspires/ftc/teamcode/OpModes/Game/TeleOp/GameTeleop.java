@@ -138,10 +138,10 @@ public class GameTeleop extends LinearOpMode {
             //---Intake---//
 
             if (gamepad1.left_trigger > robot.triggerSensitivity) {
-                intake.StartIntake(1);
+                intake.StartIntake(-1);
             }
             if (gamepad1.right_trigger > robot.triggerSensitivity) {
-                intake.StartIntake(-1);
+                intake.StartIntake(1);
             }
             if (gamepad1.right_bumper) {
                 intake.StopIntake();

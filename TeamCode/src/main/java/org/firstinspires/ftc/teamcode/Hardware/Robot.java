@@ -326,7 +326,7 @@ public class Robot {
         public int intakeState = 0;
         public Intake() {
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
-            intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+            intakeMotor.setDirection(DcMotor.Direction.REVERSE);
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
@@ -343,10 +343,10 @@ public class Robot {
         public void RunToPosIntake(int ticks, double power) {
             intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            intakeMotor.setTargetPosition(ticks);
+            intakeMotor.setTargetPosition(-750);
             intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            intakeMotor.setPower(0.7);
+            intakeMotor.setPower(0.25);
 
             while (intakeMotor.isBusy()) {
 
@@ -364,6 +364,7 @@ public class Robot {
         public int currentLevel = 1;
 
         public double liftBottom = 0;
+        public double liftAprilTags = 6;
         public double liftLow = 12;
         public double liftMedium = 20;
         public double liftHigh = 28;

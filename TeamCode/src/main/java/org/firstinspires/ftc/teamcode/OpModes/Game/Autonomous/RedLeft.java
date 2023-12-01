@@ -28,14 +28,14 @@ public class RedLeft extends FirstMeetAutoControls {
             sleep(500);
             Turn(90);
             Drive(-2);
-            intake.RunToPosIntake(1000, 1);
+            intake.RunToPosIntake(-1000, 1);
             Turn(0);
             sleep(500);
             Drive(24);
             Turn(90);
             Drive(-64);
-            StrafeWithInches(25, 0);
-            Navigate(4, 4, 5);
+            StrafeWithInches(25, 0, 4);
+            Navigate(4, 9, 5);
         }
         if (spikeLocation == 2) {
             Drive(5);
@@ -53,11 +53,11 @@ public class RedLeft extends FirstMeetAutoControls {
             Drive(-15);
             sleep(500);
             Turn(180);
-            intake.RunToPosIntake(1000, 1);
+            intake.RunToPosIntake(-1000, 1);
             Turn(90);
             Drive(-64);
-            StrafeWithInches(27, 0);
-            Navigate(5, 6, 5);
+            StrafeWithInches(27, 0, 5);
+            Navigate(5, 9, 5);
         }
         if (spikeLocation == 3) {
             Drive(18);
@@ -66,18 +66,18 @@ public class RedLeft extends FirstMeetAutoControls {
             sleep(500);
             Turn(270);
             Drive(-2);
-            intake.RunToPosIntake(1000, 1);
+            intake.RunToPosIntake(-1000, 1);
             Turn(0);
             sleep(500);
             Drive(24);
             Turn(90);
             Drive(-64);
-            StrafeWithInches(30, 0);
-            Navigate(6, 6, 5);
+            StrafeWithInches(30, 0, 6);
+            Navigate(6, 9, 5);
         }
 
-
-        Drive(-2);
+        sleep(1000);
+        Drive(-5);
         lift.SetPosition(lift.liftLow - 5, 0);
         sleep(2000);
         dropper.OpenDropper();
