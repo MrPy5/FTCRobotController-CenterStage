@@ -20,8 +20,10 @@ public class RedLeft extends FirstMeetAutoControls {
             telemetry.update();
         }
         waitForStart();
-        robot.gameTimer.startTime();
 
+        robot.gameTimer.startTime();
+        sleep(5000);
+        double drive = 0;
         if (spikeLocation == 1) {
             Drive(18);
             sleep(1000);
@@ -36,8 +38,8 @@ public class RedLeft extends FirstMeetAutoControls {
             Turn(90);
             Turn(90);
             Drive(-64);
-            StrafeWithInches(30, 0, 4);
-            Navigate(4, 9, 5);
+            drive = StrafeWithInches(30, 0, 4);
+            //Navigate(4, 9, 5);
         }
         if (spikeLocation == 2) {
             Drive(5);
@@ -59,8 +61,8 @@ public class RedLeft extends FirstMeetAutoControls {
             Turn(90);
             Drive(-70);
             Turn(90);
-            StrafeWithInches(30, 0, 5);
-            Navigate(5, 9, 5);
+            drive = StrafeWithInches(30, 0, 5);
+            //Navigate(5, 9, 5);
         }
         if (spikeLocation == 3) {
             Drive(18);
@@ -77,16 +79,17 @@ public class RedLeft extends FirstMeetAutoControls {
             Turn(90);
             Drive(-75);
             Turn(90);
-            StrafeWithInches(30, 0, 6);
-            Navigate(6, 9, 5);
+            drive = StrafeWithInches(30, 0, 6);
+            //Navigate(6, 9, 5);
         }
-
+        Drive(-13);
         sleep(1000);
+        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        sleep(500);
         Drive(-5);
-        lift.SetPosition(lift.liftLow - 5, 0);
-        sleep(2000);
-        dropper.OpenDropper();
         sleep(1000);
+        dropper.OpenDropper();
+        sleep(500);
         dropper.CloseDropper();
         lift.SetPosition(lift.liftLow, lift.liftLow - 5);
         sleep(1000);
@@ -94,7 +97,7 @@ public class RedLeft extends FirstMeetAutoControls {
         Drive(3);
         sleep(1000);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
-        sleep(4000);
+        sleep(1000);
 
 
     }

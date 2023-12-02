@@ -309,7 +309,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
 
     }
 
-    public void StrafeWithInches(double targetStrafeInches, int direction, int targetTag) {
+    public double StrafeWithInches(double targetStrafeInches, int direction, int targetTag) {
         ResetEncoders();
 
         double currentStrafeInches = GetAverageStrafePositionInches();
@@ -318,7 +318,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         if (targetTag != -1) {
             lift.SetPosition(lift.liftAprilTags, 0);
         }
-
+        double targetPose = 0;
         while (Math.abs(strafeDistanceToTarget) > 1) {
             currentStrafeInches = GetAverageStrafePositionInches();
             strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
@@ -336,7 +336,8 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
                 robot.backRight.setPower(-0.2);
             }
 
-            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 1 && robot.getTargetAprilTagPos(targetTag).x > -1)) {
+            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 1.5 && robot.getTargetAprilTagPos(targetTag).x > -1.5)) {
+                targetPose = robot.getTargetAprilTagPos(targetTag).range;
                 break;
             }
         }
@@ -346,6 +347,8 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         robot.frontRight.setPower(0);
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
+
+        return targetPose;
     }
 
     public NavigationState NavigateToAprilTag(int targetTag, double targetDistance) {
@@ -405,10 +408,10 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         }
         else {
 
-            //robot.frontLeft.setPower(-0.05);
-            //robot.frontRight.setPower(-0.05);
-            //robot.backLeft.setPower(-0.05);
-            //robot.backRight.setPower(-0.05);
+            robot.frontLeft.setPower(-0.05);
+            robot.frontRight.setPower(-0.05);
+            robot.backLeft.setPower(-0.05);
+            robot.backRight.setPower(-0.05);
             return NavigationState.Waiting;
 
         }
@@ -421,7 +424,6 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         boolean timedOut = (robot.gameTimer.seconds() - lastGoingTime > timeout);
         while (!timedOut && navigationState != NavigationState.Done && opModeIsActive()) {
             navigationState = NavigateToAprilTag(targetId, distance);
-            telemetry.addData("state1", NavigateToAprilTag(targetId, distance));
             if (navigationState != NavigationState.Waiting) {
                 lastGoingTime = robot.gameTimer.seconds();
             }

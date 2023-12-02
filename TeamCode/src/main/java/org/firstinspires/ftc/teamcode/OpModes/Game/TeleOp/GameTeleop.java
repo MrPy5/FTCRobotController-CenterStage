@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Game.TeleOp;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
@@ -168,6 +169,11 @@ public class GameTeleop extends LinearOpMode {
                 lift.SetPosition(lift.liftHigh, liftCurrent);
                 liftCurrent = lift.liftHigh;
             }
+            if (gamepad2.left_bumper) {
+                robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+
 
 
 

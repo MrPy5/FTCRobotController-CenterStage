@@ -21,7 +21,7 @@ public class RedRight extends FirstMeetAutoControls {
         }
         waitForStart();
         robot.gameTimer.startTime();
-
+        double drive = 0;
         if (spikeLocation == 1) {
             Drive(18);
             sleep(1000);
@@ -31,6 +31,7 @@ public class RedRight extends FirstMeetAutoControls {
             Drive(-4);
             intake.RunToPosIntake(-1000, 1);
             Drive(-15);
+            StrafeWithInches(5, 1, 4);
             Navigate(4, 9, 5);
 
 
@@ -45,8 +46,8 @@ public class RedRight extends FirstMeetAutoControls {
             Drive(-2);
             Turn(90);
             Drive(-15);
-            StrafeWithInches(5, 1, 5);
-            Navigate(5, 9, 5);
+            drive = StrafeWithInches(5, 1, 5);
+            //Navigate(5, 9, 5);
 
         }
         if (spikeLocation == 3) {
@@ -61,15 +62,16 @@ public class RedRight extends FirstMeetAutoControls {
             sleep(250);
             Drive(-2);
             intake.RunToPosIntake(-1000,1);
-            StrafeWithInches(7, 0, 6);
-            Navigate(6, 9, 5);
+            drive = StrafeWithInches(7, 0, 6);
+            //Navigate(6, 9, 5);
 
         }
 
-
+        Drive(-drive);
         sleep(1000);
+        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        sleep(500);
         Drive(-5);
-        lift.SetPosition(lift.liftLow - 4, 0);
         sleep(2000);
         dropper.OpenDropper();
         sleep(1000);
@@ -81,7 +83,8 @@ public class RedRight extends FirstMeetAutoControls {
         Drive(3);
         sleep(1000);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
-        sleep(4000);
+        sleep(1000);
+        StrafeWithInches(26, 0, -1);
 
 
     }

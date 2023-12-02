@@ -48,12 +48,12 @@ public class BlueRight extends FirstMeetAutoControls {
             Drive(-43);
             sleep(500);
             Turn(180);
-            StrafeWithInches(7, 1, -1);
+            StrafeWithInches(12, 1, -1);
             intake.RunToPosIntake(-1000, 1);
             sleep(500);
             Drive(-3);
             Turn(270);
-            Drive(-79);
+            Drive(-76);
             Turn(270);
             StrafeWithInches(30, 1, 2);
             Navigate(2, 9, 5);
@@ -79,8 +79,9 @@ public class BlueRight extends FirstMeetAutoControls {
         }
 
         sleep(1000);
+        lift.SetPosition(lift.liftLow - 4, lift.liftAprilTags);
+        sleep(500);
         Drive(-5);
-        lift.SetPosition(lift.liftLow - 5, 0);
         sleep(2000);
         dropper.OpenDropper();
         sleep(1000);

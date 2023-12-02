@@ -185,7 +185,7 @@ public class Robot {
     }
     public void initEasyOpenCV() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName webcamNamed = null;
+        WebcamName webcamNamed;
         webcamNamed = hardwareMap.get(WebcamName.class, openCVWebCamName); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamNamed, cameraMonitorViewId);
         pipeline = new ContourDetectionPipeline();
@@ -237,7 +237,7 @@ public class Robot {
         builder.setCameraResolution(new android.util.Size(1280, 800));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableLiveView(false);
+        builder.enableLiveView(true);
 
 
         // Set the stream format; MJPEG uses less bandwidtmh than default YUY2.
@@ -385,7 +385,7 @@ public class Robot {
             liftMotor = hardwareMap.get(DcMotor.class, "lift");
             liftMotor.setDirection(DcMotor.Direction.FORWARD);
             liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
