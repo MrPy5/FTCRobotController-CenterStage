@@ -16,6 +16,7 @@ public class RedRight extends FirstMeetAutoControls {
 
             spikeLocation = robot.ScanForElement();
             telemetry.addData("Spike: ", spikeLocation);
+            telemetry.addData("Area: ", robot.area);
             telemetry.update();
         }
         waitForStart();

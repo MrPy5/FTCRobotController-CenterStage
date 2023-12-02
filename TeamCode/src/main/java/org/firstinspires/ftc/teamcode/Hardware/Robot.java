@@ -614,7 +614,7 @@ public class Robot {
         if (centerX > (STREAM_WIDTH / 2.0)) {
             returnSpike = 2;
         }
-        if (area < 40000) {
+        if (area < 35250) {
             returnSpike = 3;
         }
         return returnSpike;

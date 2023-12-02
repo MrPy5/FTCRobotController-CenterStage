@@ -314,7 +314,11 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
 
         double currentStrafeInches = GetAverageStrafePositionInches();
         double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
-        lift.SetPosition(lift.liftAprilTags, 0);
+
+        if (targetTag != -1) {
+            lift.SetPosition(lift.liftAprilTags, 0);
+        }
+
         while (Math.abs(strafeDistanceToTarget) > 1) {
             currentStrafeInches = GetAverageStrafePositionInches();
             strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
@@ -332,7 +336,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
                 robot.backRight.setPower(-0.2);
             }
 
-            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 50 && robot.getTargetAprilTagPos(targetTag).x > -50)) {
+            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 1 && robot.getTargetAprilTagPos(targetTag).x > -1)) {
                 break;
             }
         }
