@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.Autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 
 @Autonomous(name = "Red Left")
 public class RedLeft extends AutoControls {
@@ -10,78 +12,67 @@ public class RedLeft extends AutoControls {
         initMethods(hardwareMap);
         robot.alliance = "red";
 
+        //Vision
         int spikeLocation = robot.ScanForElement(1);
-        sleep(5000);
+        sleep(1000);
         while (opModeInInit()) {
-
             spikeLocation = robot.ScanForElement(1);
             telemetry.addData("Spike: ", spikeLocation);
             telemetry.addData("Area: ", robot.area);
             telemetry.update();
         }
-        waitForStart();
 
+        waitForStart();
         robot.gameTimer.startTime();
-        sleep(5000);
-        double drive = 0;
+
+        //Position 1
         if (spikeLocation == 1) {
-            Drive(18);
-            sleep(1000);
-            Drive(6);
-            sleep(500);
-            Turn(90);
-            Drive(-2);
-            intake.RunToPosIntake(-1000, 1);
-            Turn(0);
-            sleep(500);
-            Drive(24);
-            Turn(90);
-            Turn(90);
-            Drive(-64);
-            drive = StrafeWithInches(30, 0, 4);
-            //Navigate(4, 9, 5);
-        }
-        if (spikeLocation == 2) {
-            Drive(5);
-            sleep(1000);
-            Turn(90);
-            sleep(500);
-            Drive(10);
-            sleep(500);
-            Turn(0);
-            sleep(500);
-            Drive(45);
-            sleep(500);
-            Turn(90);
-            sleep(500);
-            Drive(-12);
-            sleep(500);
-            Turn(180);
-            intake.RunToPosIntake(-1000, 1);
-            Turn(90);
-            Drive(-70);
-            Turn(90);
-            drive = StrafeWithInches(30, 0, 5);
-            //Navigate(5, 9, 5);
-        }
-        if (spikeLocation == 3) {
-            Drive(18);
-            sleep(1000);
-            Drive(6);
+            DriveWithCorrection(40, 0, 0.2);
             sleep(500);
             Turn(270);
-            Drive(-2);
-            intake.RunToPosIntake(-1000, 1);
-            Drive(-1);
-            Turn(0);
             sleep(500);
-            Drive(22);
+            DriveWithCorrection(-2, 0, 0.2);
+            sleep(500);
+            spike.DropSpike();
+            sleep(500);
             Turn(90);
-            Drive(-75);
-            Turn(90);
-            drive = StrafeWithInches(30, 0, 6);
-            //Navigate(6, 9, 5);
+            sleep(500);
+            StrafeWithInches(48, 1, -1);
+            sleep(500);
+            DriveWithCorrection(-72, 0, 0.2);
+            sleep(500);
+            StrafeWithInches(48, 0, 4);
+            Navigate(4, 9, 5);
         }
+        //Position 2
+        if (spikeLocation == 2) {
+            DriveWithCorrection(47, 0, 0.2);
+            sleep(500);
+            spike.DropSpike();
+            sleep(1000);
+            Turn(90);
+            DriveWithCorrection(-72, 0, 0.2);
+            StrafeWithInches(48, 0, 5);
+            Navigate(5, 9, 5);
+        }
+        //Position 3
+        if (spikeLocation == 3) {
+            DriveWithCorrection(40, 0, 0.2);
+            sleep(500);
+            Turn(90);
+            sleep(500);
+            DriveWithCorrection(-2, 0, 0.2);
+            sleep(500);
+            spike.DropSpike();
+            sleep(500);
+            StrafeWithInches(48, 1, -1);
+            sleep(500);
+            DriveWithCorrection(-70, 0, 0.2);
+            sleep(500);
+            StrafeWithInches(48, 0, 6);
+            Navigate(6, 9, 5);
+        }
+
         Drive(-13);
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
@@ -98,7 +89,6 @@ public class RedLeft extends AutoControls {
         sleep(1000);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(1000);
-
 
     }
 

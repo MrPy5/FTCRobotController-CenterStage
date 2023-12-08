@@ -14,6 +14,9 @@ public class TestAuto extends AutoControls {
         waitForStart();
         robot.gameTimer.startTime();
 
+        DriveWithCorrection(80, 0, 0.3);
+
+        /*
         while (opModeIsActive()) {
             if (robot.getTargetAprilTagPos(2) != null) {
                 telemetry.addData("hi", "true");
@@ -30,11 +33,7 @@ public class TestAuto extends AutoControls {
                 }
             }
         }
-
-
-
-
-
+         */
 
     }
 

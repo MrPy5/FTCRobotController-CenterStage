@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 public abstract class AutoControls extends LinearOpMode {
@@ -23,6 +24,7 @@ public abstract class AutoControls extends LinearOpMode {
     public Dropper dropper;
     public Lift lift;
     public Intake intake;
+    public SpikeHook spike;
     public BNO055IMU imu;
     public Orientation angles;
 
@@ -34,6 +36,7 @@ public abstract class AutoControls extends LinearOpMode {
         dropper = robot.new Dropper();
         lift = robot.new Lift();
         intake = robot.new Intake();
+        spike = robot.new SpikeHook();
         robot.initEasyOpenCV();
         robot.initAprilTag();
         initIMU();
@@ -95,18 +98,20 @@ public abstract class AutoControls extends LinearOpMode {
 
         double speedMinimum;
 
-
+    /*
         if (degreesOff > 10) {
             speedModifier = 6;
         }
 
-        speedMinimum = 6;
+     */
 
+        speedModifier = 5;
+        speedMinimum = 3;
 
         if (degreesOff < .3) {
             adjustment = 0;
         } else {
-            adjustment = (Math.pow((degreesOff + 2) / speedModifier, 2) + speedMinimum) / 100;
+            adjustment = (Math.pow((degreesOff) / speedModifier, 2) + speedMinimum) / 100;
         }
 
         if (goRight) {
@@ -265,7 +270,7 @@ public abstract class AutoControls extends LinearOpMode {
         while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE) {
 
             double turnAdjustment;
-            turnAdjustment = headingAdjustment(targetHeading, 0) / 80;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
 
             currentInches = GetAverageWheelPositionInches();
             distanceToTarget = targetInches - currentInches;
@@ -277,8 +282,8 @@ public abstract class AutoControls extends LinearOpMode {
             }
             robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
             robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
-            robot.backRight.setPower((rrPower * reverse) + turnAdjustment);
-            robot.backLeft.setPower((lrPower * reverse) - turnAdjustment);
+            robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
+            robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
         }
 
         robot.frontLeft.setPower(0);

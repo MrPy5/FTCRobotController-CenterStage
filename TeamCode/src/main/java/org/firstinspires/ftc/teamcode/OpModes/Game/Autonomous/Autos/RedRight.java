@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.Autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 
 @Autonomous(name = "Red Right")
 public class RedRight extends AutoControls {
@@ -10,73 +12,72 @@ public class RedRight extends AutoControls {
         initMethods(hardwareMap);
         robot.alliance = "red";
 
+        //Vision
         int spikeLocation = robot.ScanForElement(1);
-        sleep(5000);
+        sleep(1000);
         while (opModeInInit()) {
-
             spikeLocation = robot.ScanForElement(1);
             telemetry.addData("Spike: ", spikeLocation);
             telemetry.addData("Area: ", robot.area);
             telemetry.update();
         }
+
         waitForStart();
         robot.gameTimer.startTime();
-        double drive = 0;
+
+        //Position 1
         if (spikeLocation == 1) {
-            Drive(18);
-            sleep(1000);
-            Drive(6);
+            DriveWithCorrection(40, 0, 0.2);
             sleep(500);
-            Turn(90);
-            Drive(-4);
-            intake.RunToPosIntake(-1000, 1);
-            Drive(-15);
-            StrafeWithInches(5, 1, 4);
-            Navigate(4, 9, 5);
-
-
-        }
-        if (spikeLocation == 2) {
-            Drive(18);
-            sleep(1000);
-            Drive(3);
-
-            sleep(500);
-            intake.RunToPosIntake(-1000, 1);
-            Drive(-2);
-            Turn(90);
-            Drive(-15);
-            drive = StrafeWithInches(5, 1, 5);
-            //Navigate(5, 9, 5);
-
-        }
-        if (spikeLocation == 3) {
             Turn(270);
-            Drive(24);
             sleep(500);
-            Turn(0);
+            DriveWithCorrection(-2, 0, 0.2);
             sleep(500);
-            Drive(26);
+            spike.DropSpike();
             sleep(500);
             Turn(90);
-            sleep(250);
-            Drive(-2);
-            intake.RunToPosIntake(-1000,1);
-            drive = StrafeWithInches(7, 0, 6);
-            //Navigate(6, 9, 5);
-
+            sleep(500);
+            DriveWithCorrection(-30, 0, 0.2);
+            sleep(500);
+            StrafeWithInches(12, 1, 4);
+            Navigate(4, 9, 5);
+        }
+        //Position 2
+        if (spikeLocation == 2) {
+            DriveWithCorrection(47, 0, 0.2);
+            sleep(500);
+            spike.DropSpike();
+            sleep(1000);
+            Turn(90);
+            DriveWithCorrection(-30, 0, 0.2);
+            StrafeWithInches(48, 0, 5);
+            Navigate(5, 9, 5);
+        }
+        //Position 3
+        if (spikeLocation == 3) {
+            DriveWithCorrection(40, 0, 0.2);
+            sleep(500);
+            Turn(90);
+            sleep(500);
+            DriveWithCorrection(-2, 0, 0.2);
+            sleep(500);
+            spike.DropSpike();
+            sleep(500);
+            DriveWithCorrection(-25, 0, 0.2);
+            sleep(500);
+            StrafeWithInches(12, 0, 6);
+            Navigate(6, 9, 5);
         }
 
-        Drive(-drive);
+        Drive(-13);
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
         Drive(-5);
-        sleep(2000);
-        dropper.OpenDropper();
         sleep(1000);
-        dropper.CloseDropper();
+        dropper.OpenDropper();
         sleep(500);
+        dropper.CloseDropper();
         lift.SetPosition(lift.liftLow, lift.liftLow - 5);
         sleep(1000);
 
@@ -84,8 +85,6 @@ public class RedRight extends AutoControls {
         sleep(1000);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(1000);
-        StrafeWithInches(26, 0, -1);
-
 
     }
 
