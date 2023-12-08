@@ -13,12 +13,13 @@ public class NewAuto extends AutoControls {
         robot.alliance = "red";
 
         //Vision
-        int spikeLocation = robot.ScanForElement(1);
+        boolean spikeLocation = robot.ScanForElementBitmap(1);
         sleep(1000);
         while (opModeInInit()) {
-            spikeLocation = robot.ScanForElement(1);
+            spikeLocation = robot.ScanForElementBitmap(1);
             telemetry.addData("Spike: ", spikeLocation);
-            telemetry.addData("Area: ", robot.area);
+            telemetry.addData("Area: ", robot.whiteOne);
+            telemetry.addData("Area: ", robot.whiteTwo);
             telemetry.update();
         }
 
@@ -26,7 +27,7 @@ public class NewAuto extends AutoControls {
         robot.gameTimer.startTime();
 
         //Position 1
-        if (spikeLocation == 2) {
+        if (spikeLocation == true) {
             DriveWithCorrection(18, 0, 0.2);
             sleep(500);
         }

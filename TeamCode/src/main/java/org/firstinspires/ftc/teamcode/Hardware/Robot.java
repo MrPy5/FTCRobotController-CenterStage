@@ -109,7 +109,7 @@ public class Robot {
 
     public String openCVWebCamName = "OpenCV";
 
-    public ContourDetectionPipeline pipeline;
+    public ColorCounter pipeline;
 
     public int STREAM_WIDTH = 1280; // modify for your camera
     public int STREAM_HEIGHT = 720; // modify for your camera
@@ -121,6 +121,9 @@ public class Robot {
 
     public double centerX = 0;
     public double centerY = 0;
+
+    public int whiteOne = 0;
+    public int whiteTwo = 0;
 
     public double area = 0;
 
@@ -191,7 +194,8 @@ public class Robot {
         WebcamName webcamNamed = null;
         webcamNamed = hardwareMap.get(WebcamName.class, openCVWebCamName); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamNamed, cameraMonitorViewId);
-        pipeline = new ContourDetectionPipeline();
+        //pipeline = new ContourDetectionPipeline();
+        pipeline = new ColorCounter();
         webcam.setPipeline(pipeline);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -241,7 +245,6 @@ public class Robot {
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableLiveView(false);
-
 
         // Set the stream format; MJPEG uses less bandwidtmh than default YUY2.
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
@@ -613,6 +616,70 @@ public class Robot {
 
 
     }
+
+    public class ColorCounter extends OpenCvPipeline {
+
+
+
+        Mat hsvFrame = new Mat();
+        Mat colorMask = new Mat();
+        Mat croppedSectorOne = new Mat();
+        Mat croppedSectorTwo = new Mat();
+        Mat resizedOne = new Mat();
+        Mat resizedTwo = new Mat();
+
+
+
+        // Calculate the distance using the formula
+
+        @Override
+        public Mat processFrame(Mat input) {
+            colorMask = preprocessFrame(input);
+            Rect ro1 = new Rect(150,0,250,350);
+            Rect ro2 = new Rect(650,0,250,350);
+            croppedSectorOne = new Mat(colorMask, ro1);
+            croppedSectorTwo = new Mat(colorMask, ro2);
+
+            Size sz = new Size(25,35);
+            Imgproc.resize(croppedSectorOne, resizedOne, sz);
+
+            Imgproc.resize(croppedSectorTwo, resizedTwo, sz);
+            whiteOne = Core.countNonZero(resizedOne);
+            whiteTwo = Core.countNonZero(resizedTwo);
+
+            return resizedOne;
+        }
+
+        private Mat preprocessFrame(Mat frame) {
+
+            Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
+
+            Scalar lowerRed = new Scalar(100, 100, 100);
+            Scalar upperRed = new Scalar(180, 255, 255);
+            Scalar lowerBlue = new Scalar(0, 100, 100);
+            Scalar upperBlue = new Scalar(80, 255, 255);
+
+
+            if (alliance == "red") {
+                Core.inRange(hsvFrame, lowerRed, upperRed, colorMask);
+            }
+            if (alliance == "blue") {
+                Core.inRange(hsvFrame, lowerBlue, upperBlue, colorMask);
+            }
+
+            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+            Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_OPEN, kernel);
+            Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_CLOSE, kernel);
+
+            return colorMask;
+        }
+
+
+
+
+
+    }
+
     private  double getDistance(double width){
         double distance = (objectWidthInRealWorldUnits * focalLength) / width;
         return distance;
@@ -637,6 +704,10 @@ public class Robot {
             returnSpike = 3;
         }
         return returnSpike;
+    }
+
+    public boolean ScanForElementBitmap(int preferredFailOutput) {
+        return whiteOne > whiteTwo;
     }
     public double getCenter() {
         return centerX;
