@@ -60,7 +60,7 @@ public class BlueLeft extends FirstMeetAutoControls {
             Drive(-1);
             intake.RunToPosIntake(-1000, 1);
             Drive(-10);
-            StrafeWithInches(10, 1, 3);
+            StrafeWithInches(10, 0, 3);
             Navigate(3, 9, 5);
         }
 
