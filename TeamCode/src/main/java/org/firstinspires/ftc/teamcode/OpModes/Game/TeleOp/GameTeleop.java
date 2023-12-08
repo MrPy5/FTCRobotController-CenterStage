@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Suspension;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.DroneLauncher;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
 
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class GameTeleop extends LinearOpMode {
         Intake intake = robot.new Intake();
         Suspension suspension = robot.new Suspension();
         DroneLauncher droneLauncher = robot.new DroneLauncher();
+        SpikeHook spikeHook = robot.new SpikeHook();
 
         waitForStart();
 
@@ -68,6 +70,7 @@ public class GameTeleop extends LinearOpMode {
         intake.StopIntake();
         lift.SetPosition(0, 0);
         dropper.CloseDropper();
+        spikeHook.ResetSpike();
 
 
         while (opModeIsActive()) {
@@ -148,7 +151,12 @@ public class GameTeleop extends LinearOpMode {
                 intake.StopIntake();
             }
 
-
+            if (gamepad1.square) {
+                spikeHook.DropSpike();
+            }
+            if (gamepad1.circle) {
+                spikeHook.ResetSpike();
+            }
 
             //---Lift---//
             //Preset Positions

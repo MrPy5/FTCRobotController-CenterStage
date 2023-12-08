@@ -3,18 +3,18 @@ package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "Blue Left")
-public class BlueLeft extends FirstMeetAutoControls {
+public class BlueLeft extends AutoControls {
 
     @Override
     public void runOpMode() {
         initMethods(hardwareMap);
         robot.alliance = "blue";
 
-        int spikeLocation = robot.ScanForElement();
+        int spikeLocation = robot.ScanForElement(1);
         sleep(5000);
         while (opModeInInit()) {
 
-            spikeLocation = robot.ScanForElement();
+            spikeLocation = robot.ScanForElement(1);
             telemetry.addData("Spike: ", spikeLocation);
             telemetry.update();
         }

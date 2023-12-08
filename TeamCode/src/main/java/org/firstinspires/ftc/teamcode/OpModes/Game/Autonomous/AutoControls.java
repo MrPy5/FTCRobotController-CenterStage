@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
-import android.util.Log;
-
-import com.acmerobotics.dashboard.message.redux.StopOpMode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,17 +16,18 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
-import org.openftc.easyopencv.OpenCvWebcam;
 
-public abstract class FirstMeetAutoControls extends LinearOpMode {
+public abstract class AutoControls extends LinearOpMode {
 
-    Robot robot;
-    Dropper dropper;
-    Lift lift;
+    public Robot robot;
+    public Dropper dropper;
+    public Lift lift;
+    public Intake intake;
+    public BNO055IMU imu;
+    public Orientation angles;
 
-    Intake intake;
-    BNO055IMU imu;
-    Orientation angles;
+    public final double DISTANCE_TOLERANCE = 1;
+
 
     public void initMethods(HardwareMap hwMap) {
         robot = new Robot(hwMap, false);
@@ -50,17 +48,9 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        /*byte AXIS_MAP_SIGN_BYTE = 0x1; //This is what to write to the AXIS_MAP_SIGN register to negate the z axis
-        imu.write8(BNO055IMU.Register.OPR_MODE, BNO055IMU.SensorMode.CONFIG.bVal & 0x0F);  // puts it in config mode
-        sleep(100);
-        imu.write8(BNO055IMU.Register.AXIS_MAP_SIGN, AXIS_MAP_SIGN_BYTE & 0x0F);
-        imu.write8(BNO055IMU.Register.OPR_MODE, BNO055IMU.SensorMode.IMU.bVal & 0x0F);*/
 
     }
 
@@ -85,7 +75,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         return (((Math.abs(robot.frontLeft.getCurrentPosition()) + Math.abs(robot.frontRight.getCurrentPosition()) + Math.abs(robot.backLeft.getCurrentPosition()) + Math.abs(robot.backRight.getCurrentPosition())) / 4.0) / robot.strafeTicksPerInch);
     }
 
-    public double headingAdjustment(double targetHeading, double distanceToX) {
+    public double headingAdjustment(double targetHeading, double speedModifier) {
         double adjustment;
         double currentHeading;
         double degreesOff;
@@ -104,7 +94,7 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         }
 
         double speedMinimum;
-        double speedModifier = 6;
+
 
         if (degreesOff > 10) {
             speedModifier = 6;
@@ -145,19 +135,6 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
         }
 
         return degreesOff;
-    }
-
-    public void ZeroPowerToBrake() {
-        robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-    public void ZeroPowerToFloat() {
-        robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     public void ResetEncoders() {
@@ -266,24 +243,27 @@ public abstract class FirstMeetAutoControls extends LinearOpMode {
 
     }
 
-    public void DriveWithCorrection (double targetInches, double targetHeading) {
+    public void DriveWithCorrection (double targetInches, double targetHeading, double power) {
         ResetEncoders();
+
+
         double currentInches;
         double distanceToTarget;
 
-        double lfPower = 0.2;
-        double rfPower = 0.2;
-        double lrPower = 0.2;
-        double rrPower = 0.2;
+        double lfPower = power;
+        double rfPower = power;
+        double lrPower = power;
+        double rrPower = power;
 
-        double reverse = 1;
+        double reverse;
 
         currentInches = GetAverageWheelPositionInches();
         distanceToTarget = targetInches - currentInches;
 
 
 
-        while (Math.abs(distanceToTarget) > 1) {
+        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE) {
+
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0) / 80;
 

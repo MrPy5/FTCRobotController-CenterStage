@@ -59,6 +59,9 @@ public class Robot {
     //---DROPPER---//
     public Servo pixelDropper; //Delete if two droppers
 
+    //---SPIKE HOOK---//
+    public Servo spikeHook; //Delete if two droppers
+
     //---DRIVING---//
 
     //Motors
@@ -404,7 +407,21 @@ public class Robot {
             currentLevel = 0; //edit this later;
         }
     }
+    public class SpikeHook {
+        public double spikeUp = 0.5;
+        public double spikeDropped = 0.8;
 
+        public SpikeHook() {
+            spikeHook = hardwareMap.get(Servo.class, "spikeHook");
+
+        }
+        public void DropSpike() {
+            spikeHook.setPosition(spikeDropped);
+        }
+        public void ResetSpike() {
+            spikeHook.setPosition(spikeUp);
+        }
+    }
     public class Dropper {
 
         public boolean dropperOpen = false;
@@ -608,9 +625,11 @@ public class Robot {
     private void UpdateArea(double areaImport) {
         area = areaImport;
     }
-    public int ScanForElement() {
-        int returnSpike = 1;
-
+    public int ScanForElement(int preferredFailOutput) {
+        int returnSpike = preferredFailOutput;
+        if (centerX <= (STREAM_WIDTH / 2.0)) {
+            returnSpike = 1;
+        }
         if (centerX > (STREAM_WIDTH / 2.0)) {
             returnSpike = 2;
         }
