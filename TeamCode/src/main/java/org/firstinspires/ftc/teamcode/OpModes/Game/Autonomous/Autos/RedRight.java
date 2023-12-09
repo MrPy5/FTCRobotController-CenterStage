@@ -27,17 +27,19 @@ public class RedRight extends AutoControls {
 
         //Position 1
         if (spikeLocation == 1) {
-            DriveWithCorrection(40, 0, 0.2);
+            DriveWithCorrection(30, 0, 0.2);
             sleep(500);
             Turn(270);
             sleep(500);
-            DriveWithCorrection(-2, 0, 0.2);
+            DriveWithCorrection(-2, 270, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(500);
+            DriveWithCorrection(3, 270, 0.2);
+            sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-30, 0, 0.2);
+            DriveWithCorrection(-28, 90, 0.2);
             sleep(500);
             StrafeWithInches(12, 1, 4);
             Navigate(4, 9, 5);
@@ -49,27 +51,29 @@ public class RedRight extends AutoControls {
             spike.DropSpike();
             sleep(1000);
             Turn(90);
-            DriveWithCorrection(-30, 0, 0.2);
+            DriveWithCorrection(-30, 90, 0.2);
             StrafeWithInches(48, 0, 5);
             Navigate(5, 9, 5);
         }
         //Position 3
         if (spikeLocation == 3) {
-            DriveWithCorrection(40, 0, 0.2);
+            DriveWithCorrection(30, 0, 0.2);
             sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-2, 0, 0.2);
+            DriveWithCorrection(-3.5, 90, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(500);
-            DriveWithCorrection(-25, 0, 0.2);
+            StrafeWithInches(20, 1, -1);
             sleep(500);
-            StrafeWithInches(12, 0, 6);
+            DriveWithCorrection(-27, 90, 0.2);
+            sleep(500);
+            StrafeWithInches(35, 0, 6);
             Navigate(6, 9, 5);
         }
 
-        Drive(-13);
+        DriveWithCorrection(-2, 90, 0.3);
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);

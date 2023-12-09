@@ -27,17 +27,19 @@ public class BlueLeft extends AutoControls {
 
         //Position 1
         if (spikeLocation == 1) {
-            DriveWithCorrection(40, 0, 0.2);
+            DriveWithCorrection(30, 0, 0.2);
             sleep(500);
             Turn(270);
             sleep(500);
-            DriveWithCorrection(-2, 0, 0.2);
+            DriveWithCorrection(-2, 270, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(500);
-            DriveWithCorrection(-25, 0, 0.2);
+            StrafeWithInches(20, 0, -1);
             sleep(500);
-            StrafeWithInches(12, 0, 1);
+            DriveWithCorrection(-25, 270, 0.2);
+            sleep(500);
+            StrafeWithInches(30, 1, 1);
             Navigate(1, 9, 3);
         }
         //Position 2
@@ -47,29 +49,31 @@ public class BlueLeft extends AutoControls {
             spike.DropSpike();
             sleep(1000);
             Turn(270);
-            DriveWithCorrection(-90, 0, 0.2);
+            DriveWithCorrection(-30, 270, 0.2);
             StrafeWithInches(48, 1, 2);
             Navigate(2, 9, 5);
         }
         //Position 3
         if (spikeLocation == 3) {
-            DriveWithCorrection(40, 0, 0.2);
+            DriveWithCorrection(30, 0, 0.2);
             sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-2, 0, 0.2);
+            DriveWithCorrection(-2, 90, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(500);
+            DriveWithCorrection(3, 270, 0.2);
+            sleep(500);
             Turn(270);
             sleep(500);
-            DriveWithCorrection(-30, 0, 0.2);
+            DriveWithCorrection(-30, 270, 0.2);
             sleep(500);
-            StrafeWithInches(12, 1, 3);
+            StrafeWithInches(12, 0, 3);
             Navigate(3, 9, 5);
         }
 
-        Drive(-13);
+        Drive(-2);
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
