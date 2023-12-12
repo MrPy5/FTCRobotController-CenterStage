@@ -13,12 +13,24 @@ public class BlueLeft extends AutoControls {
         robot.alliance = "blue";
 
         //Vision
+        /*
         int spikeLocation = robot.ScanForElement(1);
         sleep(1000);
         while (opModeInInit()) {
             spikeLocation = robot.ScanForElement(1);
             telemetry.addData("Spike: ", spikeLocation);
             telemetry.addData("Area: ", robot.area);
+            telemetry.update();
+        }
+        */
+
+        int spikeLocation = robot.ScanForElementBitmap(2);
+        sleep(1000);
+        while (opModeInInit()) {
+            spikeLocation = robot.ScanForElementBitmap(2);
+            telemetry.addData("Spike: ", spikeLocation);
+            telemetry.addData("White One: ", robot.whiteOne);
+            telemetry.addData("White Two: ", robot.whiteTwo);
             telemetry.update();
         }
 
@@ -40,7 +52,7 @@ public class BlueLeft extends AutoControls {
             DriveWithCorrection(-25, 270, 0.2);
             sleep(500);
             StrafeWithInches(30, 1, 1);
-            Navigate(1, 9, 3);
+            //Navigate(1, 9, 3);
         }
         //Position 2
         if (spikeLocation == 2) {
@@ -51,7 +63,7 @@ public class BlueLeft extends AutoControls {
             Turn(270);
             DriveWithCorrection(-30, 270, 0.2);
             StrafeWithInches(48, 1, 2);
-            Navigate(2, 9, 5);
+            //Navigate(2, 9, 5);
         }
         //Position 3
         if (spikeLocation == 3) {
@@ -59,25 +71,25 @@ public class BlueLeft extends AutoControls {
             sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-2, 90, 0.2);
+            DriveWithCorrection(-3, 90, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(500);
-            DriveWithCorrection(3, 270, 0.2);
+            DriveWithCorrection(5, 90, 0.2);
             sleep(500);
             Turn(270);
             sleep(500);
-            DriveWithCorrection(-30, 270, 0.2);
+            DriveWithCorrection(-28, 270, 0.2);
             sleep(500);
             StrafeWithInches(12, 0, 3);
-            Navigate(3, 9, 5);
+            //Navigate(3, 9, 5);
         }
 
-        Drive(-2);
+        Drive(-8);
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
-        Drive(-5);
+        Drive(-7);
         sleep(1000);
         dropper.OpenDropper();
         sleep(500);

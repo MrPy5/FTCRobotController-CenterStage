@@ -13,6 +13,7 @@ public class RedLeft extends AutoControls {
         robot.alliance = "red";
 
         //Vision
+        /*
         int spikeLocation = robot.ScanForElement(1);
         sleep(1000);
         while (opModeInInit()) {
@@ -21,28 +22,41 @@ public class RedLeft extends AutoControls {
             telemetry.addData("Area: ", robot.area);
             telemetry.update();
         }
+        */
+
+        int spikeLocation = robot.ScanForElementBitmap(2);
+        sleep(1000);
+        while (opModeInInit()) {
+            spikeLocation = robot.ScanForElementBitmap(2);
+            telemetry.addData("Spike: ", spikeLocation);
+            telemetry.addData("White One: ", robot.whiteOne);
+            telemetry.addData("White Two: ", robot.whiteTwo);
+            telemetry.update();
+        }
 
         waitForStart();
         robot.gameTimer.startTime();
 
         //Position 1
         if (spikeLocation == 1) {
-            DriveWithCorrection(40, 0, 0.2);
+            DriveWithCorrection(30, 0, 0.2);
             sleep(500);
             Turn(270);
             sleep(500);
-            DriveWithCorrection(-2, 0, 0.2);
+            DriveWithCorrection(-2, 270, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(500);
+            DriveWithCorrection(1, 270, 0.2);
+            sleep(500);
+            StrafeWithInches(24, 0, -1);
+            sleep(500);
             Turn(90);
             sleep(500);
-            StrafeWithInches(48, 1, -1);
-            sleep(500);
-            DriveWithCorrection(-72, 0, 0.2);
+            DriveWithCorrection(-72, 90, 0.2);
             sleep(500);
             StrafeWithInches(48, 0, 4);
-            Navigate(4, 9, 5);
+            //Navigate(4, 9, 5);
         }
         //Position 2
         if (spikeLocation == 2) {
@@ -51,33 +65,34 @@ public class RedLeft extends AutoControls {
             spike.DropSpike();
             sleep(1000);
             Turn(90);
-            DriveWithCorrection(-72, 0, 0.2);
+            DriveWithCorrection(-72, 90, 0.2);
             StrafeWithInches(48, 0, 5);
-            Navigate(5, 9, 5);
+            //Navigate(5, 9, 5);
         }
         //Position 3
         if (spikeLocation == 3) {
-            DriveWithCorrection(40, 0, 0.2);
+            DriveWithCorrection(30, 0, 0.2);
             sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-2, 0, 0.2);
-            sleep(500);
+            DriveWithCorrection(-3, 90, 0.2);
             spike.DropSpike();
             sleep(500);
-            StrafeWithInches(48, 1, -1);
+            DriveWithCorrection(2, 90, 0.2);
             sleep(500);
-            DriveWithCorrection(-70, 0, 0.2);
+            StrafeWithInches(22, 1, -1);
+            sleep(500);
+            DriveWithCorrection(-70, 90, 0.2);
             sleep(500);
             StrafeWithInches(48, 0, 6);
-            Navigate(6, 9, 5);
+            //Navigate(6, 9, 5);
         }
 
-        Drive(-13);
+        Drive(-12);
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
-        Drive(-5);
+        Drive(-7);
         sleep(1000);
         dropper.OpenDropper();
         sleep(500);

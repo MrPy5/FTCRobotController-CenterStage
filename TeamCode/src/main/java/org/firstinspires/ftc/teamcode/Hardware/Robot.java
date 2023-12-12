@@ -706,8 +706,18 @@ public class Robot {
         return returnSpike;
     }
 
-    public boolean ScanForElementBitmap(int preferredFailOutput) {
-        return whiteOne > whiteTwo;
+    public int ScanForElementBitmap(int preferredFailOutput) {
+        int returnSpike = preferredFailOutput;
+
+        if (whiteOne > whiteTwo && whiteOne > 100) {
+            returnSpike = 1;
+        } else if (whiteTwo > whiteOne && whiteTwo > 100) {
+            returnSpike = 2;
+        } else {
+            returnSpike = 3;
+        }
+
+        return returnSpike;
     }
     public double getCenter() {
         return centerX;
