@@ -55,8 +55,8 @@ public class RedLeft extends AutoControls {
             sleep(500);
             DriveWithCorrection(-72, 90, 0.2);
             sleep(500);
-            StrafeWithInches(48, 0, 4);
-            //Navigate(4, 9, 5);
+            StrafeWithInchesWithCorrection(48, 0, 4, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.2, 4);
         }
         //Position 2
         if (spikeLocation == 2) {
@@ -66,8 +66,8 @@ public class RedLeft extends AutoControls {
             sleep(1000);
             Turn(90);
             DriveWithCorrection(-72, 90, 0.2);
-            StrafeWithInches(48, 0, 5);
-            //Navigate(5, 9, 5);
+            StrafeWithInchesWithCorrection(48, 0, 5, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.2, 5);
         }
         //Position 3
         if (spikeLocation == 3) {
@@ -84,11 +84,11 @@ public class RedLeft extends AutoControls {
             sleep(500);
             DriveWithCorrection(-70, 90, 0.2);
             sleep(500);
-            StrafeWithInches(48, 0, 6);
-            //Navigate(6, 9, 5);
+            StrafeWithInchesWithCorrection(48, 0, 6, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.2, 6);
         }
 
-        Drive(-12);
+        Drive(-2);
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);

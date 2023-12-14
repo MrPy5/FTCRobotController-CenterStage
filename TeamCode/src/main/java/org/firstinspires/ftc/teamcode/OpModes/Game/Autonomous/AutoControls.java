@@ -28,7 +28,8 @@ public abstract class AutoControls extends LinearOpMode {
     public BNO055IMU imu;
     public Orientation angles;
 
-    public final double DISTANCE_TOLERANCE = 1;
+    public final double DISTANCE_TOLERANCE = 0.5;
+    public final double TAG_DISTANCE = 10;
 
 
     public void initMethods(HardwareMap hwMap) {
@@ -293,7 +294,64 @@ public abstract class AutoControls extends LinearOpMode {
 
 
     }
+    public void DriveWithCorrectionToAprilTag(double targetInches, double targetHeading, double power, int targetTag) {
+        ResetEncoders();
 
+        AprilTagPoseFtc fetchedPose = null;
+
+        double currentInches;
+        double distanceToTarget;
+
+        double lfPower = power;
+        double rfPower = power;
+        double lrPower = power;
+        double rrPower = power;
+
+        double reverse;
+
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
+
+        if (targetTag != -1) {
+            lift.SetPosition(lift.liftAprilTags, 0);
+        }
+
+        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && (fetchedPose == null ? true : fetchedPose.range > TAG_DISTANCE)) {
+
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            double tagAdjustment = 0;
+            if (targetTag != -1) {
+                fetchedPose = robot.getTargetAprilTagPos(targetTag);
+                if (fetchedPose != null) {
+                    //tagAdjustment = ((fetchedPose.x) / Math.abs(fetchedPose.x));
+                    tagAdjustment = (0.2/5) * (fetchedPose.x);
+                }
+            }
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            if (distanceToTarget < 0) {
+                reverse = -1;
+            } else {
+                reverse = 1;
+            }
+
+            robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + tagAdjustment);
+            robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - tagAdjustment);
+            robot.backRight.setPower((rrPower * reverse) - turnAdjustment + tagAdjustment);
+            robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - tagAdjustment);
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+
+    }
     public double StrafeWithInches(double targetStrafeInches, int direction, int targetTag) {
         ResetEncoders();
 
@@ -303,7 +361,7 @@ public abstract class AutoControls extends LinearOpMode {
         if (targetTag != -1) {
             lift.SetPosition(lift.liftAprilTags, 0);
         }
-        double targetPose = 0;
+        double targetRange = 0;
         while (Math.abs(strafeDistanceToTarget) > 1) {
             currentStrafeInches = GetAverageStrafePositionInches();
             strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
@@ -322,7 +380,7 @@ public abstract class AutoControls extends LinearOpMode {
             }
 
             if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2)) {
-                targetPose = robot.getTargetAprilTagPos(targetTag).range;
+                targetRange = robot.getTargetAprilTagPos(targetTag).range;
                 break;
             }
         }
@@ -333,7 +391,52 @@ public abstract class AutoControls extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
 
-        return targetPose;
+        return targetRange;
+    }
+
+    public double StrafeWithInchesWithCorrection(double targetStrafeInches, int direction, int targetTag, int targetHeading) {
+        ResetEncoders();
+
+        double currentStrafeInches = GetAverageStrafePositionInches();
+        double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+
+        if (targetTag != -1) {
+            lift.SetPosition(lift.liftAprilTags, 0);
+        }
+        double targetRange = 0;
+        while (Math.abs(strafeDistanceToTarget) > 1) {
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            currentStrafeInches = GetAverageStrafePositionInches();
+            strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+
+            if (direction == 1) {
+                robot.frontLeft.setPower(0.2 + turnAdjustment);
+                robot.backLeft.setPower(-0.2 + turnAdjustment);
+                robot.frontRight.setPower(-0.2 - turnAdjustment);
+                robot.backRight.setPower(0.2 - turnAdjustment);
+            }
+            if (direction == 0) {
+                robot.frontLeft.setPower(-0.2 + turnAdjustment);
+                robot.backLeft.setPower(0.2 + turnAdjustment);
+                robot.frontRight.setPower(0.2 - turnAdjustment);
+                robot.backRight.setPower(-0.2 - turnAdjustment);
+            }
+
+            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2)) {
+                targetRange = robot.getTargetAprilTagPos(targetTag).range;
+                break;
+            }
+        }
+
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+        return targetRange;
     }
 
     public NavigationState NavigateToAprilTag(int targetTag, double targetDistance) {
