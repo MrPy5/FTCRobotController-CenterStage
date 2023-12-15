@@ -13,17 +13,6 @@ public class RedRight extends AutoControls {
         robot.alliance = "red";
 
         //Vision
-        /*
-        int spikeLocation = robot.ScanForElement(1);
-        sleep(1000);
-        while (opModeInInit()) {
-            spikeLocation = robot.ScanForElement(1);
-            telemetry.addData("Spike: ", spikeLocation);
-            telemetry.addData("Area: ", robot.area);
-            telemetry.update();
-        }
-         */
-
         int spikeLocation = robot.ScanForElementBitmap(2);
         sleep(1000);
         while (opModeInInit()) {
@@ -47,13 +36,15 @@ public class RedRight extends AutoControls {
             sleep(500);
             spike.DropSpike();
             sleep(500);
+            spike.ResetSpike();
             DriveWithCorrection(3, 270, 0.2);
             sleep(500);
             Turn(90);
             sleep(500);
             DriveWithCorrection(-28, 90, 0.2);
             sleep(500);
-            StrafeWithInches(12, 1, 4);
+            StrafeWithInchesWithCorrection(12, 0.2, 4, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 4);
             //Navigate(4, 9, 5);
         }
         //Position 2
@@ -62,9 +53,11 @@ public class RedRight extends AutoControls {
             sleep(500);
             spike.DropSpike();
             sleep(1000);
+            spike.ResetSpike();
             Turn(90);
             DriveWithCorrection(-30, 90, 0.2);
-            StrafeWithInches(48, 0, 5);
+            StrafeWithInchesWithCorrection(48, -0.2, 5, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);
             //Navigate(5, 9, 5);
         }
         //Position 3
@@ -73,15 +66,17 @@ public class RedRight extends AutoControls {
             sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-3.5, 90, 0.2);
+            DriveWithCorrection(-1.5, 90, 0.2);
             sleep(500);
             spike.DropSpike();
-            sleep(500);
-            StrafeWithInches(20, 1, -1);
+            sleep(1000);
+            spike.ResetSpike();
+            StrafeWithInchesWithCorrection(20, 0.2, -1, 90);
             sleep(500);
             DriveWithCorrection(-27, 90, 0.2);
             sleep(500);
-            StrafeWithInches(35, 0, 6);
+            StrafeWithInchesWithCorrection(35, -0.2, 6, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 6);
             //Navigate(6, 9, 5);
         }
 

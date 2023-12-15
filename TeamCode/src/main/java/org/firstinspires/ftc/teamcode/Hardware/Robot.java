@@ -411,8 +411,8 @@ public class Robot {
         }
     }
     public class SpikeHook {
-        public double spikeUp = 0.5;
-        public double spikeDropped = 0.8;
+        public double spikeUp = 0.25;
+        public double spikeDropped = 0.7;
 
         public SpikeHook() {
             spikeHook = hardwareMap.get(Servo.class, "spikeHook");
@@ -647,7 +647,8 @@ public class Robot {
             whiteOne = Core.countNonZero(resizedOne);
             whiteTwo = Core.countNonZero(resizedTwo);
 
-            return resizedOne;
+            //return resizedOne;
+            return colorMask;
         }
 
         private Mat preprocessFrame(Mat frame) {

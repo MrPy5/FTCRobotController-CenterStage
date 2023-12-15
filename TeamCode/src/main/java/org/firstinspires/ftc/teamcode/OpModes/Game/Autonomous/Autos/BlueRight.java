@@ -13,17 +13,6 @@ public class BlueRight extends AutoControls {
         robot.alliance = "blue";
 
         //Vision
-        /*
-        int spikeLocation = robot.ScanForElement(1);
-        sleep(1000);
-        while (opModeInInit()) {
-            spikeLocation = robot.ScanForElement(1);
-            telemetry.addData("Spike: ", spikeLocation);
-            telemetry.addData("Area: ", robot.area);
-            telemetry.update();
-        }
-        */
-
         int spikeLocation = robot.ScanForElementBitmap(2);
         sleep(1000);
         while (opModeInInit()) {
@@ -46,14 +35,15 @@ public class BlueRight extends AutoControls {
             DriveWithCorrection(-2, 270, 0.2);
             sleep(500);
             spike.DropSpike();
-            sleep(500);
+            sleep(1000);
+            spike.ResetSpike();
             DriveWithCorrection(1, 270, 0.2);
             sleep(500);
-            StrafeWithInches(24, 0, -1);
+            StrafeWithInchesWithCorrection(24, 0, -1, 270);
             sleep(500);
             DriveWithCorrection(-70, 270, 0.2);
             sleep(500);
-            StrafeWithInches(48, 1, 1);
+            StrafeWithInchesWithCorrection(48, 1, 1, 270);
             //Navigate(1, 9, 5);
         }
         //Position 2
@@ -62,9 +52,10 @@ public class BlueRight extends AutoControls {
             sleep(500);
             spike.DropSpike();
             sleep(1000);
+            spike.ResetSpike();
             Turn(270);
             DriveWithCorrection(-72, 0, 0.2);
-            StrafeWithInches(48, 1, 2);
+            StrafeWithInchesWithCorrection(48, 1, 2, 270);
             //Navigate(2, 9, 5);
         }
         //Position 3
@@ -76,16 +67,17 @@ public class BlueRight extends AutoControls {
             DriveWithCorrection(-2, 90, 0.2);
             sleep(500);
             spike.DropSpike();
-            sleep(500);
+            sleep(1000);
+            spike.ResetSpike();
             DriveWithCorrection(2, 90, 0.2);
             sleep(500);
-            StrafeWithInches(22, 1, -1);
+            StrafeWithInchesWithCorrection(22, 1, -1, 90);
             sleep(500);
             Turn(270);
             sleep(500);
             DriveWithCorrection(-72, 270, 0.2);
             sleep(500);
-            StrafeWithInches(48, 1, 3);
+            StrafeWithInchesWithCorrection(48, 1, 3, 270);
             //Navigate(3, 9, 5);
 
         }

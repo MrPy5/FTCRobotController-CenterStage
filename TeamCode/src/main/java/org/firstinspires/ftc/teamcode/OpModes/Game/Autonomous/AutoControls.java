@@ -38,8 +38,10 @@ public abstract class AutoControls extends LinearOpMode {
         lift = robot.new Lift();
         intake = robot.new Intake();
         spike = robot.new SpikeHook();
+        spike.ResetSpike();
+
         robot.initEasyOpenCV();
-        robot.initAprilTag();
+        //robot.initAprilTag();
         initIMU();
     }
 
@@ -394,6 +396,44 @@ public abstract class AutoControls extends LinearOpMode {
         return targetRange;
     }
 
+    public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {
+        ResetEncoders();
+
+        double currentStrafeInches = GetAverageStrafePositionInches();
+        double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+
+        if (targetTag != -1) {
+            lift.SetPosition(lift.liftAprilTags, 0);
+        }
+        double targetRange = 0;
+        while (Math.abs(strafeDistanceToTarget) > 1) {
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            currentStrafeInches = GetAverageStrafePositionInches();
+            strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+
+            robot.frontLeft.setPower(power + turnAdjustment);
+            robot.backLeft.setPower(-1 * (power) + turnAdjustment);
+            robot.frontRight.setPower(-1 *(power) - turnAdjustment);
+            robot.backRight.setPower(power - turnAdjustment);
+
+            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2)) {
+                targetRange = robot.getTargetAprilTagPos(targetTag).range;
+                break;
+            }
+        }
+
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+        return targetRange;
+    }
+
+    /*
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, int direction, int targetTag, int targetHeading) {
         ResetEncoders();
 
@@ -438,6 +478,7 @@ public abstract class AutoControls extends LinearOpMode {
 
         return targetRange;
     }
+     */
 
     public NavigationState NavigateToAprilTag(int targetTag, double targetDistance) {
         double lfPower;

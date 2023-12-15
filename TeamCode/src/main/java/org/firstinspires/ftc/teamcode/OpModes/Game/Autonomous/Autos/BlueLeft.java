@@ -13,17 +13,6 @@ public class BlueLeft extends AutoControls {
         robot.alliance = "blue";
 
         //Vision
-        /*
-        int spikeLocation = robot.ScanForElement(1);
-        sleep(1000);
-        while (opModeInInit()) {
-            spikeLocation = robot.ScanForElement(1);
-            telemetry.addData("Spike: ", spikeLocation);
-            telemetry.addData("Area: ", robot.area);
-            telemetry.update();
-        }
-        */
-
         int spikeLocation = robot.ScanForElementBitmap(2);
         sleep(1000);
         while (opModeInInit()) {
@@ -46,12 +35,14 @@ public class BlueLeft extends AutoControls {
             DriveWithCorrection(-2, 270, 0.2);
             sleep(500);
             spike.DropSpike();
-            sleep(500);
-            StrafeWithInches(20, 0, -1);
+            sleep(1000);
+            spike.ResetSpike();
+            StrafeWithInchesWithCorrection(20, 0, -1, 270);
             sleep(500);
             DriveWithCorrection(-25, 270, 0.2);
             sleep(500);
-            StrafeWithInches(30, 1, 1);
+            StrafeWithInchesWithCorrection(30, 1, 1, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 1);
             //Navigate(1, 9, 3);
         }
         //Position 2
@@ -60,9 +51,11 @@ public class BlueLeft extends AutoControls {
             sleep(500);
             spike.DropSpike();
             sleep(1000);
+            spike.ResetSpike();
             Turn(270);
             DriveWithCorrection(-30, 270, 0.2);
-            StrafeWithInches(48, 1, 2);
+            StrafeWithInchesWithCorrection(48, 1, 2, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);
             //Navigate(2, 9, 5);
         }
         //Position 3
@@ -74,14 +67,16 @@ public class BlueLeft extends AutoControls {
             DriveWithCorrection(-3, 90, 0.2);
             sleep(500);
             spike.DropSpike();
-            sleep(500);
+            sleep(1000);
+            spike.ResetSpike();
             DriveWithCorrection(5, 90, 0.2);
             sleep(500);
             Turn(270);
             sleep(500);
             DriveWithCorrection(-28, 270, 0.2);
             sleep(500);
-            StrafeWithInches(12, 0, 3);
+            StrafeWithInchesWithCorrection(12, 0, 3, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 3);
             //Navigate(3, 9, 5);
         }
 
