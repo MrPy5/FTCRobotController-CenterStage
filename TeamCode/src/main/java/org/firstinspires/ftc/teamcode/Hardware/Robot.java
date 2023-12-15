@@ -52,6 +52,14 @@ public class Robot {
     //---DRONE LAUNCHER---//
     public Servo droneReleaser;
 
+    //---PIXEL SPLITTER--//
+    public Servo pixelSplitter;
+
+    public enum pixelSplitterState {
+        Open,
+        Split
+    }
+
     //---SUSPENSION---//
     public DcMotor suspensionMotor;
     public Servo suspensionServo;
@@ -473,6 +481,31 @@ public class Robot {
 
         public void Reset() {
             droneReleaser.setPosition(setPosition);
+        }
+    }
+
+    public class PixelSplitter {
+        public double openPosition = 0.69;
+        public double splitPosition = 0.2;
+        public boolean pixelSplitterReset = true;
+
+        public pixelSplitterState splitterState = pixelSplitterState.Open;
+
+        public PixelSplitter() {
+
+            pixelSplitter = hardwareMap.get(Servo.class, "pixelSplitter");
+
+        }
+
+        public void SplitPixel() {
+            droneReleaser.setPosition(splitPosition);
+            splitterState = pixelSplitterState.Split;
+        }
+
+        public void OpenSplitter() {
+            droneReleaser.setPosition(openPosition);
+            splitterState = pixelSplitterState.Open;
+
         }
     }
 

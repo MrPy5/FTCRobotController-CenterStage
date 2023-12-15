@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Suspension;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.DroneLauncher;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.pixelSplitterState;
 
 
 import java.util.List;
@@ -33,6 +35,8 @@ public class GameTeleop extends LinearOpMode {
         Suspension suspension = robot.new Suspension();
         DroneLauncher droneLauncher = robot.new DroneLauncher();
         SpikeHook spikeHook = robot.new SpikeHook();
+        PixelSplitter pixelSplitter = robot.new PixelSplitter();
+
 
         waitForStart();
 
@@ -209,6 +213,26 @@ public class GameTeleop extends LinearOpMode {
             //---Drone---//
             if (gamepad1.triangle) {
                 droneLauncher.ReleaseDrone();
+            }
+
+            //---Pixel Splitter---//
+            if (gamepad2.left_trigger > robot.triggerSensitivity) {
+                if (pixelSplitter.pixelSplitterReset) {
+
+                    if (pixelSplitter.splitterState == pixelSplitterState.Open) {
+                        pixelSplitter.SplitPixel();
+                        pixelSplitter.pixelSplitterReset = false;
+                    }
+                    if (pixelSplitter.splitterState == pixelSplitterState.Split) {
+                        pixelSplitter.OpenSplitter();
+                        pixelSplitter.pixelSplitterReset = false;
+                    }
+
+                }
+
+            }
+            else {
+                pixelSplitter.pixelSplitterReset = true;
             }
 
             //---Suspension---//
