@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 public abstract class AutoControls extends LinearOpMode {
@@ -23,6 +24,7 @@ public abstract class AutoControls extends LinearOpMode {
     public Robot robot;
     public Dropper dropper;
     public Lift lift;
+    public PixelSplitter splitter;
     public Intake intake;
     public SpikeHook spike;
     public BNO055IMU imu;
@@ -38,7 +40,11 @@ public abstract class AutoControls extends LinearOpMode {
         lift = robot.new Lift();
         intake = robot.new Intake();
         spike = robot.new SpikeHook();
+        splitter = robot.new PixelSplitter();
+
         spike.ResetSpike();
+        dropper.CloseDropper();
+        splitter.OpenSplitter();
 
         robot.initEasyOpenCV();
         robot.initAprilTag();
@@ -169,7 +175,7 @@ public abstract class AutoControls extends LinearOpMode {
         double currentHeading;
         ElapsedTime turnTimer = new ElapsedTime();
         double lastAngle = -1;
-        while (degreesOff(targetHeading) > 0.5) {
+        while (degreesOff(targetHeading) > 0.5 && opModeIsActive()) {
 
             double adjustment = 0;
             adjustment = headingAdjustment(targetHeading, 0);
@@ -228,7 +234,7 @@ public abstract class AutoControls extends LinearOpMode {
 
 
 
-        while (Math.abs(distanceToTarget) > 1) {
+        while (Math.abs(distanceToTarget) > 1 && opModeIsActive()) {
             currentInches = GetAverageWheelPositionInches();
             distanceToTarget = targetInches - currentInches;
 
@@ -270,7 +276,7 @@ public abstract class AutoControls extends LinearOpMode {
 
 
 
-        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE) {
+        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
 
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
@@ -318,7 +324,7 @@ public abstract class AutoControls extends LinearOpMode {
             lift.SetPosition(lift.liftAprilTags, 0);
         }
 
-        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && (fetchedPose == null ? true : fetchedPose.range > TAG_DISTANCE)) {
+        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && (fetchedPose == null ? true : fetchedPose.range > TAG_DISTANCE) && opModeIsActive()) {
 
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
@@ -364,7 +370,7 @@ public abstract class AutoControls extends LinearOpMode {
             lift.SetPosition(lift.liftAprilTags, 0);
         }
         double targetRange = 0;
-        while (Math.abs(strafeDistanceToTarget) > 1) {
+        while (Math.abs(strafeDistanceToTarget) > 1 && opModeIsActive()) {
             currentStrafeInches = GetAverageStrafePositionInches();
             strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
 
@@ -406,7 +412,7 @@ public abstract class AutoControls extends LinearOpMode {
             lift.SetPosition(lift.liftAprilTags, 0);
         }
         double targetRange = 0;
-        while (Math.abs(strafeDistanceToTarget) > 1) {
+        while (Math.abs(strafeDistanceToTarget) > 1 && opModeIsActive()) {
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
 

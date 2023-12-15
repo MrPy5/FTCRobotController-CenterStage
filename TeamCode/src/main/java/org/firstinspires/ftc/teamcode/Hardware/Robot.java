@@ -498,12 +498,12 @@ public class Robot {
         }
 
         public void SplitPixel() {
-            droneReleaser.setPosition(splitPosition);
+            pixelSplitter.setPosition(splitPosition);
             splitterState = pixelSplitterState.Split;
         }
 
         public void OpenSplitter() {
-            droneReleaser.setPosition(openPosition);
+            pixelSplitter.setPosition(openPosition);
             splitterState = pixelSplitterState.Open;
 
         }
