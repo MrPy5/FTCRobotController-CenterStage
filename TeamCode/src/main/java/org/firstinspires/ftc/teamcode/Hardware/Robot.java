@@ -648,6 +648,7 @@ public class Robot {
             whiteTwo = Core.countNonZero(resizedTwo);
 
             //return resizedOne;
+            Imgproc.rectangle(colorMask, ro1, new Scalar(255, 255, 255), 10);
             return colorMask;
         }
 
