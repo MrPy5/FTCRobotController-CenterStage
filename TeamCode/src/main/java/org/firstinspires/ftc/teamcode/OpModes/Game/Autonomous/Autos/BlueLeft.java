@@ -41,7 +41,7 @@ public class BlueLeft extends AutoControls {
             sleep(500);
             DriveWithCorrection(-25, 270, 0.2);
             sleep(500);
-            StrafeWithInchesWithCorrection(30, 1, 1, 270);
+            StrafeWithInchesWithCorrection(30, 0.2, 1, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 1);
             //Navigate(1, 9, 3);
         }
@@ -54,7 +54,7 @@ public class BlueLeft extends AutoControls {
             spike.ResetSpike();
             Turn(270);
             DriveWithCorrection(-30, 270, 0.2);
-            StrafeWithInchesWithCorrection(48, 1, 2, 270);
+            StrafeWithInchesWithCorrection(48, 0.2, 2, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);
             //Navigate(2, 9, 5);
         }
@@ -75,7 +75,7 @@ public class BlueLeft extends AutoControls {
             sleep(500);
             DriveWithCorrection(-28, 270, 0.2);
             sleep(500);
-            StrafeWithInchesWithCorrection(12, 0, 3, 270);
+            StrafeWithInchesWithCorrection(12, 0.2, 3, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 3);
             //Navigate(3, 9, 5);
         }
@@ -84,8 +84,6 @@ public class BlueLeft extends AutoControls {
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
-        Drive(-7);
-        sleep(1000);
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();

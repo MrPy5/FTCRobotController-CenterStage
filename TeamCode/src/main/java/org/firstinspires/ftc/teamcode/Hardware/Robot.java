@@ -635,20 +635,22 @@ public class Robot {
         @Override
         public Mat processFrame(Mat input) {
             colorMask = preprocessFrame(input);
-            Rect ro1 = new Rect(150,0,250,350);
-            Rect ro2 = new Rect(650,0,250,350);
+            Rect ro1 = new Rect(130,230,250,300);
+            Rect ro2 = new Rect(650,220,350,180);
             croppedSectorOne = new Mat(colorMask, ro1);
             croppedSectorTwo = new Mat(colorMask, ro2);
 
-            Size sz = new Size(25,35);
-            Imgproc.resize(croppedSectorOne, resizedOne, sz);
+            Size sz1 = new Size(25,20);
+            Size sz2 = new Size(35,10);
+            Imgproc.resize(croppedSectorOne, resizedOne, sz1);
 
-            Imgproc.resize(croppedSectorTwo, resizedTwo, sz);
+            Imgproc.resize(croppedSectorTwo, resizedTwo, sz2);
             whiteOne = Core.countNonZero(resizedOne);
             whiteTwo = Core.countNonZero(resizedTwo);
 
             //return resizedOne;
-            Imgproc.rectangle(colorMask, ro1, new Scalar(255, 255, 255), 10);
+            Imgproc.rectangle(colorMask, ro1, new Scalar(100, 255, 255), 10);
+            Imgproc.rectangle(colorMask, ro2, new Scalar(100, 255, 255), 10);
             return colorMask;
         }
 
@@ -711,9 +713,9 @@ public class Robot {
     public int ScanForElementBitmap(int preferredFailOutput) {
         int returnSpike = preferredFailOutput;
 
-        if (whiteOne > whiteTwo && whiteOne > 100) {
+        if (whiteOne > whiteTwo && whiteOne > 80) {
             returnSpike = 1;
-        } else if (whiteTwo > whiteOne && whiteTwo > 100) {
+        } else if (whiteTwo > whiteOne && whiteTwo > 80) {
             returnSpike = 2;
         } else {
             returnSpike = 3;

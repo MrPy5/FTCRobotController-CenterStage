@@ -41,7 +41,7 @@ public abstract class AutoControls extends LinearOpMode {
         spike.ResetSpike();
 
         robot.initEasyOpenCV();
-        //robot.initAprilTag();
+        robot.initAprilTag();
         initIMU();
     }
 

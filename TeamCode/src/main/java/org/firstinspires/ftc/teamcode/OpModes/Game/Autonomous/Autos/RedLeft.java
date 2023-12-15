@@ -84,8 +84,6 @@ public class RedLeft extends AutoControls {
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
-        Drive(-7);
-        sleep(1000);
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();

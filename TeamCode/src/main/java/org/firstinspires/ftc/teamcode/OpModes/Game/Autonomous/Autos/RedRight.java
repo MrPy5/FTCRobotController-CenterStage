@@ -49,13 +49,17 @@ public class RedRight extends AutoControls {
         }
         //Position 2
         if (spikeLocation == 2) {
-            DriveWithCorrection(47, 0, 0.2);
+            DriveWithCorrection(18, 0, 0.2);
+            sleep(500);
+            DriveWithCorrection(27, 0, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(1000);
             spike.ResetSpike();
+            DriveWithCorrection(2, 0, 0.2);
+            sleep(500);
             Turn(90);
-            DriveWithCorrection(-30, 90, 0.2);
+            DriveWithCorrection(-27, 90, 0.2);
             StrafeWithInchesWithCorrection(48, -0.2, 5, 90);
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);
             //Navigate(5, 9, 5);
@@ -79,24 +83,22 @@ public class RedRight extends AutoControls {
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 6);
             //Navigate(6, 9, 5);
         }
-
-        DriveWithCorrection(-5, 90, 0.3);
-        sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
-        Drive(-5);
-        sleep(1000);
+        DriveWithCorrection(-5, 90, 0.3);
+        sleep(500);
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();
         lift.SetPosition(lift.liftLow, lift.liftLow - 5);
-        sleep(1000);
+        sleep(500);
 
         Drive(3);
-        sleep(1000);
+        sleep(500);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
-        sleep(1000);
-
+        sleep(500);
+        StrafeWithInchesWithCorrection(12, 0.2, -1, 90);
+        sleep(500);
     }
 
 }

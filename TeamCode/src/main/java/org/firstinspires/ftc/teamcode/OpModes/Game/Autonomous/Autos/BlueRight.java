@@ -43,8 +43,8 @@ public class BlueRight extends AutoControls {
             sleep(500);
             DriveWithCorrection(-70, 270, 0.2);
             sleep(500);
-            StrafeWithInchesWithCorrection(48, 1, 1, 270);
-            //Navigate(1, 9, 5);
+            StrafeWithInchesWithCorrection(48, 0.2, 1, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 1);
         }
         //Position 2
         if (spikeLocation == 2) {
@@ -55,8 +55,8 @@ public class BlueRight extends AutoControls {
             spike.ResetSpike();
             Turn(270);
             DriveWithCorrection(-72, 0, 0.2);
-            StrafeWithInchesWithCorrection(48, 1, 2, 270);
-            //Navigate(2, 9, 5);
+            StrafeWithInchesWithCorrection(48, 0.2, 2, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);
         }
         //Position 3
         if (spikeLocation == 3) {
@@ -77,8 +77,8 @@ public class BlueRight extends AutoControls {
             sleep(500);
             DriveWithCorrection(-72, 270, 0.2);
             sleep(500);
-            StrafeWithInchesWithCorrection(48, 1, 3, 270);
-            //Navigate(3, 9, 5);
+            StrafeWithInchesWithCorrection(48, 0.2, 3, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 3);
 
         }
 
@@ -86,8 +86,6 @@ public class BlueRight extends AutoControls {
         sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
-        Drive(-7);
-        sleep(1000);
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();
