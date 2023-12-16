@@ -46,8 +46,9 @@ public abstract class AutoControls extends LinearOpMode {
         dropper.CloseDropper();
         splitter.OpenSplitter();
 
-        robot.initEasyOpenCV();
         robot.initAprilTag();
+        robot.initEasyOpenCV();
+
         initIMU();
     }
 

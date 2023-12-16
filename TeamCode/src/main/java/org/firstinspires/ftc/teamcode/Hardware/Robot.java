@@ -419,8 +419,8 @@ public class Robot {
         }
     }
     public class SpikeHook {
-        public double spikeUp = 0.25;
-        public double spikeDropped = 0.7;
+        public double spikeUp = 0.22;
+        public double spikeDropped = 0.65;
 
         public SpikeHook() {
             spikeHook = hardwareMap.get(Servo.class, "spikeHook");

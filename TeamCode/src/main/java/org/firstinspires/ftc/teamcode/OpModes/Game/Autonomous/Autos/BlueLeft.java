@@ -37,13 +37,12 @@ public class BlueLeft extends AutoControls {
             spike.DropSpike();
             sleep(1000);
             spike.ResetSpike();
-            StrafeWithInchesWithCorrection(20, 0, -1, 270);
+            StrafeWithInchesWithCorrection(20, -0.2, -1, 270);
             sleep(500);
             DriveWithCorrection(-25, 270, 0.2);
             sleep(500);
             StrafeWithInchesWithCorrection(30, 0.2, 1, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 1);
-            //Navigate(1, 9, 3);
         }
         //Position 2
         if (spikeLocation == 2) {
@@ -56,7 +55,6 @@ public class BlueLeft extends AutoControls {
             DriveWithCorrection(-30, 270, 0.2);
             StrafeWithInchesWithCorrection(48, 0.2, 2, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);
-            //Navigate(2, 9, 5);
         }
         //Position 3
         if (spikeLocation == 3) {
@@ -64,35 +62,41 @@ public class BlueLeft extends AutoControls {
             sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-3, 90, 0.2);
+            DriveWithCorrection(-4, 90, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(1000);
             spike.ResetSpike();
-            DriveWithCorrection(5, 90, 0.2);
+            DriveWithCorrection(17, 90, 0.2);
             sleep(500);
             Turn(270);
             sleep(500);
-            DriveWithCorrection(-28, 270, 0.2);
+            DriveWithCorrection(-15, 270, 0.2);
             sleep(500);
-            StrafeWithInchesWithCorrection(12, 0.2, 3, 270);
+            StrafeWithInchesWithCorrection(12, -0.2, 3, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 3);
-            //Navigate(3, 9, 5);
         }
 
-        Drive(-8);
-        sleep(1000);
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        sleep(500);
+        DriveWithCorrection(-2, 270, 0.3);
         sleep(500);
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();
         lift.SetPosition(lift.liftLow, lift.liftLow - 5);
-        sleep(1000);
+        sleep(500);
 
         Drive(3);
         sleep(1000);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
+
+        if (spikeLocation == 2 || spikeLocation == 3) {
+            StrafeWithInchesWithCorrection(12, -0.2, -1, 270);
+        } else if (spikeLocation == 1) {
+            StrafeWithInchesWithCorrection(20, -0.2, -1, 270);
+        }
+
         sleep(1000);
 
     }

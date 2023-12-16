@@ -103,7 +103,7 @@ public class RedLeft extends AutoControls {
 
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
-        DriveWithCorrection(-5, 90, 0.3);
+        DriveWithCorrection(-2, 90, 0.3);
         sleep(500);
         dropper.OpenDropper();
         sleep(500);
@@ -115,7 +115,13 @@ public class RedLeft extends AutoControls {
         sleep(1000);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(1000);
-        StrafeWithInchesWithCorrection(12, 0.2, -1, 90);
+
+        if (spikeLocation == 1 || spikeLocation == 2) {
+            StrafeWithInchesWithCorrection(12, 0.2, -1, 90);
+        } else if (spikeLocation == 3) {
+            StrafeWithInchesWithCorrection(20, 0.2, -1, 90);
+        }
+
         sleep(500);
 
     }
