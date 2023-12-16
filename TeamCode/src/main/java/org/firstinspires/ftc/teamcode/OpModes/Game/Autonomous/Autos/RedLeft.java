@@ -52,14 +52,16 @@ public class RedLeft extends AutoControls {
 
             DriveWithCorrection(42, 0, 0.3);
             sleep(500);
-            StrafeWithInchesWithCorrection(13, -0.3, -1, 0);
+            StrafeWithInchesWithCorrection(14, -0.3, -1, 0);
+            sleep(500);
+            DriveWithCorrection(-1, 0, 0.3);
             sleep(500);
             spike.DropSpike();
             sleep(500);
             spike.ResetSpike();
-            DriveWithCorrection(3, 0, 0.3);
+            DriveWithCorrection(5, 0, 0.3);
             Turn(90);
-            DriveWithCorrection(-89, 90, 0.3);
+            DriveWithCorrection(-88, 90, 0.3);
             sleep(500);
             StrafeWithInchesWithCorrection(48, -0.3, 4, 90);
             DriveWithCorrectionToAprilTag(-40, 90, 0.4, 4);
@@ -67,6 +69,7 @@ public class RedLeft extends AutoControls {
         }
         //Position 2
         if (spikeLocation == 2) {
+            /*
             DriveWithCorrection(18, 0, 0.2);
             sleep(500);
             DriveWithCorrection(27, 0, 0.2);
@@ -79,11 +82,28 @@ public class RedLeft extends AutoControls {
             Turn(90);
             DriveWithCorrection(-72, 90, 0.4);
             StrafeWithInchesWithCorrection(48, -0.2, 5, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);*/
+            DriveWithCorrection(18, 0, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(10, -0.2, -1, 0);
+            sleep(500);
+            DriveWithCorrection(25.5, 0, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(2, 0.2, -1, 0);
+            sleep(500);
+            spike.DropSpike();
+            sleep(500);
+            spike.ResetSpike();
+            DriveWithCorrection(3, 0, 0.2);
+            sleep(500);
+            Turn(90);
+            DriveWithCorrection(-82, 90, 0.2);
+            StrafeWithInchesWithCorrection(48, -0.2, 5, 90);
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);
         }
         //Position 3
         if (spikeLocation == 3) {
-            DriveWithCorrection(30, 0, 0.3);
+            DriveWithCorrection(28, 0, 0.3);
             sleep(500);
             Turn(90);
             sleep(500);
@@ -116,13 +136,6 @@ public class RedLeft extends AutoControls {
         lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(1000);
 
-        if (spikeLocation == 1 || spikeLocation == 2) {
-            StrafeWithInchesWithCorrection(12, 0.2, -1, 90);
-        } else if (spikeLocation == 3) {
-            StrafeWithInchesWithCorrection(20, 0.2, -1, 90);
-        }
-
-        sleep(500);
 
     }
 

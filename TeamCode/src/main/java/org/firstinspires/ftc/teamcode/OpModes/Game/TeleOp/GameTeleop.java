@@ -76,6 +76,9 @@ public class GameTeleop extends LinearOpMode {
         dropper.CloseDropper();
         spikeHook.ResetSpike();
 
+        //---Suspension---//
+        int suspensionToggle = 0;
+        boolean suspensionReset = true;
 
         while (opModeIsActive()) {
 
@@ -210,13 +213,14 @@ public class GameTeleop extends LinearOpMode {
             }
 
 
+
             //---Drone---//
             if (gamepad1.triangle) {
                 droneLauncher.ReleaseDrone();
             }
 
             //---Pixel Splitter---//
-            if (gamepad2.left_trigger > robot.triggerSensitivity) {
+            /*if (gamepad2.left_trigger > robot.triggerSensitivity) {
                 if (pixelSplitter.pixelSplitterReset) {
 
                     if (pixelSplitter.splitterState == pixelSplitterState.Open) {
@@ -233,24 +237,32 @@ public class GameTeleop extends LinearOpMode {
             }
             else {
                 pixelSplitter.pixelSplitterReset = true;
-            }
+            }*/
 
             //---Suspension---//
             //Servo
-            if (gamepad1.dpad_left) {
-                suspension.ActivateSuspension();
+            if (gamepad2.left_trigger > robot.triggerSensitivity && suspensionReset) {
+                if (suspensionToggle == 0) {
+                    suspension.ActivateSuspension();
+                    suspensionToggle = 1;
+                }
+                else if (suspensionToggle == 1) {
+                    suspension.DeactivateSuspension();
+                    suspensionToggle = 0;
+                }
+                suspensionReset = false;
             }
-            if (gamepad1.dpad_right) {
-                suspension.DeactivateSuspension();
+            if (gamepad2.left_trigger < robot.triggerSensitivity) {
+                suspensionReset = true;
             }
             //Motor
-            if (gamepad1.dpad_up) {
+            if (gamepad2.dpad_right) {
                 robot.suspensionMotor.setPower(1);
             }
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_left) {
                 robot.suspensionMotor.setPower(-1);
             }
-            if (!gamepad1.dpad_down && !gamepad1.dpad_up) {
+            if (!gamepad2.dpad_right && !gamepad2.dpad_left) {
                 robot.suspensionMotor.setPower(0);
             }
 

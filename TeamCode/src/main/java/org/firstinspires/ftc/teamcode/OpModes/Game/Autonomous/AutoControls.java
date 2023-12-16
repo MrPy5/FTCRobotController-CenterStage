@@ -425,9 +425,17 @@ public abstract class AutoControls extends LinearOpMode {
             robot.frontRight.setPower(-1 *(power) - turnAdjustment);
             robot.backRight.setPower(power - turnAdjustment);
 
-            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2)) {
-                targetRange = robot.getTargetAprilTagPos(targetTag).range;
-                break;
+            if (robot.getTargetAprilTagPos(targetTag) != null) {
+                telemetry.addData("boolean", (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2));
+
+                if (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2) {
+                    telemetry.addData("target tag", robot.getTargetAprilTagPos(targetTag).x);
+
+                    targetRange = robot.getTargetAprilTagPos(targetTag).range;
+                    break;
+                }
+                telemetry.update();
+
             }
         }
 

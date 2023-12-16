@@ -37,11 +37,11 @@ public class RedRight extends AutoControls {
             spike.DropSpike();
             sleep(500);
             spike.ResetSpike();
-            DriveWithCorrection(3, 270, 0.2);
+            DriveWithCorrection(5, 270, 0.2);
             sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-28, 90, 0.2);
+            DriveWithCorrection(-25, 90, 0.2);
             sleep(500);
             StrafeWithInchesWithCorrection(12, 0.2, 4, 90);
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 4);

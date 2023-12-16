@@ -24,8 +24,9 @@ public class BlueRight extends AutoControls {
         }
 
         waitForStart();
-        robot.gameTimer.startTime();
 
+        robot.gameTimer.startTime();
+        //sleep(2000);
         //Position 1
         if (spikeLocation == 1) {
             DriveWithCorrection(39, 0, 0.2);
@@ -48,6 +49,7 @@ public class BlueRight extends AutoControls {
         }
         //Position 2
         if (spikeLocation == 2) {
+            /*
             DriveWithCorrection(18, 0, 0.2);
             sleep(500);
             DriveWithCorrection(27, 0, 0.2);
@@ -60,7 +62,25 @@ public class BlueRight extends AutoControls {
             Turn(270);
             DriveWithCorrection(-72, 270, 0.2);
             StrafeWithInchesWithCorrection(48, 0.2, 2, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);*/
+            DriveWithCorrection(18, 0, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(10, 0.2, -1, 0);
+            sleep(500);
+            DriveWithCorrection(26.5, 0, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(12, -0.2, -1, 0);
+            sleep(500);
+            spike.DropSpike();
+            sleep(500);
+            spike.ResetSpike();
+            DriveWithCorrection(3, 0, 0.2);
+            sleep(500);
+            Turn(270);
+            DriveWithCorrection(-72, 270, 0.2);
+            StrafeWithInchesWithCorrection(48, 0.2, 2, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);
+
         }
         //Position 3
         if (spikeLocation == 3) {
@@ -109,6 +129,7 @@ public class BlueRight extends AutoControls {
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();
+        sleep(500);
         lift.SetPosition(lift.liftLow, lift.liftLow - 5);
         sleep(500);
 

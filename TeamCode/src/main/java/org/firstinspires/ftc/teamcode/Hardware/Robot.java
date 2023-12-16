@@ -460,11 +460,7 @@ public class Robot {
             dropperOpen = true;
         }
 
-        public void Score() {
-            pixelDropper.setPosition(openDropper);
-            scoreTimer = gameTimer.milliseconds();
 
-        }
     }
 
     public class DroneLauncher {
@@ -669,7 +665,7 @@ public class Robot {
         public Mat processFrame(Mat input) {
             colorMask = preprocessFrame(input);
             Rect ro1 = new Rect(130,230,250,300);
-            Rect ro2 = new Rect(650,220,350,180);
+            Rect ro2 = new Rect(580,220,350,180);
             croppedSectorOne = new Mat(colorMask, ro1);
             croppedSectorTwo = new Mat(colorMask, ro2);
 
@@ -746,9 +742,9 @@ public class Robot {
     public int ScanForElementBitmap(int preferredFailOutput) {
         int returnSpike = preferredFailOutput;
 
-        if (whiteOne > whiteTwo && whiteOne > 80) {
+        if (whiteOne > whiteTwo && whiteOne > 75) {
             returnSpike = 1;
-        } else if (whiteTwo > whiteOne && whiteTwo > 80) {
+        } else if (whiteTwo > whiteOne && whiteTwo > 75 ) {
             returnSpike = 2;
         } else {
             returnSpike = 3;
