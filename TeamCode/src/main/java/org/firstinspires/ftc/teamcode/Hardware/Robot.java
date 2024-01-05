@@ -70,6 +70,9 @@ public class Robot {
     //---SPIKE HOOK---//
     public Servo spikeHook; //Delete if two droppers
 
+    //---INTAKE HOIST---//
+    public Servo intakeHoist;
+
     //---DRIVING---//
 
     //Motors
@@ -336,6 +339,8 @@ public class Robot {
 
     }
 
+
+
     public class Intake {
         public int intakeState = 0;
         public Intake() {
@@ -504,6 +509,33 @@ public class Robot {
 
         }
     }
+    public class IntakeHoist {
+
+
+
+        public double groundPosition = 0.86;
+        public double hoistedPosition = groundPosition - 0.86;
+        public double stackPosition = groundPosition - 0.17;
+
+
+
+        public IntakeHoist() {
+
+            intakeHoist = hardwareMap.get(Servo.class, "intakeHoist");
+
+        }
+
+        public void Hoist() {
+            intakeHoist.setPosition(hoistedPosition);
+        }
+
+        public void Stack() {
+            intakeHoist.setPosition(stackPosition);
+        }
+        public void Ground() {
+            intakeHoist.setPosition(groundPosition);
+        }
+    }
 
     public class Suspension {
 
@@ -568,16 +600,8 @@ public class Robot {
                 // Draw a red outline around the largest detected object
                 Imgproc.drawContours(input, contours, contours.indexOf(largestContour), new Scalar(255, 0, 0), 2);
                 // Calculate the width of the bounding box
-                width = calculateWidth(largestContour);
-                area = calculateArea(largestContour);
-                UpdateArea(area);
-                // Display the width next to the label
-                String widthLabel = "Width: " + (int) width + " pixels";
-                Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                //Display the Distance
-                String distanceLabel = "Area: " + String.format("%.2f", area) + " inches";
-                Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
-                // Calculate the centroid of the largest contour
+
+
                 Moments moments = Imgproc.moments(largestContour);
                 cX = moments.get_m10() / moments.get_m00();
                 cY = moments.get_m01() / moments.get_m00();
@@ -597,18 +621,11 @@ public class Robot {
 
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
-            Scalar lowerRed = new Scalar(100, 100, 100);
-            Scalar upperRed = new Scalar(180, 255, 255);
-            Scalar lowerBlue = new Scalar(0, 100, 100);
-            Scalar upperBlue = new Scalar(80, 255, 255);
+            Scalar lowerWhite = new Scalar(0, 0, 240);
+            Scalar upperWhite = new Scalar(0, 0, 255);
 
+            Core.inRange(hsvFrame, lowerWhite, upperWhite, colorMask);
 
-            if (alliance == "red") {
-                Core.inRange(hsvFrame, lowerRed, upperRed, colorMask);
-            }
-            if (alliance == "blue") {
-                Core.inRange(hsvFrame, lowerBlue, upperBlue, colorMask);
-            }
 
             Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
             Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_OPEN, kernel);
@@ -631,19 +648,6 @@ public class Robot {
 
             return largestContour;
         }
-        private double calculateWidth(MatOfPoint contour) {
-            Rect boundingRect = Imgproc.boundingRect(contour);
-
-            return boundingRect.width;
-        }
-        public double calculateArea(MatOfPoint contour) {
-            Rect boundingRect = Imgproc.boundingRect(contour);
-
-            return boundingRect.area();
-        }
-
-
-
     }
 
     public class ColorCounter extends OpenCvPipeline {
@@ -712,6 +716,7 @@ public class Robot {
 
 
     }
+
 
     private  double getDistance(double width){
         double distance = (objectWidthInRealWorldUnits * focalLength) / width;

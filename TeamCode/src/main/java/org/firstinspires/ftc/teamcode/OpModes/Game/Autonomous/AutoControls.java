@@ -361,6 +361,57 @@ public abstract class AutoControls extends LinearOpMode {
 
 
     }
+    public void DriveWithCorrectionToStack(double targetInches, double targetHeading, double power) {
+        ResetEncoders();
+
+
+
+        double currentInches;
+        double distanceToTarget;
+
+        double lfPower = power;
+        double rfPower = power;
+        double lrPower = power;
+        double rrPower = power;
+
+        double reverse;
+
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
+
+
+        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            double tagAdjustment = 0;
+
+            //tagAdjustment = (0.2/5) * (fetchedPose.x);
+
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            if (distanceToTarget < 0) {
+                reverse = -1;
+            } else {
+                reverse = 1;
+            }
+
+            robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + tagAdjustment);
+            robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - tagAdjustment);
+            robot.backRight.setPower((rrPower * reverse) - turnAdjustment + tagAdjustment);
+            robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - tagAdjustment);
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+
+    }
     public double StrafeWithInches(double targetStrafeInches, int direction, int targetTag) {
         ResetEncoders();
 

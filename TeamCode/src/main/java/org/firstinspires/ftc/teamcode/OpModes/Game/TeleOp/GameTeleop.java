@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.DroneLauncher;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.pixelSplitterState;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.IntakeHoist;
+
 
 
 import java.util.List;
@@ -36,6 +38,7 @@ public class GameTeleop extends LinearOpMode {
         DroneLauncher droneLauncher = robot.new DroneLauncher();
         SpikeHook spikeHook = robot.new SpikeHook();
         PixelSplitter pixelSplitter = robot.new PixelSplitter();
+        IntakeHoist intakeHoist = robot.new IntakeHoist();
 
 
         waitForStart();
@@ -88,16 +91,32 @@ public class GameTeleop extends LinearOpMode {
             // intake -> Right trigger
             // outtake -> Left trigger
             // stop intake -> Right Bumper
-            // shoot drone -> D-Pad up
-            // turn servo -> D-Pad Left
-            // lift robot -> D-Pad Down
-            // reverse lift robot -> D-Pad Up
+            // ground -> D-Pad down
+            // stack -> D-Pad left
+            // hoisted -> D-Pad up
+            // launch drone -> triangle
 
             //---Gamepad2 controls---//
             //
             // lift presets -> Right Bumper, a, b, y
-            // manual lift -> Bumpers
-            // Pixel Dropper -> Right trigger
+            // lift position reset -> Left Bumper
+            // manual lift -> D-Pad up & down
+            // drop pixel -> Right trigger
+            // toggle suspension activation -> Left Trigger
+            // raise & lower suspension -> D-Pad left & right
+
+            /*
+
+
+
+
+
+
+
+
+
+             */
+
 
 
 
@@ -212,8 +231,6 @@ public class GameTeleop extends LinearOpMode {
                 dropper.OpenDropper();
             }
 
-
-
             //---Drone---//
             if (gamepad1.triangle) {
                 droneLauncher.ReleaseDrone();
@@ -264,6 +281,17 @@ public class GameTeleop extends LinearOpMode {
             }
             if (!gamepad2.dpad_right && !gamepad2.dpad_left) {
                 robot.suspensionMotor.setPower(0);
+            }
+
+            //Hoist
+            if (gamepad1.dpad_down) {
+                intakeHoist.Ground();
+            }
+            if (gamepad1.dpad_left) {
+                intakeHoist.Stack();
+            }
+            if (gamepad1.dpad_up) {
+                intakeHoist.Hoist();
             }
 
             telemetry.addData("Manual Lift Mode: ", manualLiftMode);
