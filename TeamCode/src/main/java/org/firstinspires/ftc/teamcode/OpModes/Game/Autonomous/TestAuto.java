@@ -2,24 +2,136 @@ package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Test Auto")
+import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
+
+@Autonomous(name = "TestAuto")
 public class TestAuto extends AutoControls {
 
     @Override
     public void runOpMode() {
         initMethods(hardwareMap);
-
         robot.alliance = "red";
 
-
+        //Vision
+        int spikeLocation = 1;
         waitForStart();
         robot.gameTimer.startTime();
-        lift.SetPosition(lift.liftLow, 0);
-        sleep(1000);
-        dropper.OpenDropper();
+
+        //Position 1
+        if (spikeLocation == 1) {
+
+
+            DriveWithCorrection(42, 0, 0.4);
+            sleep(100);
+            StrafeWithInchesWithCorrection(14, -0.4, -1, 0);
+            sleep(100);
+            DriveWithCorrection(-1, 0, 0.3);
+            sleep(100);
+            spike.DropSpike();
+            sleep(400);
+            spike.ResetSpike();
+            DriveWithCorrection(5, 0, 0.4);
+            Turn(90);
+            DriveWithCorrection(-88, 90, 0.6);
+            sleep(100);
+            StrafeWithInchesWithCorrection(48, -0.3, 4, 90);
+            DriveWithCorrectionToAprilTag(-40, 90, 0.4, 4);
+
+        }
+        //Position 2
+        if (spikeLocation == 2) {
+            /*
+            DriveWithCorrection(18, 0, 0.2);
+            sleep(500);
+            DriveWithCorrection(27, 0, 0.2);
+            sleep(500);
+            spike.DropSpike();
+            sleep(1000);
+            spike.ResetSpike();
+            DriveWithCorrection(2, 0, 0.2);
+            sleep(250);
+            Turn(90);
+            DriveWithCorrection(-72, 90, 0.4);
+            StrafeWithInchesWithCorrection(48, -0.2, 5, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);*/
+            DriveWithCorrection(18, 0, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(10, -0.2, -1, 0);
+            sleep(500);
+            DriveWithCorrection(25.5, 0, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(2, 0.2, -1, 0);
+            sleep(500);
+            spike.DropSpike();
+            sleep(500);
+            spike.ResetSpike();
+            DriveWithCorrection(3, 0, 0.2);
+            sleep(500);
+            Turn(90);
+            DriveWithCorrection(-82, 90, 0.2);
+            StrafeWithInchesWithCorrection(48, -0.2, 5, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);
+        }
+        //Position 3
+        if (spikeLocation == 3) {
+            DriveWithCorrection(28, 0, 0.3);
+            sleep(500);
+            Turn(90);
+            sleep(500);
+            DriveWithCorrection(-3, 90, 0.3);
+            spike.DropSpike();
+            sleep(1000);
+            spike.ResetSpike();
+            DriveWithCorrection(2, 90, 0.3);
+            sleep(500);
+            StrafeWithInchesWithCorrection(20, 0.2, -1, 90);
+            sleep(500);
+            DriveWithCorrection(-75, 90, 0.3);
+            sleep(500);
+            StrafeWithInchesWithCorrection(48, -0.2, 6, 90);
+            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 6);
+        }
+
+        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        sleep(200);
+        DriveWithCorrection(-2, 90, 0.3);
+        sleep(50);
+        robot.pixelDropper.setPosition(0.12);
+        sleep(600);
+        robot.pixelDropper.setPosition(0.31);
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        sleep(50);
+
+        Drive(3);
+        sleep(200);
+        lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(500);
-        dropper.CloseDropper();
+        StrafeWithInchesWithCorrection(18, 0.4, -1, 90);
+        DriveWithCorrection(78, 90, 0.6);
+        DriveWithCorrectionToStack(29, 90, 0.4);
+        intake.StartIntake(1);
+        sleep(1750);
+        intake.StopIntake();
+        DriveWithCorrection(-85, 90, 0.6);
+        StrafeWithInchesWithCorrection(48, -0.3, 4, 90);
+        DriveWithCorrectionToAprilTag(-40, 90, 0.4, 4);
+
+        lift.SetPosition(lift.liftLow - 2,  lift.liftAprilTags);
+        sleep(300);
+        DriveWithCorrection(-2, 90, 0.3);
+        sleep(50);
+        robot.pixelDropper.setPosition(0.12);
+        sleep(600);
+        robot.pixelDropper.setPosition(0.31);
+        lift.SetPosition(lift.liftLow + 2, lift.liftLow - 5);
+        sleep(50);
+
+        Drive(3);
+        sleep(200);
+        lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(500);
+
+
     }
 
 }

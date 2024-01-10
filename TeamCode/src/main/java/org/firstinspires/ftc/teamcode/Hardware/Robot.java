@@ -121,6 +121,7 @@ public class Robot {
     public String openCVWebCamName = "OpenCV";
 
     public ColorCounter pipeline;
+    public ContourDetectionPipeline pipelineContour;
 
     public int STREAM_WIDTH = 1280; // modify for your camera
     public int STREAM_HEIGHT = 720; // modify for your camera
@@ -130,7 +131,7 @@ public class Robot {
 
     public String alliance = "";
 
-    public double centerX = 0;
+    public double centerX = -1;
     public double centerY = 0;
 
     public int whiteOne = 0;
@@ -205,9 +206,9 @@ public class Robot {
         WebcamName webcamNamed = null;
         webcamNamed = hardwareMap.get(WebcamName.class, openCVWebCamName); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamNamed, cameraMonitorViewId);
-        //pipeline = new ContourDetectionPipeline();
-        pipeline = new ColorCounter();
-        webcam.setPipeline(pipeline);
+        pipelineContour = new ContourDetectionPipeline();
+        //pipeline = new ColorCounter();
+        webcam.setPipeline(pipelineContour);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -383,7 +384,7 @@ public class Robot {
         public int currentLevel = 1;
 
         public double liftBottom = 0;
-        public double liftAprilTags = 6;
+        public double liftAprilTags = 10;
         public double liftLow = 12;
         public double liftMedium = 20;
         public double liftHigh = 28;
@@ -573,8 +574,6 @@ public class Robot {
 
 
     public class ContourDetectionPipeline extends OpenCvPipeline {
-        public double width;
-        public double area;
         public double cX = 0;
         public double cY = 0;
 
@@ -621,8 +620,8 @@ public class Robot {
 
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
-            Scalar lowerWhite = new Scalar(0, 0, 240);
-            Scalar upperWhite = new Scalar(0, 0, 255);
+            Scalar lowerWhite = new Scalar(0, 0, 200);
+            Scalar upperWhite = new Scalar(59, 60, 255);
 
             Core.inRange(hsvFrame, lowerWhite, upperWhite, colorMask);
 

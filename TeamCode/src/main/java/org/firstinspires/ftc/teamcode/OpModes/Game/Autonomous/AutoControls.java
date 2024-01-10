@@ -386,8 +386,9 @@ public abstract class AutoControls extends LinearOpMode {
             turnAdjustment = headingAdjustment(targetHeading, 0);
 
             double tagAdjustment = 0;
-
-            //tagAdjustment = (0.2/5) * (fetchedPose.x);
+            if (robot.getCenter() != -1) {
+                tagAdjustment = (0.0004) * ((robot.getCenter() - 945));
+            }
 
 
             currentInches = GetAverageWheelPositionInches();
