@@ -120,7 +120,7 @@ public class Robot {
 
     public String openCVWebCamName = "OpenCV";
 
-    public ColorCounter pipeline;
+    public ColorCounter pipelineColor;
     public ContourDetectionPipeline pipelineContour;
 
     public int STREAM_WIDTH = 1280; // modify for your camera
@@ -207,8 +207,8 @@ public class Robot {
         webcamNamed = hardwareMap.get(WebcamName.class, openCVWebCamName); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamNamed, cameraMonitorViewId);
         pipelineContour = new ContourDetectionPipeline();
-        //pipeline = new ColorCounter();
-        webcam.setPipeline(pipelineContour);
+        pipelineColor = new ColorCounter();
+        webcam.setPipeline(pipelineColor);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -223,6 +223,11 @@ public class Robot {
             }
         });
     }
+
+    public void switchPipeline(){
+        webcam.setPipeline(pipelineContour);
+    }
+
     public void initAprilTag() {
 
 
@@ -514,9 +519,9 @@ public class Robot {
 
 
 
-        public double groundPosition = 0.86;
-        public double hoistedPosition = groundPosition - 0.86;
-        public double stackPosition = groundPosition - 0.17;
+        public double groundPosition = 0.77;
+        public double hoistedPosition = groundPosition - 0.47;
+        public double stackPosition = groundPosition - 0.08;
 
 
 
@@ -667,8 +672,8 @@ public class Robot {
         @Override
         public Mat processFrame(Mat input) {
             colorMask = preprocessFrame(input);
-            Rect ro1 = new Rect(130,230,250,300);
-            Rect ro2 = new Rect(580,220,350,180);
+            Rect ro1 = new Rect(130,130,250,300);
+            Rect ro2 = new Rect(580,130,350,180);
             croppedSectorOne = new Mat(colorMask, ro1);
             croppedSectorTwo = new Mat(colorMask, ro2);
 

@@ -1,11 +1,13 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.OldAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
+
 @Disabled
-@Autonomous(name = "Old Blue Left")
-public class OldBlueLeft extends AutoControls {
+@Autonomous(name = "Old Blue Right")
+public class OldBlueRight extends AutoControls {
 
     @Override
     public void runOpMode() {
@@ -18,51 +20,65 @@ public class OldBlueLeft extends AutoControls {
 
             spikeLocation = robot.ScanForElement(1);
             telemetry.addData("Spike: ", spikeLocation);
+            telemetry.addData("Area: ", robot.area);
             telemetry.update();
         }
         waitForStart();
         robot.gameTimer.startTime();
 
         if (spikeLocation == 1) {
-            Turn(90);
-            Drive(22);
+            Drive(18);
+            sleep(1000);
+            Drive(6);
             sleep(500);
+            Turn(90);
+            Drive(-4);
+            intake.RunToPosIntake(-1000, 1);
             Turn(0);
             sleep(500);
-            Drive(26);
-            sleep(500);
+            Drive(24);
             Turn(270);
-            sleep(250);
-            Drive(1);
-            intake.RunToPosIntake(-1000,1);
-            StrafeWithInches(9, 1, 1);
+            Drive(-80);
+            Turn(270);
+            StrafeWithInches(30, 1, 1);
             Navigate(1, 9, 5);
-
 
         }
         if (spikeLocation == 2) {
-            Drive(18);
+            Drive(5);
             sleep(1000);
-            Drive(3);
-
+            Turn(160);
             sleep(500);
+            Drive(-43);
+            sleep(500);
+            Turn(180);
+            StrafeWithInches(12, 1, -1);
             intake.RunToPosIntake(-1000, 1);
+            sleep(500);
+            Drive(-3);
             Turn(270);
-            //Navigate(2, 8, 5);
-            Drive(-15);
+            Drive(-76);
+            Turn(270);
+            StrafeWithInches(30, 1, 2);
             Navigate(2, 9, 5);
+
         }
         if (spikeLocation == 3) {
-
             Drive(18);
             sleep(1000);
             Drive(6);
             sleep(500);
             Turn(270);
-            Drive(-1);
+            Drive(-3);
             intake.RunToPosIntake(-1000, 1);
-            Drive(-10);
-            StrafeWithInches(10, 0, 3);
+            Drive(-1);
+            Turn(0);
+            sleep(500);
+            Drive(24);
+            Turn(270);
+            Drive(-79);
+            Turn(270);
+            StrafeWithInches(20, 1, 3);
             Navigate(3, 9, 5);
         }
 

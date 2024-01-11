@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.IntakeHoist;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 public abstract class AutoControls extends LinearOpMode {
@@ -27,6 +28,7 @@ public abstract class AutoControls extends LinearOpMode {
     public PixelSplitter splitter;
     public Intake intake;
     public SpikeHook spike;
+    public IntakeHoist hoist;
     public BNO055IMU imu;
     public Orientation angles;
 
@@ -41,6 +43,7 @@ public abstract class AutoControls extends LinearOpMode {
         intake = robot.new Intake();
         spike = robot.new SpikeHook();
         splitter = robot.new PixelSplitter();
+        hoist = robot.new IntakeHoist();
 
         spike.ResetSpike();
         dropper.CloseDropper();
@@ -65,6 +68,10 @@ public abstract class AutoControls extends LinearOpMode {
         imu.initialize(parameters);
 
 
+    }
+
+    public void switchToContourPipeline() {
+        robot.switchPipeline();
     }
 
     public double GetAverageVelocityMecanum() {
@@ -363,7 +370,6 @@ public abstract class AutoControls extends LinearOpMode {
     }
     public void DriveWithCorrectionToStack(double targetInches, double targetHeading, double power) {
         ResetEncoders();
-
 
 
         double currentInches;

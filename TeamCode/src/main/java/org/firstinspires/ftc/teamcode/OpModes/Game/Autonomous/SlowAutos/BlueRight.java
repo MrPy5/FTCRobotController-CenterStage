@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.Autos;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.SlowAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 
-@Autonomous(name = "Blue Left")
-public class BlueLeft extends AutoControls {
+@Autonomous(name = "Blue Right")
+public class BlueRight extends AutoControls {
 
     @Override
     public void runOpMode() {
@@ -24,11 +24,12 @@ public class BlueLeft extends AutoControls {
         }
 
         waitForStart();
-        robot.gameTimer.startTime();
 
+        robot.gameTimer.startTime();
+        //sleep(2000);
         //Position 1
         if (spikeLocation == 1) {
-            DriveWithCorrection(30, 0, 0.2);
+            DriveWithCorrection(39, 0, 0.2);
             sleep(500);
             Turn(270);
             sleep(500);
@@ -37,23 +38,29 @@ public class BlueLeft extends AutoControls {
             spike.DropSpike();
             sleep(1000);
             spike.ResetSpike();
-            StrafeWithInchesWithCorrection(20, -0.2, -1, 270);
+            DriveWithCorrection(3, 270, 0.2);
             sleep(500);
-            DriveWithCorrection(-25, 270, 0.2);
+            StrafeWithInchesWithCorrection(11, -0.2, -1, 270);
             sleep(500);
-            StrafeWithInchesWithCorrection(30, 0.2, 1, 270);
+            DriveWithCorrection(-75, 270, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(48, 0.2, 1, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 1);
         }
         //Position 2
         if (spikeLocation == 2) {
             /*
-            DriveWithCorrection(47, 0, 0.2);
+            DriveWithCorrection(18, 0, 0.2);
+            sleep(500);
+            DriveWithCorrection(27, 0, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(1000);
             spike.ResetSpike();
+            DriveWithCorrection(2, 0, 0.2);
+            sleep(250);
             Turn(270);
-            DriveWithCorrection(-30, 270, 0.2);
+            DriveWithCorrection(-72, 270, 0.2);
             StrafeWithInchesWithCorrection(48, 0.2, 2, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);*/
             DriveWithCorrection(18, 0, 0.2);
@@ -73,26 +80,46 @@ public class BlueLeft extends AutoControls {
             DriveWithCorrection(-72, 270, 0.2);
             StrafeWithInchesWithCorrection(48, 0.2, 2, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);
+
         }
         //Position 3
         if (spikeLocation == 3) {
+            /*
             DriveWithCorrection(30, 0, 0.2);
             sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-4, 90, 0.2);
+            DriveWithCorrection(-2, 90, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(1000);
             spike.ResetSpike();
-            DriveWithCorrection(17, 90, 0.2);
+            DriveWithCorrection(2, 90, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(22, 0.2, -1, 90);
             sleep(500);
             Turn(270);
             sleep(500);
-            DriveWithCorrection(-15, 270, 0.2);
+            DriveWithCorrection(-72, 270, 0.2);
             sleep(500);
-            StrafeWithInchesWithCorrection(12, -0.2, 3, 270);
+            StrafeWithInchesWithCorrection(48, 0.2, 3, 270);
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 3);
+             */
+
+            DriveWithCorrection(42, 0, 0.3);
+            sleep(500);
+            StrafeWithInchesWithCorrection(5, 0.3, -1, 0);
+            sleep(500);
+            spike.DropSpike();
+            sleep(500);
+            spike.ResetSpike();
+            DriveWithCorrection(4, 0, 0.3);
+            Turn(270);
+            DriveWithCorrection(-78, 270, 0.3);
+            sleep(500);
+            StrafeWithInchesWithCorrection(48, 0.3, 3, 270);
+            DriveWithCorrectionToAprilTag(-40, 270, 0.4, 3);
+
         }
 
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
@@ -102,19 +129,13 @@ public class BlueLeft extends AutoControls {
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();
+        sleep(500);
         lift.SetPosition(lift.liftLow, lift.liftLow - 5);
         sleep(500);
 
         Drive(3);
         sleep(1000);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
-
-        if (spikeLocation == 2 || spikeLocation == 3) {
-            StrafeWithInchesWithCorrection(12, -0.2, -1, 270);
-        } else if (spikeLocation == 1) {
-            StrafeWithInchesWithCorrection(20, -0.2, -1, 270);
-        }
-
         sleep(1000);
 
     }

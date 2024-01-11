@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.Autos;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.SlowAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 
-@Autonomous(name = "Red Right")
-public class RedRight extends AutoControls {
+@Autonomous(name = "Blue Left")
+public class BlueLeft extends AutoControls {
 
     @Override
     public void runOpMode() {
         initMethods(hardwareMap);
-        robot.alliance = "red";
+        robot.alliance = "blue";
 
         //Vision
         int spikeLocation = robot.ScanForElementBitmap(2);
@@ -35,32 +35,44 @@ public class RedRight extends AutoControls {
             DriveWithCorrection(-2, 270, 0.2);
             sleep(500);
             spike.DropSpike();
-            sleep(500);
+            sleep(1000);
             spike.ResetSpike();
-            DriveWithCorrection(5, 270, 0.2);
+            StrafeWithInchesWithCorrection(20, -0.2, -1, 270);
             sleep(500);
-            Turn(90);
+            DriveWithCorrection(-25, 270, 0.2);
             sleep(500);
-            DriveWithCorrection(-25, 90, 0.2);
-            sleep(500);
-            StrafeWithInchesWithCorrection(12, 0.2, 4, 90);
-            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 4);
+            StrafeWithInchesWithCorrection(30, 0.2, 1, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 1);
         }
         //Position 2
         if (spikeLocation == 2) {
-            DriveWithCorrection(18, 0, 0.2);
-            sleep(500);
-            DriveWithCorrection(27, 0, 0.2);
+            /*
+            DriveWithCorrection(47, 0, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(1000);
             spike.ResetSpike();
-            DriveWithCorrection(2, 0, 0.2);
+            Turn(270);
+            DriveWithCorrection(-30, 270, 0.2);
+            StrafeWithInchesWithCorrection(48, 0.2, 2, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);*/
+            DriveWithCorrection(18, 0, 0.2);
             sleep(500);
-            Turn(90);
-            DriveWithCorrection(-27, 90, 0.2);
-            StrafeWithInchesWithCorrection(48, -0.2, 5, 90);
-            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);
+            StrafeWithInchesWithCorrection(10, 0.2, -1, 0);
+            sleep(500);
+            DriveWithCorrection(26.5, 0, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(12, -0.2, -1, 0);
+            sleep(500);
+            spike.DropSpike();
+            sleep(500);
+            spike.ResetSpike();
+            DriveWithCorrection(3, 0, 0.2);
+            sleep(500);
+            Turn(270);
+            DriveWithCorrection(-72, 270, 0.2);
+            StrafeWithInchesWithCorrection(48, 0.2, 2, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 2);
         }
         //Position 3
         if (spikeLocation == 3) {
@@ -68,21 +80,24 @@ public class RedRight extends AutoControls {
             sleep(500);
             Turn(90);
             sleep(500);
-            DriveWithCorrection(-1.5, 90, 0.2);
+            DriveWithCorrection(-4, 90, 0.2);
             sleep(500);
             spike.DropSpike();
             sleep(1000);
             spike.ResetSpike();
-            StrafeWithInchesWithCorrection(20, 0.2, -1, 90);
+            DriveWithCorrection(17, 90, 0.2);
             sleep(500);
-            DriveWithCorrection(-27, 90, 0.2);
+            Turn(270);
             sleep(500);
-            StrafeWithInchesWithCorrection(35, -0.2, 6, 90);
-            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 6);
+            DriveWithCorrection(-15, 270, 0.2);
+            sleep(500);
+            StrafeWithInchesWithCorrection(12, -0.2, 3, 270);
+            DriveWithCorrectionToAprilTag(-20, 270, 0.4, 3);
         }
+
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
         sleep(500);
-        DriveWithCorrection(-2, 90, 0.3);
+        DriveWithCorrection(-2, 270, 0.3);
         sleep(500);
         dropper.OpenDropper();
         sleep(500);
@@ -91,11 +106,17 @@ public class RedRight extends AutoControls {
         sleep(500);
 
         Drive(3);
-        sleep(500);
+        sleep(1000);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
-        sleep(500);
-        StrafeWithInchesWithCorrection(12, 0.2, -1, 90);
-        sleep(500);
+
+        if (spikeLocation == 2 || spikeLocation == 3) {
+            StrafeWithInchesWithCorrection(12, -0.2, -1, 270);
+        } else if (spikeLocation == 1) {
+            StrafeWithInchesWithCorrection(20, -0.2, -1, 270);
+        }
+
+        sleep(1000);
+
     }
 
 }

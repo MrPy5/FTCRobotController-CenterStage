@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 
 @Autonomous(name = "TestAuto")
@@ -13,8 +14,20 @@ public class TestAuto extends AutoControls {
         robot.alliance = "red";
 
         //Vision
-        int spikeLocation = 1;
+        int spikeLocation = robot.ScanForElementBitmap(2);
+        sleep(1000);
+        while (opModeInInit()) {
+            spikeLocation = robot.ScanForElementBitmap(2);
+            telemetry.addData("Spike: ", spikeLocation);
+            telemetry.addData("White One: ", robot.whiteOne);
+            telemetry.addData("White Two: ", robot.whiteTwo);
+            telemetry.update();
+        }
+
+        //int spikeLocation = 1;
         waitForStart();
+        switchToContourPipeline();
+
         robot.gameTimer.startTime();
 
         //Position 1
@@ -92,13 +105,13 @@ public class TestAuto extends AutoControls {
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 6);
         }
 
-        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        lift.SetPosition(lift.liftLow - 5,  lift.liftAprilTags);
         sleep(200);
         DriveWithCorrection(-2, 90, 0.3);
         sleep(50);
-        robot.pixelDropper.setPosition(0.12);
+        dropper.OpenDropper();
         sleep(600);
-        robot.pixelDropper.setPosition(0.31);
+        dropper.CloseDropper();
         lift.SetPosition(lift.liftLow, lift.liftLow - 5);
         sleep(50);
 
@@ -108,21 +121,29 @@ public class TestAuto extends AutoControls {
         sleep(500);
         StrafeWithInchesWithCorrection(18, 0.4, -1, 90);
         DriveWithCorrection(78, 90, 0.6);
-        DriveWithCorrectionToStack(29, 90, 0.4);
+        DriveWithCorrectionToStack(27, 90, 0.3);
+        hoist.Stack();
+        DriveWithCorrectionToStack(4, 90, 0.2);
         intake.StartIntake(1);
         sleep(1750);
         intake.StopIntake();
-        DriveWithCorrection(-85, 90, 0.6);
-        StrafeWithInchesWithCorrection(48, -0.3, 4, 90);
-        DriveWithCorrectionToAprilTag(-40, 90, 0.4, 4);
+        DriveWithCorrection(-4, 90, 0.2);
+        hoist.Ground();
 
-        lift.SetPosition(lift.liftLow - 2,  lift.liftAprilTags);
+        intake.StartIntake(0.6);
+        DriveWithCorrection(-83, 90, 0.6);
+        intake.StopIntake();
+
+        StrafeWithInchesWithCorrection(48, -0.3, 4, 90);
+        DriveWithCorrectionToAprilTag(-50, 90, 0.4, 4);
+
+        lift.SetPosition(lift.liftLow - 1,  lift.liftAprilTags);
         sleep(300);
         DriveWithCorrection(-2, 90, 0.3);
         sleep(50);
-        robot.pixelDropper.setPosition(0.12);
+        dropper.OpenDropper();
         sleep(600);
-        robot.pixelDropper.setPosition(0.31);
+        dropper.CloseDropper();
         lift.SetPosition(lift.liftLow + 2, lift.liftLow - 5);
         sleep(50);
 
