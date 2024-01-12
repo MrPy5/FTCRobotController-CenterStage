@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.FastAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 
-@Autonomous(name = "TestAuto")
-public class TestAuto extends AutoControls {
+@Autonomous(name = "Fast Red Left")
+public class FastRedLeft extends AutoControls {
 
     @Override
     public void runOpMode() {
@@ -32,8 +32,6 @@ public class TestAuto extends AutoControls {
 
         //Position 1
         if (spikeLocation == 1) {
-
-
             DriveWithCorrection(42, 0, 0.4);
             sleep(100);
             StrafeWithInchesWithCorrection(14, -0.4, -1, 0);
@@ -43,31 +41,17 @@ public class TestAuto extends AutoControls {
             spike.DropSpike();
             sleep(400);
             spike.ResetSpike();
-            hoist.Ground();
             DriveWithCorrection(5, 0, 0.4);
             Turn(90);
             DriveWithCorrection(-88, 90, 0.6);
             sleep(100);
-            StrafeWithInchesWithCorrection(48, -0.2, 4, 90);
+            StrafeWithInchesWithCorrection(48, -0.3, 4, 90);
             DriveWithCorrectionToAprilTag(-40, 90, 0.4, 4);
 
         }
+
         //Position 2
         if (spikeLocation == 2) {
-            /*
-            DriveWithCorrection(18, 0, 0.2);
-            sleep(500);
-            DriveWithCorrection(27, 0, 0.2);
-            sleep(500);
-            spike.DropSpike();
-            sleep(1000);
-            spike.ResetSpike();
-            DriveWithCorrection(2, 0, 0.2);
-            sleep(250);
-            Turn(90);
-            DriveWithCorrection(-72, 90, 0.4);
-            StrafeWithInchesWithCorrection(48, -0.2, 5, 90);
-            DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);*/
             DriveWithCorrection(18, 0, 0.4);
             sleep(100);
             StrafeWithInchesWithCorrection(10, -0.3, -1, 0);
@@ -79,7 +63,6 @@ public class TestAuto extends AutoControls {
             spike.DropSpike();
             sleep(400);
             spike.ResetSpike();
-            hoist.Ground();
             DriveWithCorrection(4, 0, 0.3);
             sleep(100);
             Turn(90);
@@ -87,6 +70,7 @@ public class TestAuto extends AutoControls {
             StrafeWithInchesWithCorrection(48, -0.3, 5, 90);
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);
         }
+
         //Position 3
         if (spikeLocation == 3) {
             DriveWithCorrection(28, 0, 0.4);
@@ -97,7 +81,6 @@ public class TestAuto extends AutoControls {
             spike.DropSpike();
             sleep(400);
             spike.ResetSpike();
-            hoist.Ground();
             DriveWithCorrection(2, 90, 0.3);
             sleep(100);
             StrafeWithInchesWithCorrection(20, 0.3, -1, 90);
@@ -162,8 +145,6 @@ public class TestAuto extends AutoControls {
         sleep(200);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(500);
-
-
     }
 
 }

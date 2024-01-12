@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.SlowAutos;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.FastAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 
-@Autonomous(name = "Red Right")
-public class RedRight extends AutoControls {
+@Autonomous(name = "Fast Red Right")
+public class FastRedRight extends AutoControls {
 
     @Override
     public void runOpMode() {
@@ -28,73 +28,76 @@ public class RedRight extends AutoControls {
 
         //Position 1
         if (spikeLocation == 1) {
-            DriveWithCorrection(30, 0, 0.2);
-            sleep(500);
+            DriveWithCorrection(30, 0, 0.4);
+            sleep(100);
             Turn(270);
-            sleep(500);
+            sleep(100);
             DriveWithCorrection(-2, 270, 0.2);
-            sleep(500);
+            sleep(100);
             spike.DropSpike();
-            sleep(500);
+            sleep(400);
             spike.ResetSpike();
-            DriveWithCorrection(5, 270, 0.2);
-            sleep(500);
+            DriveWithCorrection(5, 270, 0.3);
+            sleep(100);
             Turn(90);
-            sleep(500);
-            DriveWithCorrection(-25, 90, 0.2);
-            sleep(500);
-            StrafeWithInchesWithCorrection(12, 0.2, 4, 90);
+            sleep(100);
+            DriveWithCorrection(-25, 90, 0.4);
+            sleep(100);
+            StrafeWithInchesWithCorrection(12, 0.3, 4, 90);
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 4);
         }
+
         //Position 2
         if (spikeLocation == 2) {
-            DriveWithCorrection(18, 0, 0.2);
-            sleep(500);
-            DriveWithCorrection(27, 0, 0.2);
-            sleep(500);
+            DriveWithCorrection(18, 0, 0.3);
+            sleep(100);
+            DriveWithCorrection(27, 0, 0.4);
+            sleep(100);
             spike.DropSpike();
-            sleep(1000);
+            sleep(400);
             spike.ResetSpike();
             DriveWithCorrection(2, 0, 0.2);
-            sleep(500);
+            sleep(100);
             Turn(90);
-            DriveWithCorrection(-27, 90, 0.2);
-            StrafeWithInchesWithCorrection(48, -0.2, 5, 90);
+            DriveWithCorrection(-27, 90, 0.4);
+            StrafeWithInchesWithCorrection(48, -0.3, 5, 90);
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 5);
         }
+
         //Position 3
         if (spikeLocation == 3) {
-            DriveWithCorrection(30, 0, 0.2);
-            sleep(500);
+            DriveWithCorrection(30, 0, 0.4);
+            sleep(100);
             Turn(90);
-            sleep(500);
+            sleep(100);
             DriveWithCorrection(-1.5, 90, 0.2);
-            sleep(500);
+            sleep(100);
             spike.DropSpike();
-            sleep(1000);
+            sleep(400);
             spike.ResetSpike();
-            StrafeWithInchesWithCorrection(20, 0.2, -1, 90);
-            sleep(500);
-            DriveWithCorrection(-27, 90, 0.2);
-            sleep(500);
-            StrafeWithInchesWithCorrection(35, -0.2, 6, 90);
+            StrafeWithInchesWithCorrection(20, 0.3, -1, 90);
+            sleep(100);
+            DriveWithCorrection(-27, 90, 0.4);
+            sleep(100);
+            StrafeWithInchesWithCorrection(35, -0.3, 6, 90);
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 6);
         }
+
         lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
-        sleep(500);
+        sleep(100);
         DriveWithCorrection(-2, 90, 0.3);
-        sleep(500);
+        sleep(100);
         dropper.OpenDropper();
-        sleep(500);
+        sleep(400);
         dropper.CloseDropper();
         lift.SetPosition(lift.liftLow, lift.liftLow - 5);
-        sleep(500);
+        sleep(100);
 
         Drive(3);
-        sleep(500);
+        sleep(100);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
-        sleep(500);
-        StrafeWithInchesWithCorrection(12, 0.2, -1, 90);
+        sleep(100);
+        StrafeWithInchesWithCorrection(12, 0.3, -1, 90);
         sleep(500);
     }
 

@@ -174,6 +174,10 @@ public abstract class AutoControls extends LinearOpMode {
 
     }
 
+    //Acceleration
+    //Catwalk-Drive
+    //Catwalk-Drive with April-Tag
+
     public void Turn (double targetHeading) {
 
         double lfPower;
@@ -393,7 +397,7 @@ public abstract class AutoControls extends LinearOpMode {
 
             double tagAdjustment = 0;
             if (robot.getCenter() != -1) {
-                tagAdjustment = (0.0004) * ((robot.getCenter() - 945));
+                tagAdjustment = (0.0008) * ((robot.getCenter() - 925));
             }
 
 
