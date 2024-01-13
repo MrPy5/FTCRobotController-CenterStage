@@ -126,10 +126,13 @@ public class Robot {
     public int STREAM_WIDTH = 1280; // modify for your camera
     public int STREAM_HEIGHT = 720; // modify for your camera
 
-    public final double objectWidthInRealWorldUnits = 5.5;  // Replace with the actual width of the object in real-world units
-    public final double focalLength = 728;  // Replace with the focal length of the camera in pixels
+    public final double objectWidthInRealWorldUnits = 3.25;  // Replace with the actual width of the object in real-world units
+    public final double focalLength = 1430;  // Replace with the focal length of the camera in pixels
 
-    public String alliance = "";
+    public final double heightOfCamera = 10.5;
+
+    public double objectWidth = 0;
+    public double objectHeight = 0;
 
     public double centerX = -1;
     public double centerY = 0;
@@ -144,6 +147,7 @@ public class Robot {
 
     //http://192.168.43.1:8080/dash
 
+    public String alliance = "";
 
     public Robot(HardwareMap robot_hardwareMap, boolean show_CameraPreview) {
         //Set Hardware map
@@ -576,9 +580,11 @@ public class Robot {
 
 
     public class ContourDetectionPipeline extends OpenCvPipeline {
-        public double cX = 0;
-        public double cY = 0;
 
+        double cX = 0;
+        double cY = 0;
+        double width = 0;
+        double height = 0;
 
         Mat hierarchy = new Mat();
         Mat hsvFrame = new Mat();
@@ -601,17 +607,25 @@ public class Robot {
                 // Draw a red outline around the largest detected object
                 Imgproc.drawContours(input, contours, contours.indexOf(largestContour), new Scalar(255, 0, 0), 2);
                 // Calculate the width of the bounding box
+                width = calculateWidth(largestContour);
+                height = calculateHeight(largestContour);
 
-
+                // Display the width next to the label
+                String widthLabel = "Width: " + (int) width + " pixels";
+                Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                //Display the Distance
+                String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
+                Imgproc.putText(input, distanceLabel, new Point(cX + 10, cY + 60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+                // Calculate the centroid of the largest contour
                 Moments moments = Imgproc.moments(largestContour);
                 cX = moments.get_m10() / moments.get_m00();
                 cY = moments.get_m01() / moments.get_m00();
-                //update Center Variables:
-                UpdateCenter(cX, cY);
+
                 // Draw a dot at the centroid
                 String label = "(" + (int) cX + ", " + (int) cY + ")";
                 Imgproc.putText(input, label, new Point(cX + 10, cY), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 255, 0), 2);
                 Imgproc.circle(input, new Point(cX, cY), 5, new Scalar(0, 255, 0), -1);
+                updateData();
 
             }
 
@@ -622,8 +636,8 @@ public class Robot {
 
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
-            Scalar lowerWhite = new Scalar(0, 0, 200);
-            Scalar upperWhite = new Scalar(59, 60, 255);
+            Scalar lowerWhite = new Scalar(0, 0, 175);
+            Scalar upperWhite = new Scalar(90, 90, 255);
 
             Core.inRange(hsvFrame, lowerWhite, upperWhite, colorMask);
 
@@ -649,7 +663,36 @@ public class Robot {
 
             return largestContour;
         }
+        private double calculateWidth(MatOfPoint contour) {
+            Rect boundingRect = Imgproc.boundingRect(contour);
+            return boundingRect.width;
+        }
+        private double calculateHeight(MatOfPoint contour) {
+            Rect boundingRect = Imgproc.boundingRect(contour);
+            return boundingRect.height;
+        }
+
+        public void updateData() {
+            centerX = cX;
+            centerY = cY;
+            objectWidth = width;
+            objectHeight = height;
+        }
     }
+    public double getDistance(double width){
+        double distance = (objectWidthInRealWorldUnits * focalLength) / width;
+        return distance;
+    }
+    public double getDistanceFromRobot(double H) {
+        double distance = Math.sqrt(Math.pow(H, 2) - Math.pow(heightOfCamera, 2));
+        return distance;
+    }
+    public double convertPixelsToInches(double width) {
+        double newX = ((centerX / STREAM_WIDTH) - 0.5) * STREAM_WIDTH;
+        double value = centerX * (objectWidthInRealWorldUnits / objectWidth);
+        return value;
+    }
+
 
     public class ColorCounter extends OpenCvPipeline {
 
@@ -719,10 +762,7 @@ public class Robot {
     }
 
 
-    private  double getDistance(double width){
-        double distance = (objectWidthInRealWorldUnits * focalLength) / width;
-        return distance;
-    }
+
     private void UpdateCenter(double cx, double cy) {
         centerX = cx;
         centerY = cy;

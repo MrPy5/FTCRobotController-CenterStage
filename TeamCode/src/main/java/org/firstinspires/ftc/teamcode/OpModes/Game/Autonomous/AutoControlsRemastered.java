@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
+import android.text.method.MovementMethod;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,14 +15,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.IntakeHoist;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
+import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
-public abstract class AutoControls extends LinearOpMode {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class AutoControlsRemastered extends LinearOpMode {
 
     public Robot robot;
     public Dropper dropper;
@@ -32,8 +37,8 @@ public abstract class AutoControls extends LinearOpMode {
     public BNO055IMU imu;
     public Orientation angles;
 
-    public final double DISTANCE_TOLERANCE = 0.5;
-    public final double TAG_DISTANCE = 10;
+    public double DISTANCE_TOLERANCE = 0.5;
+
 
 
     public void initMethods(HardwareMap hwMap) {
@@ -69,11 +74,284 @@ public abstract class AutoControls extends LinearOpMode {
 
 
     }
-
     public void switchToContourPipeline() {
         robot.switchPipeline();
     }
+    public void ResetEncoders() {
 
+        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+    public double GetAverageWheelPositionInches() {
+        return ((((robot.frontLeft.getCurrentPosition() + robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4.0) / robot.ticksPerInch));
+    }
+    public enum MoveState {
+        Dead,
+        Init,
+        Finished,
+
+    }
+    public double headingAdjustment(double targetHeading, double speedModifier) {
+        double adjustment;
+        double currentHeading;
+        double degreesOff;
+        boolean goRight;
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        currentHeading = (360 + angles.firstAngle) % 360;
+
+        goRight = targetHeading > currentHeading;
+        degreesOff = Math.abs(targetHeading - currentHeading);
+
+        if (degreesOff > 180) {
+            goRight = !goRight;
+            degreesOff = 360 - degreesOff;
+        }
+
+        double speedMinimum;
+
+    /*
+        if (degreesOff > 10) {
+            speedModifier = 6;
+        }
+
+     */
+
+        speedModifier = 5;
+        speedMinimum = 3;
+
+        if (degreesOff < .3) {
+            adjustment = 0;
+        } else {
+            adjustment = (Math.pow((degreesOff) / speedModifier, 2) + speedMinimum) / 100;
+        }
+
+        if (goRight) {
+            adjustment = -adjustment;
+        }
+
+        return adjustment;
+    }
+    public class Motion {
+        List<Move> moves = new ArrayList<>();
+        public ElapsedTime motionTimer = new ElapsedTime();
+        public Motion() {
+
+        }
+        public void add(Move move) {
+            moves.add(move);
+        }
+        public void Start(int millisecondDelay) {
+            sleep(millisecondDelay);
+            motionTimer.reset();
+
+            while (opModeIsActive()) {
+                telemetry.addData("time: ", motionTimer.milliseconds());
+                telemetry.update();
+
+                for (Move move : moves) {
+                    //init
+                    if ((move.startMillisecond != -1 && move.startMillisecond < motionTimer.milliseconds()) || (move.startAfterIndex != -1 && moves.get(move.startAfterIndex).state == MoveState.Finished)) {
+                        if (move.state == MoveState.Dead) {
+                            move.Init();
+                        }
+
+                    }
+
+                    //check
+                    if (move.whileChecked && move.state == MoveState.Init) {
+                        move.Check();
+                    }
+                }
+            }
+
+        }
+    }
+    public class Move {
+        int startMillisecond;
+        int startAfterIndex;
+
+        boolean whileChecked = false;
+        MoveState state = MoveState.Dead;
+
+
+
+
+        public Move(int startMillisecondPARAM, int startAfterIndexPARAM, boolean whileCheckedPARAM) {
+            startMillisecond = startMillisecondPARAM;
+            startAfterIndex = startAfterIndexPARAM;
+            whileChecked = whileCheckedPARAM;
+
+
+        }
+        public void Init() {
+            state = MoveState.Init;
+        }
+        public void Check() {
+
+        }
+    }
+    public class SpikeDrop extends Move {
+
+        public SpikeDrop(int startMillisecondPARAM, int startAfterIndexPARAM) {
+            super(startMillisecondPARAM, startAfterIndexPARAM, false);
+        }
+
+        public void Init() {
+            state = MoveState.Init;
+            spike.DropSpike();
+            state = MoveState.Finished;
+        }
+
+    }
+    public class MoveHoist extends Move {
+        double hoistPosition;
+        public MoveHoist(int startMillisecondPARAM, int startAfterIndexPARAM, double hoistPositionPARAM) {
+            super(startMillisecondPARAM, startAfterIndexPARAM, false);
+            hoistPosition = hoistPositionPARAM;
+        }
+
+        public void Init() {
+            state = MoveState.Init;
+            robot.intakeHoist.setPosition(hoistPosition);
+            state = MoveState.Finished;
+        }
+
+    }
+
+    public class MoveIntake extends Move {
+        double moveIntakeForMilliseconds;
+
+        ElapsedTime moveTimer = new ElapsedTime();
+        public MoveIntake(int startMillisecondPARAM, int startAfterIndexPARAM, double moveIntakeForMillisecondsPARAM) {
+            super(startMillisecondPARAM, startAfterIndexPARAM, true);
+            moveIntakeForMilliseconds = moveIntakeForMillisecondsPARAM;
+        }
+
+        public void Init() {
+            state = MoveState.Init;
+            intake.StartIntake(0.75);
+            moveTimer.reset();
+
+        }
+        public void Check() {
+            if (moveTimer.milliseconds() > moveIntakeForMilliseconds) {
+                intake.StopIntake();
+                state = MoveState.Finished;
+            }
+        }
+
+    }
+
+    public class Drive extends Move {
+        double targetInches;
+        double power;
+        double targetHeading;
+        public Drive(int startMillisecondPARAM, int startAfterIndexPARAM, double targetInchesPARAM, double powerPARAM, double targetHeadingPARAM) {
+            super(startMillisecondPARAM, startAfterIndexPARAM, true);
+            targetInches = targetInchesPARAM;
+            power = powerPARAM;
+            targetHeading = targetHeadingPARAM;
+        }
+
+        public void Init() {
+            state = MoveState.Init;
+            ResetEncoders();
+
+            double currentInches;
+            double distanceToTarget;
+
+            double lfPower = power;
+            double rfPower = power;
+            double lrPower = power;
+            double rrPower = power;
+
+            double reverse;
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+
+
+            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+                double turnAdjustment;
+                turnAdjustment = headingAdjustment(targetHeading, 0);
+
+                currentInches = GetAverageWheelPositionInches();
+                distanceToTarget = targetInches - currentInches;
+
+                if (distanceToTarget < 0) {
+                    reverse = -1;
+                } else {
+                    reverse = 1;
+                }
+                robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
+                robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
+                robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
+                robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+            }
+
+        }
+        public void Check() {
+            double currentInches;
+            double distanceToTarget;
+
+            double lfPower = power;
+            double rfPower = power;
+            double lrPower = power;
+            double rrPower = power;
+
+            double reverse;
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+
+
+            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+                double turnAdjustment;
+                turnAdjustment = headingAdjustment(targetHeading, 0);
+
+                currentInches = GetAverageWheelPositionInches();
+                distanceToTarget = targetInches - currentInches;
+
+                if (distanceToTarget < 0) {
+                    reverse = -1;
+                } else {
+                    reverse = 1;
+                }
+                robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
+                robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
+                robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
+                robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+            }
+            else {
+                robot.frontLeft.setPower(0);
+                robot.frontRight.setPower(0);
+                robot.backLeft.setPower(0);
+                robot.backRight.setPower(0);
+                state = MoveState.Finished;
+            }
+
+        }
+
+    }
+
+
+
+    /*
     public double GetAverageVelocityMecanum() {
         double averageVelocity;
 
@@ -121,7 +399,7 @@ public abstract class AutoControls extends LinearOpMode {
         }
 
      */
-
+    /*
         speedModifier = 5;
         speedMinimum = 3;
 
@@ -159,25 +437,12 @@ public abstract class AutoControls extends LinearOpMode {
         return degreesOff;
     }
 
-    public void ResetEncoders() {
 
-        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
-
+    */
     //Acceleration
     //Catwalk-Drive
     //Catwalk-Drive with April-Tag
-
+    /*
     public void Turn (double targetHeading) {
 
         double lfPower;
@@ -371,7 +636,8 @@ public abstract class AutoControls extends LinearOpMode {
         robot.backRight.setPower(0);
 
 
-    }
+    }*/
+    /*
     public void DriveWithCorrectionToStack(double targetInches, double targetHeading, double power) {
         ResetEncoders();
 
@@ -521,7 +787,7 @@ public abstract class AutoControls extends LinearOpMode {
 
         return targetRange;
     }
-
+    */
     /*
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, int direction, int targetTag, int targetHeading) {
         ResetEncoders();
@@ -568,7 +834,7 @@ public abstract class AutoControls extends LinearOpMode {
         return targetRange;
     }
      */
-
+    /*
     public NavigationState NavigateToAprilTag(int targetTag, double targetDistance) {
         double lfPower;
         double rfPower;
@@ -635,7 +901,7 @@ public abstract class AutoControls extends LinearOpMode {
         }
     }
 
-
+    /*
     public void Navigate(int targetId, double distance, double timeout) {
         NavigationState navigationState = NavigationState.Waiting;
         double lastGoingTime = robot.gameTimer.seconds();
@@ -658,6 +924,6 @@ public abstract class AutoControls extends LinearOpMode {
             Going,
             Waiting,
             Done
-    }
+    }*/
 
 }
