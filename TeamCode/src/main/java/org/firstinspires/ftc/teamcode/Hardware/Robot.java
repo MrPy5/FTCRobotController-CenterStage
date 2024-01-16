@@ -521,9 +521,9 @@ public class Robot {
     }
     public class IntakeHoist {
 
-        public double stackPosition = 0.74;
+        public double stackPosition = 0.71;
         public double groundPosition = stackPosition + 0.08;
-        public double hoistedPosition = groundPosition - 0.47;
+        public double hoistedPosition = stackPosition - 0.47;
 
 
         public IntakeHoist() {

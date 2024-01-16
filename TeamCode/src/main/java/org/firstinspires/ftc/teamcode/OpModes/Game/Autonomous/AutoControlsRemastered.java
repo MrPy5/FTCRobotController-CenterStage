@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
-import android.text.method.MovementMethod;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,7 +18,6 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.IntakeHoist;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +34,11 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
     public BNO055IMU imu;
     public Orientation angles;
 
-    public double DISTANCE_TOLERANCE = 0.5;
+    public double DISTANCE_TOLERANCE = 0.15;
 
+    public double currentInchesCompare = -1;
+
+    public ElapsedTime gameTimer = new ElapsedTime();
 
 
     public void initMethods(HardwareMap hwMap) {
@@ -94,6 +94,9 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
     public double GetAverageWheelPositionInches() {
         return ((((robot.frontLeft.getCurrentPosition() + robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4.0) / robot.ticksPerInch));
     }
+    public double GetAverageStrafePositionInches() {
+        return (((Math.abs(robot.frontLeft.getCurrentPosition()) + Math.abs(robot.frontRight.getCurrentPosition()) + Math.abs(robot.backLeft.getCurrentPosition()) + Math.abs(robot.backRight.getCurrentPosition())) / 4.0) / robot.strafeTicksPerInch);
+    }
     public enum MoveState {
         Dead,
         Init,
@@ -142,280 +145,6 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
 
         return adjustment;
     }
-    public class Motion {
-        List<Move> moves = new ArrayList<>();
-        public ElapsedTime motionTimer = new ElapsedTime();
-        public Motion() {
-
-        }
-        public void add(Move move) {
-            moves.add(move);
-        }
-        public void Start(int millisecondDelay) {
-            sleep(millisecondDelay);
-            motionTimer.reset();
-
-            while (opModeIsActive()) {
-                telemetry.addData("time: ", motionTimer.milliseconds());
-                telemetry.update();
-
-                for (Move move : moves) {
-                    //init
-                    if ((move.startMillisecond != -1 && move.startMillisecond < motionTimer.milliseconds()) || (move.startAfterIndex != -1 && moves.get(move.startAfterIndex).state == MoveState.Finished)) {
-                        if (move.state == MoveState.Dead) {
-                            move.Init();
-                        }
-
-                    }
-
-                    //check
-                    if (move.whileChecked && move.state == MoveState.Init) {
-                        move.Check();
-                    }
-                }
-            }
-
-        }
-    }
-    public class Move {
-        int startMillisecond;
-        int startAfterIndex;
-
-        boolean whileChecked = false;
-        MoveState state = MoveState.Dead;
-
-
-
-
-        public Move(int startMillisecondPARAM, int startAfterIndexPARAM, boolean whileCheckedPARAM) {
-            startMillisecond = startMillisecondPARAM;
-            startAfterIndex = startAfterIndexPARAM;
-            whileChecked = whileCheckedPARAM;
-
-
-        }
-        public void Init() {
-            state = MoveState.Init;
-        }
-        public void Check() {
-
-        }
-    }
-    public class SpikeDrop extends Move {
-
-        public SpikeDrop(int startMillisecondPARAM, int startAfterIndexPARAM) {
-            super(startMillisecondPARAM, startAfterIndexPARAM, false);
-        }
-
-        public void Init() {
-            state = MoveState.Init;
-            spike.DropSpike();
-            state = MoveState.Finished;
-        }
-
-    }
-    public class MoveHoist extends Move {
-        double hoistPosition;
-        public MoveHoist(int startMillisecondPARAM, int startAfterIndexPARAM, double hoistPositionPARAM) {
-            super(startMillisecondPARAM, startAfterIndexPARAM, false);
-            hoistPosition = hoistPositionPARAM;
-        }
-
-        public void Init() {
-            state = MoveState.Init;
-            robot.intakeHoist.setPosition(hoistPosition);
-            state = MoveState.Finished;
-        }
-
-    }
-
-    public class MoveIntake extends Move {
-        double moveIntakeForMilliseconds;
-
-        ElapsedTime moveTimer = new ElapsedTime();
-        public MoveIntake(int startMillisecondPARAM, int startAfterIndexPARAM, double moveIntakeForMillisecondsPARAM) {
-            super(startMillisecondPARAM, startAfterIndexPARAM, true);
-            moveIntakeForMilliseconds = moveIntakeForMillisecondsPARAM;
-        }
-
-        public void Init() {
-            state = MoveState.Init;
-            intake.StartIntake(0.75);
-            moveTimer.reset();
-
-        }
-        public void Check() {
-            if (moveTimer.milliseconds() > moveIntakeForMilliseconds) {
-                intake.StopIntake();
-                state = MoveState.Finished;
-            }
-        }
-
-    }
-
-    public class Drive extends Move {
-        double targetInches;
-        double power;
-        double targetHeading;
-        public Drive(int startMillisecondPARAM, int startAfterIndexPARAM, double targetInchesPARAM, double powerPARAM, double targetHeadingPARAM) {
-            super(startMillisecondPARAM, startAfterIndexPARAM, true);
-            targetInches = targetInchesPARAM;
-            power = powerPARAM;
-            targetHeading = targetHeadingPARAM;
-        }
-
-        public void Init() {
-            state = MoveState.Init;
-            ResetEncoders();
-
-            double currentInches;
-            double distanceToTarget;
-
-            double lfPower = power;
-            double rfPower = power;
-            double lrPower = power;
-            double rrPower = power;
-
-            double reverse;
-
-            currentInches = GetAverageWheelPositionInches();
-            distanceToTarget = targetInches - currentInches;
-
-
-
-            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
-
-                double turnAdjustment;
-                turnAdjustment = headingAdjustment(targetHeading, 0);
-
-                currentInches = GetAverageWheelPositionInches();
-                distanceToTarget = targetInches - currentInches;
-
-                if (distanceToTarget < 0) {
-                    reverse = -1;
-                } else {
-                    reverse = 1;
-                }
-                robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
-                robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
-                robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
-                robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
-            }
-
-        }
-        public void Check() {
-            double currentInches;
-            double distanceToTarget;
-
-            double lfPower = power;
-            double rfPower = power;
-            double lrPower = power;
-            double rrPower = power;
-
-            double reverse;
-
-            currentInches = GetAverageWheelPositionInches();
-            distanceToTarget = targetInches - currentInches;
-
-
-
-            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
-
-                double turnAdjustment;
-                turnAdjustment = headingAdjustment(targetHeading, 0);
-
-                currentInches = GetAverageWheelPositionInches();
-                distanceToTarget = targetInches - currentInches;
-
-                if (distanceToTarget < 0) {
-                    reverse = -1;
-                } else {
-                    reverse = 1;
-                }
-                robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
-                robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
-                robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
-                robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
-            }
-            else {
-                robot.frontLeft.setPower(0);
-                robot.frontRight.setPower(0);
-                robot.backLeft.setPower(0);
-                robot.backRight.setPower(0);
-                state = MoveState.Finished;
-            }
-
-        }
-
-    }
-
-
-
-    /*
-    public double GetAverageVelocityMecanum() {
-        double averageVelocity;
-
-        double backLeft = robot.backLeft.getVelocity();
-        double backRight = robot.backRight.getVelocity();
-        double frontRight = robot.frontRight.getVelocity();
-        double frontLeft = robot.frontLeft.getVelocity();
-
-        averageVelocity = (backLeft + backRight + frontRight + frontLeft) / 4;
-        averageVelocity = (averageVelocity / robot.ticksPerInch) / 12;
-        return  averageVelocity;
-    }
-
-    public double GetAverageWheelPositionInches() {
-        return ((((robot.frontLeft.getCurrentPosition() + robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4.0) / robot.ticksPerInch));
-    }
-
-    public double GetAverageStrafePositionInches() {
-        return (((Math.abs(robot.frontLeft.getCurrentPosition()) + Math.abs(robot.frontRight.getCurrentPosition()) + Math.abs(robot.backLeft.getCurrentPosition()) + Math.abs(robot.backRight.getCurrentPosition())) / 4.0) / robot.strafeTicksPerInch);
-    }
-
-    public double headingAdjustment(double targetHeading, double speedModifier) {
-        double adjustment;
-        double currentHeading;
-        double degreesOff;
-        boolean goRight;
-
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        currentHeading = (360 + angles.firstAngle) % 360;
-
-        goRight = targetHeading > currentHeading;
-        degreesOff = Math.abs(targetHeading - currentHeading);
-
-        if (degreesOff > 180) {
-            goRight = !goRight;
-            degreesOff = 360 - degreesOff;
-        }
-
-        double speedMinimum;
-
-    /*
-        if (degreesOff > 10) {
-            speedModifier = 6;
-        }
-
-     */
-    /*
-        speedModifier = 5;
-        speedMinimum = 3;
-
-        if (degreesOff < .3) {
-            adjustment = 0;
-        } else {
-            adjustment = (Math.pow((degreesOff) / speedModifier, 2) + speedMinimum) / 100;
-        }
-
-        if (goRight) {
-            adjustment = -adjustment;
-        }
-
-        return adjustment;
-    }
-
     public double degreesOff(double targetHeading) {
         if (targetHeading == -1) {
             return 0;
@@ -438,492 +167,518 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
     }
 
 
-    */
-    //Acceleration
-    //Catwalk-Drive
-    //Catwalk-Drive with April-Tag
-    /*
-    public void Turn (double targetHeading) {
+    public class Motion {
+        List<Move> moves = new ArrayList<>();
 
-        double lfPower;
-        double rfPower;
-        double lrPower;
-        double rrPower;
-        double currentHeading;
-        ElapsedTime turnTimer = new ElapsedTime();
-        double lastAngle = -1;
-        while (degreesOff(targetHeading) > 0.5 && opModeIsActive()) {
-
-            double adjustment = 0;
-            adjustment = headingAdjustment(targetHeading, 0);
-
-            lfPower = adjustment;
-            rfPower = -adjustment;
-            lrPower = adjustment;
-            rrPower = -adjustment;
-
-            robot.frontLeft.setPower(lfPower);
-            robot.frontRight.setPower(rfPower);
-            robot.backLeft.setPower(lrPower);
-            robot.backRight.setPower(rrPower);
-
-
-            angles   = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-            currentHeading = (360 + angles.firstAngle) % 360;
-            if (currentHeading == lastAngle) {
-                turnTimer.startTime();
-                if (turnTimer.milliseconds() >= 2000) {
-
-                    robot.frontLeft.setPower(0);
-                    robot.frontRight.setPower(0);
-                    robot.backLeft.setPower(0);
-                    robot.backRight.setPower(0);
-                    break;
-                }
-            }
-
-            lastAngle = currentHeading;
+        public Motion() {
 
         }
-
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
-
-    }
-
-    public void Drive (double targetInches) {
-        ResetEncoders();
-        double currentInches;
-        double distanceToTarget;
-
-        double lfPower = 0.5;
-        double rfPower = 0.5;
-        double lrPower = 0.5;
-        double rrPower = 0.5;
-
-        double reverse = 1;
-
-        currentInches = GetAverageWheelPositionInches();
-        distanceToTarget = targetInches - currentInches;
-
-
-
-        while (Math.abs(distanceToTarget) > 1 && opModeIsActive()) {
-            currentInches = GetAverageWheelPositionInches();
-            distanceToTarget = targetInches - currentInches;
-
-            if (distanceToTarget < 0) {
-                reverse = -1;
-            } else {
-                reverse = 1;
-            }
-            robot.frontLeft.setPower(lfPower * reverse);
-            robot.frontRight.setPower(rfPower * reverse);
-            robot.backRight.setPower(rrPower * reverse);
-            robot.backLeft.setPower(lrPower * reverse);
+        public void add(Move move) {
+            moves.add(move);
         }
-
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
-
-
-    }
-
-    public void DriveWithCorrection (double targetInches, double targetHeading, double power) {
-        ResetEncoders();
-
-
-        double currentInches;
-        double distanceToTarget;
-
-        double lfPower = power;
-        double rfPower = power;
-        double lrPower = power;
-        double rrPower = power;
-
-        double reverse;
-
-        currentInches = GetAverageWheelPositionInches();
-        distanceToTarget = targetInches - currentInches;
-
-
-
-        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
-
-            double turnAdjustment;
-            turnAdjustment = headingAdjustment(targetHeading, 0);
-
-            currentInches = GetAverageWheelPositionInches();
-            distanceToTarget = targetInches - currentInches;
-
-            if (distanceToTarget < 0) {
-                reverse = -1;
-            } else {
-                reverse = 1;
-            }
-            robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
-            robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
-            robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
-            robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
-        }
-
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
-
-
-    }
-    public void DriveWithCorrectionToAprilTag(double targetInches, double targetHeading, double power, int targetTag) {
-        ResetEncoders();
-
-        AprilTagPoseFtc fetchedPose = null;
-
-        double currentInches;
-        double distanceToTarget;
-
-        double lfPower = power;
-        double rfPower = power;
-        double lrPower = power;
-        double rrPower = power;
-
-        double reverse;
-
-        currentInches = GetAverageWheelPositionInches();
-        distanceToTarget = targetInches - currentInches;
-
-        if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0);
-        }
-
-        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && (fetchedPose == null ? true : fetchedPose.range > TAG_DISTANCE) && opModeIsActive()) {
-
-            double turnAdjustment;
-            turnAdjustment = headingAdjustment(targetHeading, 0);
-
-            double tagAdjustment = 0;
-            if (targetTag != -1) {
-                fetchedPose = robot.getTargetAprilTagPos(targetTag);
-                if (fetchedPose != null) {
-                    //tagAdjustment = ((fetchedPose.x) / Math.abs(fetchedPose.x));
-                    tagAdjustment = (0.2/5) * (fetchedPose.x);
-                }
-            }
-
-            currentInches = GetAverageWheelPositionInches();
-            distanceToTarget = targetInches - currentInches;
-
-            if (distanceToTarget < 0) {
-                reverse = -1;
-            } else {
-                reverse = 1;
-            }
-
-            robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + tagAdjustment);
-            robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - tagAdjustment);
-            robot.backRight.setPower((rrPower * reverse) - turnAdjustment + tagAdjustment);
-            robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - tagAdjustment);
-        }
-
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
-
-
-    }*/
-    /*
-    public void DriveWithCorrectionToStack(double targetInches, double targetHeading, double power) {
-        ResetEncoders();
-
-
-        double currentInches;
-        double distanceToTarget;
-
-        double lfPower = power;
-        double rfPower = power;
-        double lrPower = power;
-        double rrPower = power;
-
-        double reverse;
-
-        currentInches = GetAverageWheelPositionInches();
-        distanceToTarget = targetInches - currentInches;
-
-
-        double tagAdjustment = 0;
-        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
-
-            double turnAdjustment;
-            turnAdjustment = headingAdjustment(targetHeading, 0);
-
-            tagAdjustment = 0;
-            if (robot.getCenter() != -1) {
-
-
-                tagAdjustment = 4 * Math.pow(2 * ((robot.getCenter() / 1280.0) - 0.50), 3);
-                telemetry.addData("adjustment", tagAdjustment);
-                telemetry.update();
-            }
-
-            if (tagAdjustment < 0.01) {
-                break;
-            }
-
-
-            currentInches = GetAverageWheelPositionInches();
-            distanceToTarget = targetInches - currentInches;
-
-            if (distanceToTarget < 0) {
-                reverse = -1;
-            } else {
-                reverse = 1;
-            }
-
-            robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + tagAdjustment);
-            robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - tagAdjustment);
-            robot.backRight.setPower((rrPower * reverse) - turnAdjustment + tagAdjustment);
-            robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - tagAdjustment);
-        }
-        if (tagAdjustment < 0.01) {
-            sleep(1000);
-            DriveWithCorrection(robot.getDistance(robot.objectWidth), targetHeading, power);
-        }
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
-
-
-    }
-    public double StrafeWithInches(double targetStrafeInches, int direction, int targetTag) {
-        ResetEncoders();
-
-        double currentStrafeInches = GetAverageStrafePositionInches();
-        double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
-
-        if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0);
-        }
-        double targetRange = 0;
-        while (Math.abs(strafeDistanceToTarget) > 1 && opModeIsActive()) {
-            currentStrafeInches = GetAverageStrafePositionInches();
-            strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
-
-            if (direction == 1) {
-                robot.frontLeft.setPower(0.2);
-                robot.backLeft.setPower(-0.2);
-                robot.frontRight.setPower(-0.2);
-                robot.backRight.setPower(0.2);
-            }
-            if (direction == 0) {
-                robot.frontLeft.setPower(-0.2);
-                robot.backLeft.setPower(0.2);
-                robot.frontRight.setPower(0.2);
-                robot.backRight.setPower(-0.2);
-            }
-
-            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2)) {
-                targetRange = robot.getTargetAprilTagPos(targetTag).range;
-                break;
-            }
-        }
-
-
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
-
-        return targetRange;
-    }
-
-    public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {
-        ResetEncoders();
-
-        double currentStrafeInches = GetAverageStrafePositionInches();
-        double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
-
-        if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0);
-        }
-        double targetRange = 0;
-        while (Math.abs(strafeDistanceToTarget) > 1 && opModeIsActive()) {
-            double turnAdjustment;
-            turnAdjustment = headingAdjustment(targetHeading, 0);
-
-            currentStrafeInches = GetAverageStrafePositionInches();
-            strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
-
-            robot.frontLeft.setPower(power + turnAdjustment);
-            robot.backLeft.setPower(-1 * (power) + turnAdjustment);
-            robot.frontRight.setPower(-1 *(power) - turnAdjustment);
-            robot.backRight.setPower(power - turnAdjustment);
-
-            if (robot.getTargetAprilTagPos(targetTag) != null) {
-                telemetry.addData("boolean", (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2));
-
-                if (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2) {
-                    telemetry.addData("target tag", robot.getTargetAprilTagPos(targetTag).x);
-
-                    targetRange = robot.getTargetAprilTagPos(targetTag).range;
-                    break;
-                }
+        public void Start(int millisecondDelay) {
+            sleep(millisecondDelay);
+
+            while (opModeIsActive()) {
+                telemetry.addData("time: ", gameTimer.milliseconds());
                 telemetry.update();
 
+                for (Move move : moves) {
+                    //init
+                    if (move.trigger.CheckTrigger()) {
+                        if (move.state == MoveState.Dead) {
+                            move.Init();
+                        }
+
+                    }
+
+                    //check
+                    if (move.whileChecked && move.state == MoveState.Init) {
+                        move.Check();
+                    }
+                }
             }
+
         }
-
-
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
-
-        return targetRange;
     }
-    */
-    /*
-    public double StrafeWithInchesWithCorrection(double targetStrafeInches, int direction, int targetTag, int targetHeading) {
-        ResetEncoders();
+    public class Move {
+        Trigger trigger;
+        boolean whileChecked = false;
+        MoveState state = MoveState.Dead;
 
-        double currentStrafeInches = GetAverageStrafePositionInches();
-        double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
 
-        if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0);
+
+
+        public Move(Trigger triggerPARAM, boolean whileCheckedPARAM) {
+            trigger = triggerPARAM;
+            whileChecked = whileCheckedPARAM;
+
+
         }
-        double targetRange = 0;
-        while (Math.abs(strafeDistanceToTarget) > 1) {
-            double turnAdjustment;
-            turnAdjustment = headingAdjustment(targetHeading, 0);
+        public void Init() {
 
-            currentStrafeInches = GetAverageStrafePositionInches();
-            strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
-
-            if (direction == 1) {
-                robot.frontLeft.setPower(0.2 + turnAdjustment);
-                robot.backLeft.setPower(-0.2 + turnAdjustment);
-                robot.frontRight.setPower(-0.2 - turnAdjustment);
-                robot.backRight.setPower(0.2 - turnAdjustment);
-            }
-            if (direction == 0) {
-                robot.frontLeft.setPower(-0.2 + turnAdjustment);
-                robot.backLeft.setPower(0.2 + turnAdjustment);
-                robot.frontRight.setPower(0.2 - turnAdjustment);
-                robot.backRight.setPower(-0.2 - turnAdjustment);
-            }
-
-            if (robot.getTargetAprilTagPos(targetTag) != null && (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2)) {
-                targetRange = robot.getTargetAprilTagPos(targetTag).range;
-                break;
-            }
         }
-
-
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.backLeft.setPower(0);
-        robot.backRight.setPower(0);
-
-        return targetRange;
+        public void Check() {}
     }
-     */
-    /*
-    public NavigationState NavigateToAprilTag(int targetTag, double targetDistance) {
-        double lfPower;
-        double rfPower;
-        double lrPower;
-        double rrPower;
+    public class Trigger {
 
-        double wheelPower = 0.30;
-        double reverse;
-        double adjustment = 0;
+        public Trigger() {
+
+        }
+        public boolean CheckTrigger() {
+            return true;
+        }
+    }
+    public class IndexTrigger extends Trigger {
+        int index;
+        Motion drive;
+        public IndexTrigger(int indexPARAM, Motion drivePARAM) {
+            index = indexPARAM;
+            drive = drivePARAM;
+        }
+        public boolean CheckTrigger() {
+            boolean value = drive.moves.get(index).state == MoveState.Finished;
+            return value;
+        }
+
+    }
+    public class MillisecondTrigger extends Trigger {
+        int millisecond;
+        public MillisecondTrigger(int millisecondPARAM) {
+            millisecond = millisecondPARAM;
+        }
+        public boolean CheckTrigger() {
+            boolean value = (millisecond < gameTimer.milliseconds());
+            return value;
+        }
+
+    }
+    public class InchesTrigger extends Trigger {
+        double inches;
+        Motion drive;
+        int ofDriveIndex;
+
+        public InchesTrigger(double inchesPARAM, Motion drivePARAM, int ofDriveIndexPARAM) {
+            inches = inchesPARAM;
+            drive = drivePARAM;
+            ofDriveIndex = ofDriveIndexPARAM;
+        }
+        public boolean CheckTrigger() {
+            boolean value = Math.abs(inches) < Math.abs(currentInchesCompare) && drive.moves.get(ofDriveIndex).state == MoveState.Init;
+            return value;
+        }
+    }
+    public class SpikeDrop extends Move {
+
+        public SpikeDrop(Trigger triggerPARAM) {
+            super(triggerPARAM, false);
+        }
+
+        public void Init() {
+            state = MoveState.Init;
+            spike.DropSpike();
+            state = MoveState.Finished;
+        }
+
+    }
+    public class MoveHoist extends Move {
+        double hoistPosition;
+        public MoveHoist(Trigger triggerPARAM, double hoistPositionPARAM) {
+            super(triggerPARAM, false);
+            hoistPosition = hoistPositionPARAM;
+        }
+
+        public void Init() {
+            state = MoveState.Init;
+            robot.intakeHoist.setPosition(hoistPosition);
+            state = MoveState.Finished;
+        }
+
+    }
+
+    public class MoveIntake extends Move {
+        double moveIntakeForMilliseconds;
+
+        ElapsedTime moveTimer = new ElapsedTime();
+        public MoveIntake(Trigger triggerPARAM, double moveIntakeForMillisecondsPARAM) {
+            super(triggerPARAM, true);
+            moveIntakeForMilliseconds = moveIntakeForMillisecondsPARAM;
+        }
+
+        public void Init() {
+            state = MoveState.Init;
+            intake.StartIntake(0.75);
+            moveTimer.reset();
+
+        }
+        public void Check() {
+            if (moveTimer.milliseconds() > moveIntakeForMilliseconds) {
+                intake.StopIntake();
+                state = MoveState.Finished;
+            }
+        }
+
+    }
+
+    public class Drive extends Move {
+        double targetInches;
+
+        double minPower = 0.1;
+        double targetPower;
+        double power = minPower;
+
+        double targetHeading;
+        public Drive(Trigger triggerPARAM, double targetInchesPARAM, double powerPARAM, double targetHeadingPARAM) {
+            super(triggerPARAM, true);
+            targetInches = targetInchesPARAM;
+            targetPower = powerPARAM;
+            targetHeading = targetHeadingPARAM;
+        }
+
+        public void Init() {
+            state = MoveState.Init;
+            ResetEncoders();
+
+            double currentInches;
+            double distanceToTarget;
 
 
 
-        lift.SetPosition(lift.liftAprilTags, 0);
-        //sleep(1000);
-        AprilTagPoseFtc targetPose = robot.getTargetAprilTagPos(targetTag);
+            double lfPower = power;
+            double rfPower = power;
+            double lrPower = power;
+            double rrPower = power;
 
-        if (targetPose != null) {
-            reverse = targetPose.range < targetDistance ? 1 : -1;
+            double reverse;
 
-            adjustment = ((targetPose.x) / Math.abs(targetPose.x)) * 0.08;
-            double turnAdjustment;
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
 
-            if (robot.alliance == "blue") {
-                turnAdjustment = headingAdjustment(270, 0) / 2;
+            currentInchesCompare = currentInches;
+
+            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+                double turnAdjustment;
+                turnAdjustment = headingAdjustment(targetHeading, 0);
+
+                currentInches = GetAverageWheelPositionInches();
+                distanceToTarget = targetInches - currentInches;
+
+                if (distanceToTarget < 0) {
+                    reverse = -1;
+                } else {
+                    reverse = 1;
+                }
+
+                robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
+                robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
+                robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
+                robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+            }
+
+        }
+        public void Check() {
+
+
+            double currentInches;
+            double distanceToTarget;
+
+            double reverse;
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            currentInchesCompare = currentInches;
+            telemetry.addData("compare", currentInchesCompare);
+            telemetry.update();
+            //acceleration
+            if (Math.abs(distanceToTarget) / Math.abs(targetInches) < 0.15) {
+                power -= 0.05;
+                if (power < minPower) {
+                    power = minPower;
+                }
             }
             else {
-                turnAdjustment = headingAdjustment(90, 0) / 2;
+                power += 0.05;
+                if (power > targetPower) {
+                    power = targetPower;
+                }
 
             }
-            telemetry.addData("turn", turnAdjustment);
-            telemetry.update();
-            lfPower = (wheelPower * reverse) + adjustment + turnAdjustment;
-            rfPower = (wheelPower * reverse) - adjustment - turnAdjustment;
-            lrPower = (wheelPower * reverse) - adjustment + turnAdjustment;
-            rrPower = (wheelPower * reverse) + adjustment - turnAdjustment;
+
+            double lfPower = power;
+            double rfPower = power;
+            double lrPower = power;
+            double rrPower = power;
+
+            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+                double turnAdjustment;
+                turnAdjustment = headingAdjustment(targetHeading, 0);
+
+                currentInches = GetAverageWheelPositionInches();
+                distanceToTarget = targetInches - currentInches;
+
+                if (distanceToTarget < 0) {
+                    reverse = -1;
+                } else {
+                    reverse = 1;
+                }
+                robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
+                robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
+                robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
+                robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+            }
+            else {
+                robot.frontLeft.setPower(0);
+                robot.frontRight.setPower(0);
+                robot.backLeft.setPower(0);
+                robot.backRight.setPower(0);
+                state = MoveState.Finished;
+            }
+
+        }
+
+    }
+    public class Turn extends Move {
+        double targetHeading;
+        ElapsedTime turnTimer = new ElapsedTime();
+        public Turn(Trigger triggerPARAM, double targetHeadingPARAM) {
+            super(triggerPARAM, true);
+            targetHeading = targetHeadingPARAM;
+        }
+
+        public void Init() {
+            turnTimer.reset();
+            double lfPower;
+            double rfPower;
+            double lrPower;
+            double rrPower;
+            double currentHeading;
+
+            double lastAngle = -1;
+            if (degreesOff(targetHeading) > 0.5 && opModeIsActive()) {
+
+                double adjustment = 0;
+                adjustment = headingAdjustment(targetHeading, 0);
+
+                lfPower = adjustment;
+                rfPower = -adjustment;
+                lrPower = adjustment;
+                rrPower = -adjustment;
+
+                robot.frontLeft.setPower(lfPower);
+                robot.frontRight.setPower(rfPower);
+                robot.backLeft.setPower(lrPower);
+                robot.backRight.setPower(rrPower);
 
 
-            robot.frontLeft.setPower(lfPower);
-            robot.frontRight.setPower(rfPower);
-            robot.backLeft.setPower(lrPower);
-            robot.backRight.setPower(rrPower);
+                angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-            if (targetPose.range < targetDistance) {
+                currentHeading = (360 + angles.firstAngle) % 360;
+
+                lastAngle = currentHeading;
+
+            }
+
+        }
+        public void Check() {
+            turnTimer.reset();
+            double lfPower;
+            double rfPower;
+            double lrPower;
+            double rrPower;
+            double currentHeading;
+
+            double lastAngle = -1;
+            if (degreesOff(targetHeading) > 0.5 && opModeIsActive()) {
+
+                double adjustment = 0;
+                adjustment = headingAdjustment(targetHeading, 0);
+
+                lfPower = adjustment;
+                rfPower = -adjustment;
+                lrPower = adjustment;
+                rrPower = -adjustment;
+
+                robot.frontLeft.setPower(lfPower);
+                robot.frontRight.setPower(rfPower);
+                robot.backLeft.setPower(lrPower);
+                robot.backRight.setPower(rrPower);
+
+
+                angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+                currentHeading = (360 + angles.firstAngle) % 360;
+                if (currentHeading == lastAngle) {
+                    turnTimer.startTime();
+                    if (turnTimer.milliseconds() >= 2000) {
+
+                        robot.frontLeft.setPower(0);
+                        robot.frontRight.setPower(0);
+                        robot.backLeft.setPower(0);
+                        robot.backRight.setPower(0);
+                        state = MoveState.Finished;
+                    }
+                }
+
+                lastAngle = currentHeading;
+
+            }
+            else {
+
 
                 robot.frontLeft.setPower(0);
                 robot.frontRight.setPower(0);
                 robot.backLeft.setPower(0);
                 robot.backRight.setPower(0);
+                state = MoveState.Finished;
+            }
+        }
 
-                return NavigationState.Done;
+    }
+    public class CatWalk extends Move {
+        double targetInchesY;
+        double targetInchesX;
+
+        double minPower = 0.1;
+        double targetPower;
+        double power = minPower;
+
+        double powerX;
+
+        double targetHeading;
+        double aggresion;
+        public CatWalk(Trigger triggerPARAM, double targetInchesYPARAM, double targetInchesXPARAM, double powerPARAM, double targetHeadingPARAM, double aggresionPARAM) {
+            super(triggerPARAM, true);
+            targetInchesY = targetInchesYPARAM;
+            targetInchesX = Math.abs(targetInchesXPARAM);
+            powerX = Math.signum(targetInchesXPARAM);
+            targetPower = powerPARAM;
+            targetHeading = targetHeadingPARAM;
+            aggresion = aggresionPARAM;
+        }
+
+        public void Init() {
+            state = MoveState.Init;
+            ResetEncoders();
+
+            double currentInches;
+            double distanceToTarget;
+
+            double currentStrafeInches;
+            double strafeDistanceToTarget;
+
+            double lfPower = power;
+            double rfPower = power;
+            double lrPower = power;
+            double rrPower = power;
+
+            double reverse;
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInchesY - currentInches;
+
+            currentInchesCompare = currentInches;
+
+            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+                double turnAdjustment;
+                turnAdjustment = headingAdjustment(targetHeading, 0);
+
+                currentStrafeInches = GetAverageStrafePositionInches();
+                strafeDistanceToTarget = targetInchesX - currentStrafeInches;
+
+                currentInches = GetAverageWheelPositionInches();
+                distanceToTarget = targetInchesY - currentInches;
+
+                if (distanceToTarget < 0) {
+                    reverse = -1;
+                } else {
+                    reverse = 1;
+                }
+
+                if (Math.abs(strafeDistanceToTarget) > 1) {
+                    robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + (powerX * aggresion));
+                    robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - (powerX * aggresion));
+                    robot.backRight.setPower((rrPower * reverse) - turnAdjustment + (powerX * aggresion));
+                    robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - (powerX * aggresion));
+                }
+                else {
+                    robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
+                    robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
+                    robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
+                    robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+                }
+            }
+
+        }
+        public void Check() {
+            state = MoveState.Init;
+            ResetEncoders();
+
+            double currentInches;
+            double distanceToTarget;
+
+            double currentStrafeInches;
+            double strafeDistanceToTarget;
+
+            double lfPower = power;
+            double rfPower = power;
+            double lrPower = power;
+            double rrPower = power;
+
+            double reverse;
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInchesY - currentInches;
+
+            currentInchesCompare = currentInches;
+
+            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+                double turnAdjustment;
+                turnAdjustment = headingAdjustment(targetHeading, 0);
+
+                currentStrafeInches = GetAverageStrafePositionInches();
+                strafeDistanceToTarget = targetInchesX - currentStrafeInches;
+
+                currentInches = GetAverageWheelPositionInches();
+                distanceToTarget = targetInchesY - currentInches;
+
+                if (distanceToTarget < 0) {
+                    reverse = -1;
+                } else {
+                    reverse = 1;
+                }
+
+                if (Math.abs(strafeDistanceToTarget) > 1) {
+                    robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + (powerX * aggresion));
+                    robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - (powerX * aggresion));
+                    robot.backRight.setPower((rrPower * reverse) - turnAdjustment + (powerX * aggresion));
+                    robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - (powerX * aggresion));
+                }
+                else {
+                    robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
+                    robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
+                    robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
+                    robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+                }
             }
             else {
-                return NavigationState.Going;
+                robot.frontLeft.setPower(0);
+                robot.frontRight.setPower(0);
+                robot.backLeft.setPower(0);
+                robot.backRight.setPower(0);
+                state = MoveState.Finished;
             }
-        }
-        else {
-
-            robot.frontLeft.setPower(-0.05);
-            robot.frontRight.setPower(-0.05);
-            robot.backLeft.setPower(-0.05);
-            robot.backRight.setPower(-0.05);
-            return NavigationState.Waiting;
 
         }
+
     }
 
-    /*
-    public void Navigate(int targetId, double distance, double timeout) {
-        NavigationState navigationState = NavigationState.Waiting;
-        double lastGoingTime = robot.gameTimer.seconds();
-        boolean timedOut = (robot.gameTimer.seconds() - lastGoingTime > timeout);
-        while (!timedOut && navigationState != NavigationState.Done && opModeIsActive()) {
-            navigationState = NavigateToAprilTag(targetId, distance);
-            if (navigationState != NavigationState.Waiting) {
-                lastGoingTime = robot.gameTimer.seconds();
-            }
-            timedOut = (robot.gameTimer.seconds() - lastGoingTime > timeout);
-            telemetry.addData("state", navigationState);
-            telemetry.update();
-        }
 
-        if (navigationState != NavigationState.Done) {
-            requestOpModeStop();
-        }
-    }
-    public enum NavigationState {
-            Going,
-            Waiting,
-            Done
-    }*/
+
+
 
 }
