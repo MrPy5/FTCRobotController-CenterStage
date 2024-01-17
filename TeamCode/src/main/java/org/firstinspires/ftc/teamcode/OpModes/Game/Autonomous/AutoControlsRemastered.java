@@ -95,7 +95,7 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
         return ((((robot.frontLeft.getCurrentPosition() + robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4.0) / robot.ticksPerInch));
     }
     public double GetAverageStrafePositionInches() {
-        return (((Math.abs(robot.frontLeft.getCurrentPosition()) + Math.abs(robot.frontRight.getCurrentPosition()) + Math.abs(robot.backLeft.getCurrentPosition()) + Math.abs(robot.backRight.getCurrentPosition())) / 4.0) / robot.strafeTicksPerInch);
+        return (robot.frontLeft.getCurrentPosition() - robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() - robot.backRight.getCurrentPosition() / 4.0) / robot.strafeTicksPerInch;
     }
     public enum MoveState {
         Dead,
@@ -552,7 +552,7 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
         public CatWalk(Trigger triggerPARAM, double targetInchesYPARAM, double targetInchesXPARAM, double powerPARAM, double targetHeadingPARAM, double aggresionPARAM) {
             super(triggerPARAM, true);
             targetInchesY = targetInchesYPARAM;
-            targetInchesX = Math.abs(targetInchesXPARAM);
+            targetInchesX = targetInchesXPARAM;
             powerX = Math.signum(targetInchesXPARAM);
             targetPower = powerPARAM;
             targetHeading = targetHeadingPARAM;

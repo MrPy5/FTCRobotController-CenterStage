@@ -521,9 +521,9 @@ public class Robot {
     }
     public class IntakeHoist {
 
-        public double stackPosition = 0.71;
-        public double groundPosition = stackPosition + 0.08;
-        public double hoistedPosition = stackPosition - 0.47;
+        public double stackPosition = 0.43;
+        public double groundPosition = 0.29;
+        public double hoistedPosition = 0.99;
 
 
         public IntakeHoist() {
@@ -556,8 +556,8 @@ public class Robot {
         public double liftPowerUp = 1;
         public double liftPowerDown = 0.7;
 
-        public double servoUpPosition = 0.5;
-        public double servoDownPosition = 0.84;
+        public double servoUpPosition = 0.85;
+        public double servoDownPosition = 0.48;
         public Suspension() {
             suspensionMotor = hardwareMap.get(DcMotor.class, "suspension");
             suspensionMotor.setDirection(DcMotor.Direction.REVERSE);
