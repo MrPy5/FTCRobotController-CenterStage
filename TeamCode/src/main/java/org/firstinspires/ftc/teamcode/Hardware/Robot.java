@@ -139,6 +139,7 @@ public class Robot {
 
     public int whiteOne = 0;
     public int whiteTwo = 0;
+    public int whiteThree = 0;
 
     public double area = 0;
 
@@ -696,16 +697,14 @@ public class Robot {
 
     public class ColorCounter extends OpenCvPipeline {
 
-
-
         Mat hsvFrame = new Mat();
         Mat colorMask = new Mat();
         Mat croppedSectorOne = new Mat();
         Mat croppedSectorTwo = new Mat();
+        Mat croppedSectorThree = new Mat();
         Mat resizedOne = new Mat();
         Mat resizedTwo = new Mat();
-
-
+        Mat resizedThree = new Mat();
 
         // Calculate the distance using the formula
 
@@ -714,20 +713,26 @@ public class Robot {
             colorMask = preprocessFrame(input);
             Rect ro1 = new Rect(130,130,250,300);
             Rect ro2 = new Rect(580,130,350,180);
+            Rect ro3 = new Rect(900, 130, 250, 300);
             croppedSectorOne = new Mat(colorMask, ro1);
             croppedSectorTwo = new Mat(colorMask, ro2);
+            croppedSectorThree = new Mat(colorMask, ro3);
 
             Size sz1 = new Size(25,20);
             Size sz2 = new Size(35,10);
-            Imgproc.resize(croppedSectorOne, resizedOne, sz1);
+            Size sz3 = new Size(25, 20);
 
+            Imgproc.resize(croppedSectorOne, resizedOne, sz1);
             Imgproc.resize(croppedSectorTwo, resizedTwo, sz2);
+            Imgproc.resize(croppedSectorThree, resizedThree, sz3);
+
             whiteOne = Core.countNonZero(resizedOne);
             whiteTwo = Core.countNonZero(resizedTwo);
+            whiteThree = Core.countNonZero(resizedThree);
 
-            //return resizedOne;
             Imgproc.rectangle(colorMask, ro1, new Scalar(100, 255, 255), 10);
             Imgproc.rectangle(colorMask, ro2, new Scalar(100, 255, 255), 10);
+            Imgproc.rectangle(colorMask, ro3, new Scalar(100, 255, 255), 10);
             return colorMask;
         }
 
@@ -754,11 +759,6 @@ public class Robot {
 
             return colorMask;
         }
-
-
-
-
-
     }
 
 
@@ -788,9 +788,9 @@ public class Robot {
     public int ScanForElementBitmap(int preferredFailOutput) {
         int returnSpike = preferredFailOutput;
 
-        if (whiteOne > whiteTwo && whiteOne > 75) {
+        if (whiteOne > whiteTwo && whiteOne > whiteThree && whiteOne > 75) {
             returnSpike = 1;
-        } else if (whiteTwo > whiteOne && whiteTwo > 75 ) {
+        } else if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 75) {
             returnSpike = 2;
         } else {
             returnSpike = 3;
