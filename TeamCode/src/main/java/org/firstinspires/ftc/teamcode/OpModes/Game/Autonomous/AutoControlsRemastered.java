@@ -95,8 +95,61 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
         return ((((robot.frontLeft.getCurrentPosition() + robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4.0) / robot.ticksPerInch));
     }
     public double GetAverageStrafePositionInches() {
-        return (robot.frontLeft.getCurrentPosition() - robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() - robot.backRight.getCurrentPosition() / 4.0) / robot.strafeTicksPerInch;
+        return (robot.frontLeft.getCurrentPosition() - robot.frontRight.getCurrentPosition() - robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition() / 4.0) / robot.strafeTicksPerInch;
     }
+    // Assuming you have motors and encoders defined in your OpMode class
+
+
+    // Function to move the robot forward and sideways
+    void moveForwardAndSideways(double forwardInches, double sidewaysInches, double power) {
+
+        int forwardTicks = (int) (forwardInches * robot.ticksPerInch);
+        int sidewaysTicks = (int) (sidewaysInches * robot.ticksPerInch);
+        // Reset encoders
+        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set target positions
+        robot.frontLeft.setTargetPosition(forwardTicks - sidewaysTicks);
+        robot.frontRight.setTargetPosition(forwardTicks + sidewaysTicks);
+        robot.backLeft.setTargetPosition(forwardTicks + sidewaysTicks);
+        robot.backRight.setTargetPosition(forwardTicks - sidewaysTicks);
+
+        // Set mode to run to position
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Set power
+        double strafePower = Math.signum(sidewaysInches) / 3;
+        robot.frontRight.setPower(power + strafePower);
+        robot.frontLeft.setPower(power - strafePower);
+        robot.backRight.setPower(power - strafePower);
+        robot.backLeft.setPower(power + strafePower);
+
+        // Wait for the motors to reach the target position
+        while (robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backRight.isBusy() && robot.backLeft.isBusy()) {
+            // You can perform other tasks or checks here if needed
+        }
+
+        // Stop the motors
+        robot.frontRight.setPower(0);
+        robot.frontLeft.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+        // Set mode back to normal
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+
+
     public enum MoveState {
         Dead,
         Init,
@@ -549,6 +602,7 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
 
         double targetHeading;
         double aggresion;
+        boolean done;
         public CatWalk(Trigger triggerPARAM, double targetInchesYPARAM, double targetInchesXPARAM, double powerPARAM, double targetHeadingPARAM, double aggresionPARAM) {
             super(triggerPARAM, true);
             targetInchesY = targetInchesYPARAM;
@@ -614,8 +668,6 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
 
         }
         public void Check() {
-            state = MoveState.Init;
-            ResetEncoders();
 
             double currentInches;
             double distanceToTarget;
@@ -652,18 +704,23 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
                     reverse = 1;
                 }
 
-                if (Math.abs(strafeDistanceToTarget) > 1) {
+                if (Math.abs(strafeDistanceToTarget) > 1 && !done) {
                     robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + (powerX * aggresion));
                     robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - (powerX * aggresion));
                     robot.backRight.setPower((rrPower * reverse) - turnAdjustment + (powerX * aggresion));
                     robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - (powerX * aggresion));
                 }
                 else {
+                    done = true;
+
+                }
+                if (done) {
                     robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
                     robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
                     robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
                     robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
                 }
+                telemetry.addData("distance", GetAverageStrafePositionInches());
             }
             else {
                 robot.frontLeft.setPower(0);

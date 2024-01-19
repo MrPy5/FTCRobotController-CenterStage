@@ -33,12 +33,13 @@ public class RemasteredAuto extends AutoControlsRemastered {
             //driveOne.add(new Drive(new MillisecondTrigger(0), 26, 0.5, 0));
             //driveOne.add(new Turn(new IndexTrigger(1, driveOne), 90));
             //driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
-            driveOne.add(new CatWalk(new MillisecondTrigger(0), 30, 10, 0.3, 0, 0.5));
+            driveOne.add(new CatWalk(new MillisecondTrigger(0), 30, 30, 0.3, 0, 0.5));
 
 
             //driveOne.add(new MoveHoist(-1, 2, hoist.stackPosition));
             //driveOne.add(new MoveIntake(-1, 3, 3000));*/
         driveOne.Start(0);
+        //moveForwardAndSideways(30, 2, 0.5);
 
     }
 
