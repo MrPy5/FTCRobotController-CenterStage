@@ -20,6 +20,7 @@ public class FastRedRight extends AutoControls {
             telemetry.addData("Spike: ", spikeLocation);
             telemetry.addData("White One: ", robot.whiteOne);
             telemetry.addData("White Two: ", robot.whiteTwo);
+            telemetry.addData("White Three: ", robot.whiteThree);
             telemetry.update();
         }
 
