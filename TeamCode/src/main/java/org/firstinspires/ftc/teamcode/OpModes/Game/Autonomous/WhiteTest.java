@@ -25,7 +25,7 @@ public class WhiteTest extends AutoControls {
 
         robot.gameTimer.startTime();
         DriveWithCorrectionToStack(40, 0, 0.2);
-
+        //DriveAfterStrafeStack(0, 0.3);
 
         while (opModeIsActive()) {
             telemetry.addData("Coordinate", "(" + (int) robot.centerX + ", " + (int) robot.centerY + ")");

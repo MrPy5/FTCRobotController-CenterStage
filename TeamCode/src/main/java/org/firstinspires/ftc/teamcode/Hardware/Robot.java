@@ -129,7 +129,7 @@ public class Robot {
     public final double objectWidthInRealWorldUnits = 3.25;  // Replace with the actual width of the object in real-world units
     public final double focalLength = 1430;  // Replace with the focal length of the camera in pixels
 
-    public final double heightOfCamera = 10.5;
+    public final double heightOfCamera = 9.5;
 
     public double objectWidth = 0;
     public double objectHeight = 0;
