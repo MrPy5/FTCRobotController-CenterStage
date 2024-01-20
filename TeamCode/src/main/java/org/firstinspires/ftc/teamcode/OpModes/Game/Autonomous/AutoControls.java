@@ -372,6 +372,40 @@ public abstract class AutoControls extends LinearOpMode {
 
 
     }
+
+    public void DriveAfterStrafeStack(int targetHeading, double power) {
+        ResetEncoders();
+
+        double strafeAdjustment = 0;
+
+        while ((robot.getCenter() > 650 || robot.getCenter() < 630) && opModeIsActive()) {
+            double reverse = 1;
+            strafeAdjustment = 0;
+            if (robot.getCenter() != -1) {
+                strafeAdjustment = 0.3; //4 * Math.pow(2 * ((robot.getCenter() / 1280.0) - 0.50), 3);
+                telemetry.addData("Strafe Amount: ", strafeAdjustment);
+                telemetry.update();
+            }
+            if (robot.getCenter() > 680) {
+                reverse = -1;
+            }
+
+            robot.frontLeft.setPower(-(strafeAdjustment) * reverse);
+            robot.frontRight.setPower((strafeAdjustment) * reverse);
+            robot.backRight.setPower(-(strafeAdjustment) * reverse);
+            robot.backLeft.setPower((strafeAdjustment) * reverse);
+        }
+
+        sleep(100);
+        DriveWithCorrection(robot.getDistance(robot.objectWidth), targetHeading, power);
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backRight.setPower(0);
+        robot.backLeft.setPower(0);
+
+    }
+
     public void DriveWithCorrectionToStack(double targetInches, double targetHeading, double power) {
         ResetEncoders();
 
@@ -390,22 +424,29 @@ public abstract class AutoControls extends LinearOpMode {
         distanceToTarget = targetInches - currentInches;
 
 
-        double tagAdjustment = 0;
-        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+        double tagAdjustment = -1;
+        while (Math.abs(tagAdjustment) > 0.03 && Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
 
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
 
             tagAdjustment = 0;
+            double left;
             if (robot.getCenter() != -1) {
-                tagAdjustment = 5 * Math.pow(2 * ((robot.getCenter() / 1280.0) - 0.50), 3);
+                tagAdjustment = (((robot.getCenter() + (1280/34.0)) / 1280.0) - 0.5) * (1/3.0);
                 telemetry.addData("adjustment", tagAdjustment);
-                telemetry.update();
+                //telemetry.update();
+            }
+            if (tagAdjustment < 0) {
+                left = -1;
+            }
+            else {
+                left = 1;
             }
 
-            if (tagAdjustment < 0.01) {
+            /*if (tagAdjustment < 0.01) {
                 break;
-            }
+            }*/
 
 
             currentInches = GetAverageWheelPositionInches();
@@ -417,19 +458,22 @@ public abstract class AutoControls extends LinearOpMode {
                 reverse = 1;
             }
 
-            robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + tagAdjustment);
-            robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - tagAdjustment);
-            robot.backRight.setPower((rrPower * reverse) - turnAdjustment + tagAdjustment);
-            robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - tagAdjustment);
+            robot.frontLeft.setPower((0) + turnAdjustment + (tagAdjustment + (0.1 * left)));
+            robot.frontRight.setPower((0) - turnAdjustment - (tagAdjustment + (0.1 * left)));
+            robot.backRight.setPower((0) - turnAdjustment + (tagAdjustment + (0.1 * left)));
+            robot.backLeft.setPower((0) + turnAdjustment - (tagAdjustment + (0.1 * left)));
+
         }
-        if (tagAdjustment < 0.01) {
-            sleep(1000);
-            DriveWithCorrection(robot.getDistance(robot.objectWidth), targetHeading, power);
-        }
+
         robot.frontLeft.setPower(0);
         robot.frontRight.setPower(0);
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
+
+        if (tagAdjustment < 0.03) {
+            sleep(5000);
+            DriveWithCorrection(robot.getDistanceFromRobot(robot.getDistance(robot.objectWidth)), targetHeading, power);
+        }
 
 
     }
