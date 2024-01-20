@@ -17,29 +17,39 @@ public class RemasteredAuto extends AutoControlsRemastered {
         //int spikeLocation = 1;
         waitForStart();
 
-        Motion driveOne = new Motion();
-            /*driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
-            driveOne.add(new Drive(new MillisecondTrigger(0), 48, 0.7, 0));
-            driveOne.add(new SpikeDrop(new InchesTrigger(24.5, driveOne, 1)));
-            driveOne.add(new MoveHoist(new IndexTrigger(1, driveOne), hoist.stackPosition - 0.07));
-            driveOne.add(new Drive(new IndexTrigger(1, driveOne), 22, 0.5, 90));
-            driveOne.add(new MoveIntake(new IndexTrigger(4, driveOne), 1000));
-            driveOne.add(new MoveIntake(new IndexTrigger(5, driveOne), 1500));
-            driveOne.add(new Drive(new IndexTrigger(5, driveOne), -80, 0.8, 90));
-
-            */
-
-            //driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
-            //driveOne.add(new Drive(new MillisecondTrigger(0), 26, 0.5, 0));
-            //driveOne.add(new Turn(new IndexTrigger(1, driveOne), 90));
-            //driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
-            driveOne.add(new CatWalk(new MillisecondTrigger(0), 30, 30, 0.3, 0, 0.5));
-
-
-            //driveOne.add(new MoveHoist(-1, 2, hoist.stackPosition));
-            //driveOne.add(new MoveIntake(-1, 3, 3000));*/
+       Motion driveOne = new Motion();
+            driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
+            driveOne.add(new Drive(new MillisecondTrigger(0), 28, 0.5, 0));
+            driveOne.add(new Drive(new IndexTrigger(1, driveOne), -5, 0.4, 90));
+            driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
+            driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition + 0.07));
+            driveOne.add(new Drive(new IndexTrigger(3, driveOne), 5, 0.25, 90));
+            driveOne.add(new CatWalk(new IndexTrigger(5, driveOne), 23, 18.5, 0.4, 90, 0.9, new Vision()));
+            driveOne.add(new MoveIntake(new IndexTrigger(6, driveOne), 1500));
         driveOne.Start(0);
+
+
+       Motion driveTwo = new Motion();
+            driveTwo.add(new MoveIntake(new MillisecondTrigger(0), 1500));
+            driveTwo.add(new Drive(new MillisecondTrigger(0), -85, 0.8, 90));
+            driveTwo.add(new MoveLift(new IndexTrigger(1, driveTwo), lift.liftLow - 2, 0));
+            driveTwo.add(new CatWalk(new IndexTrigger(1, driveTwo), -28, -28, 0.5, 90, 0.5, new Vision()));
+
+        driveTwo.Start(0);
+
+       Motion driveThree = new Motion();
+            driveThree.add(new MoveDropper(new MillisecondTrigger(0), "open"));
+            driveThree.add(new MoveLift(new IndexTriggerWithDelay(0, 2000, driveThree), lift.liftBottom, lift.liftLow - 2));
+            driveThree.add(new Drive(new IndexTriggerWithDelay(0, 2000, driveThree), 10, 0.5, 90));
+            driveThree.add(new MoveDropper(new IndexTriggerWithDelay(0, 2000, driveThree), "close"));
+            driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 31, 28, 0.5, 90, 0.5, new Vision()));
+            driveThree.add(new Drive(new IndexTrigger(4, driveThree), 60, 0.8, 90));
+
+        driveThree.Start(0);
+
+
         //moveForwardAndSideways(30, 2, 0.5);
+
 
     }
 

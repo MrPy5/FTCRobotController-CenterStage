@@ -89,7 +89,7 @@ public class Robot {
     public double deadStickZone = 0.01;
     public double wheelPowerMinToMove = 0.05;
 
-    public double strafeTicksPerInch = 100.0 / (0.97);
+    public double strafeTicksPerInch = 170;
 
     //Odometer
     public DcMotorEx odometerLeft;
