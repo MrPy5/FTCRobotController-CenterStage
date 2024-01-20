@@ -18,11 +18,12 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.IntakeHoist;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AutoControlsRemastered extends LinearOpMode {
+public abstract class AutoControlsCombined extends LinearOpMode {
 
     public Robot robot;
     public Dropper dropper;
@@ -35,6 +36,7 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
     public Orientation angles;
 
     public double DISTANCE_TOLERANCE = 0.15;
+    public final double TAG_DISTANCE = 10;
 
     public double currentInchesCompare = -1;
 
@@ -98,6 +100,12 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
         return (robot.frontLeft.getCurrentPosition() - robot.frontRight.getCurrentPosition() - robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition() / 4.0) / robot.strafeTicksPerInch;
     }
     // Assuming you have motors and encoders defined in your OpMode class
+
+
+    // Function to move the robot forward and sideways
+
+
+
 
     public enum MoveState {
         Dead,
@@ -858,12 +866,282 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
 
     }
 
+    //Old Auto Controls
+    public void ManualTurn (double targetHeading) {
+
+        double lfPower;
+        double rfPower;
+        double lrPower;
+        double rrPower;
+        double currentHeading;
+        ElapsedTime turnTimer = new ElapsedTime();
+        double lastAngle = -1;
+        while (degreesOff(targetHeading) > 0.5 && opModeIsActive()) {
+
+            double adjustment = 0;
+            adjustment = headingAdjustment(targetHeading, 0);
+
+            lfPower = adjustment;
+            rfPower = -adjustment;
+            lrPower = adjustment;
+            rrPower = -adjustment;
+
+            robot.frontLeft.setPower(lfPower);
+            robot.frontRight.setPower(rfPower);
+            robot.backLeft.setPower(lrPower);
+            robot.backRight.setPower(rrPower);
+
+
+            angles   = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            currentHeading = (360 + angles.firstAngle) % 360;
+            if (currentHeading == lastAngle) {
+                turnTimer.startTime();
+                if (turnTimer.milliseconds() >= 2000) {
+
+                    robot.frontLeft.setPower(0);
+                    robot.frontRight.setPower(0);
+                    robot.backLeft.setPower(0);
+                    robot.backRight.setPower(0);
+                    break;
+                }
+            }
+
+            lastAngle = currentHeading;
+
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+    }
+
+
+    public void DriveWithCorrection (double targetInches, double targetHeading, double power) {
+        ResetEncoders();
+
+
+        double currentInches;
+        double distanceToTarget;
+
+        double lfPower = power;
+        double rfPower = power;
+        double lrPower = power;
+        double rrPower = power;
+
+        double reverse;
+
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
 
 
 
+        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            if (distanceToTarget < 0) {
+                reverse = -1;
+            } else {
+                reverse = 1;
+            }
+            robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
+            robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
+            robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
+            robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
 
 
+    }
 
+    public void DriveWithCorrectionToAprilTag(double targetInches, double targetHeading, double power, int targetTag) {
+        ResetEncoders();
+
+        AprilTagPoseFtc fetchedPose = null;
+
+        double currentInches;
+        double distanceToTarget;
+
+        double lfPower = power;
+        double rfPower = power;
+        double lrPower = power;
+        double rrPower = power;
+
+        double reverse;
+
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
+
+        if (targetTag != -1) {
+            lift.SetPosition(lift.liftAprilTags, 0);
+        }
+
+        while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && (fetchedPose == null ? true : fetchedPose.range > TAG_DISTANCE) && opModeIsActive()) {
+
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            double tagAdjustment = 0;
+            if (targetTag != -1) {
+                fetchedPose = robot.getTargetAprilTagPos(targetTag);
+                if (fetchedPose != null) {
+                    //tagAdjustment = ((fetchedPose.x) / Math.abs(fetchedPose.x));
+                    tagAdjustment = (0.2/5) * (fetchedPose.x);
+                }
+            }
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            if (distanceToTarget < 0) {
+                reverse = -1;
+            } else {
+                reverse = 1;
+            }
+
+            robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + tagAdjustment);
+            robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - tagAdjustment);
+            robot.backRight.setPower((rrPower * reverse) - turnAdjustment + tagAdjustment);
+            robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - tagAdjustment);
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+
+    }
+
+    public void DriveWithCorrectionToStack(double targetInches, double targetHeading, double power) {
+        ResetEncoders();
+
+
+        double currentInches;
+        double distanceToTarget;
+
+        double lfPower = power;
+        double rfPower = power;
+        double lrPower = power;
+        double rrPower = power;
+
+        double reverse;
+
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
+
+
+        double tagAdjustment = -1;
+        while (Math.abs(tagAdjustment) > 0.03 && Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            tagAdjustment = 0;
+            double left;
+            if (robot.getCenter() != -1) {
+                tagAdjustment = (((robot.getCenter() + (1280/34.0)) / 1280.0) - 0.5) * (1/3.0);
+                telemetry.addData("adjustment", tagAdjustment);
+                //telemetry.update();
+            }
+            if (tagAdjustment < 0) {
+                left = -1;
+            }
+            else {
+                left = 1;
+            }
+
+            /*if (tagAdjustment < 0.01) {
+                break;
+            }*/
+
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            if (distanceToTarget < 0) {
+                reverse = -1;
+            } else {
+                reverse = 1;
+            }
+
+            robot.frontLeft.setPower((0) + turnAdjustment + (tagAdjustment + (0.1 * left)));
+            robot.frontRight.setPower((0) - turnAdjustment - (tagAdjustment + (0.1 * left)));
+            robot.backRight.setPower((0) - turnAdjustment + (tagAdjustment + (0.1 * left)));
+            robot.backLeft.setPower((0) + turnAdjustment - (tagAdjustment + (0.1 * left)));
+
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+        if (tagAdjustment < 0.03) {
+            sleep(100);
+            robot.intakeHoist.setPosition(hoist.stackPosition + 0.05);
+            hoist.Stack();
+            DriveWithCorrection(robot.getDistanceFromRobot(robot.getDistance(robot.objectWidth)) - 1, targetHeading, power);
+        }
+
+
+    }
+
+    public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {
+        ResetEncoders();
+
+        double currentStrafeInches = GetAverageStrafePositionInches();
+        double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+
+        if (targetTag != -1) {
+            lift.SetPosition(lift.liftAprilTags, 0);
+        }
+        double targetRange = 0;
+        while (Math.abs(strafeDistanceToTarget) > 1 && opModeIsActive()) {
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            currentStrafeInches = GetAverageStrafePositionInches();
+            strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+
+            robot.frontLeft.setPower(power + turnAdjustment);
+            robot.backLeft.setPower(-1 * (power) + turnAdjustment);
+            robot.frontRight.setPower(-1 *(power) - turnAdjustment);
+            robot.backRight.setPower(power - turnAdjustment);
+
+            if (robot.getTargetAprilTagPos(targetTag) != null) {
+                telemetry.addData("boolean", (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2));
+
+                if (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2) {
+                    telemetry.addData("target tag", robot.getTargetAprilTagPos(targetTag).x);
+
+                    targetRange = robot.getTargetAprilTagPos(targetTag).range;
+                    break;
+                }
+                telemetry.update();
+
+            }
+        }
+
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+        return targetRange;
+    }
 
 
 

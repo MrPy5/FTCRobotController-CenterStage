@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 
-@Autonomous(name = "Blue Right")
+@Autonomous(name = "Blue Right", group = "Slow Autos")
 public class SlowBlueRight extends AutoControls {
 
     @Override

@@ -174,10 +174,6 @@ public abstract class AutoControls extends LinearOpMode {
 
     }
 
-    //Acceleration
-    //Catwalk-Drive
-    //Catwalk-Drive with April-Tag
-
     public void Turn (double targetHeading) {
 
         double lfPower;
@@ -373,6 +369,7 @@ public abstract class AutoControls extends LinearOpMode {
 
     }
 
+    /*
     public void DriveAfterStrafeStack(int targetHeading, double power) {
         ResetEncoders();
 
@@ -405,6 +402,8 @@ public abstract class AutoControls extends LinearOpMode {
         robot.backLeft.setPower(0);
 
     }
+
+     */
 
     public void DriveWithCorrectionToStack(double targetInches, double targetHeading, double power) {
         ResetEncoders();
