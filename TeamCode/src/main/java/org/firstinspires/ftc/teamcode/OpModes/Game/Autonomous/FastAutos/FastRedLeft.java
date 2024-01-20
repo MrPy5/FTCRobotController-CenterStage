@@ -35,7 +35,7 @@ public class FastRedLeft extends AutoControls {
         if (spikeLocation == 1) {
             DriveWithCorrection(42, 0, 0.4);
             sleep(100);
-            StrafeWithInchesWithCorrection(14, -0.4, -1, 0);
+            StrafeWithInchesWithCorrection(8, -0.4, -1, 0);
             sleep(100);
             DriveWithCorrection(-1, 0, 0.3);
             sleep(100);
@@ -43,8 +43,19 @@ public class FastRedLeft extends AutoControls {
             sleep(400);
             spike.ResetSpike();
             DriveWithCorrection(5, 0, 0.4);
+            hoist.Stack();
             Turn(90);
-            DriveWithCorrection(-88, 90, 0.6);
+
+            DriveWithCorrectionToStack(10, 90, 0.3);
+            robot.intakeHoist.setPosition(hoist.stackPosition - 0.07);
+            DriveWithCorrection(4, 90, 0.2);
+            intake.StartIntake(1);
+            sleep(1750);
+            intake.StopIntake();
+
+            DriveWithCorrection(-108, 90, 0.6);
+            //DriveWithCorrection(-88, 90, 0.6);
+
             sleep(100);
             StrafeWithInchesWithCorrection(48, -0.3, 4, 90);
             DriveWithCorrectionToAprilTag(-40, 90, 0.4, 4);
@@ -94,7 +105,7 @@ public class FastRedLeft extends AutoControls {
 
         lift.SetPosition(lift.liftLow - 5,  lift.liftAprilTags);
         sleep(200);
-        DriveWithCorrection(-2, 90, 0.3);
+        DriveWithCorrection(-3, 90, 0.3);
         sleep(50);
         dropper.OpenDropper();
         sleep(600);

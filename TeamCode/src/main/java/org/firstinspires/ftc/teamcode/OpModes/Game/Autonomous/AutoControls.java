@@ -398,7 +398,7 @@ public abstract class AutoControls extends LinearOpMode {
 
             tagAdjustment = 0;
             if (robot.getCenter() != -1) {
-                tagAdjustment = 4 * Math.pow(2 * ((robot.getCenter() / 1280.0) - 0.50), 3);
+                tagAdjustment = 5 * Math.pow(2 * ((robot.getCenter() / 1280.0) - 0.50), 3);
                 telemetry.addData("adjustment", tagAdjustment);
                 telemetry.update();
             }
