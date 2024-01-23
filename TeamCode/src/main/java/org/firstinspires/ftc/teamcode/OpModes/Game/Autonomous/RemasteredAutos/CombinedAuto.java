@@ -45,7 +45,7 @@ public class CombinedAuto extends AutoControlsCombined {
             driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
             driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition + 0.07));
             driveOne.add(new Drive(new IndexTrigger(3, driveOne), 5, 0.25, 90));
-            driveOne.add(new CatWalk(new IndexTrigger(5, driveOne), 23, 18.5, 0.4, 90, 0.9, new Vision()));
+            driveOne.add(new CatWalk(new IndexTrigger(5, driveOne), 23, 18.5, 0.4, 90, 1.2, new Vision()));
             driveOne.add(new MoveIntake(new IndexTrigger(6, driveOne), 1500));
         }
         driveOne.Start(0);
@@ -59,7 +59,7 @@ public class CombinedAuto extends AutoControlsCombined {
 
         driveTwo.Start(0);
 
-        StrafeWithInchesWithCorrection(28, -0.3, 6, 90);
+        StrafeWithInchesWithCorrection(20, -0.3, 6, 90);
         DriveWithCorrection(-10, 90, 0.4);
 
        Motion driveThree = new Motion();
@@ -72,10 +72,12 @@ public class CombinedAuto extends AutoControlsCombined {
 
         driveThree.Start(0);
 
-        DriveWithCorrectionToStack(40, 90, 0.3);
+        //Hoist position set in function
+        DriveWithCorrectionToStack(40, 90, 0.4, hoist.stackPosition + 0.03);
+        DriveWithCorrection(25, 90, 0.4);
 
         Motion driveFour = new Motion();
-            driveFour.add(new MoveIntake(new MillisecondTrigger(0), 3000));
+            driveFour.add(new MoveIntake(new MillisecondTrigger(0), 4500));
             driveFour.add(new Drive(new MillisecondTrigger(1500), -100, 0.8, 90));
             driveFour.add(new MoveLift(new IndexTrigger(1, driveFour), lift.liftLow - 2, 0));
 

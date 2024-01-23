@@ -788,19 +788,9 @@ public class Robot {
     public int ScanForElementBitmap(int preferredFailOutput) {
         int returnSpike = preferredFailOutput;
 
-        /*
-        if (whiteOne > whiteTwo && whiteOne > whiteThree && whiteOne > 75) {
-            returnSpike = 1;
-        } else if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 75) {
+        if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 55) {
             returnSpike = 2;
-        } else {
-            returnSpike = 3;
-        }
-         */
-
-        if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 75) {
-            returnSpike = 2;
-        } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 75) {
+        } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 55) {
             returnSpike = 3;
         } else {
             returnSpike = 1;

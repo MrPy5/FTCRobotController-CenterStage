@@ -272,7 +272,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             boolean value = false;
             if (robot.getTargetAprilTagPos(targetTag) != null) {
 
-                if (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2) {
+                if (robot.getTargetAprilTagPos(targetTag).x < 1.5 && robot.getTargetAprilTagPos(targetTag).x > -1.5) {
                     value = true;
 
                 }
@@ -725,7 +725,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 } else {
                     reverse = 1;
                 }
-                double strafePower = (Math.pow(strafeDistanceToTarget / 10, 2) + 0.05) * powerX;
+                double strafePower = (Math.pow(strafeDistanceToTarget / 10, 2) + 0.05) * powerX * aggresion;
                 if (Math.abs(strafeDistanceToTarget) > 1) {
                     robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + (strafePower));
                     robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - (strafePower));
@@ -1024,7 +1024,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
     }
 
-    public void DriveWithCorrectionToStack(double targetInches, double targetHeading, double power) {
+    public void DriveWithCorrectionToStack(double targetInches, double targetHeading, double power, double hoistPosition) {
         ResetEncoders();
 
 
@@ -1090,9 +1090,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
         if (tagAdjustment < 0.03) {
             sleep(100);
-            robot.intakeHoist.setPosition(hoist.stackPosition + 0.05);
-            hoist.Stack();
-            DriveWithCorrection(robot.getDistanceFromRobot(robot.getDistance(robot.objectWidth)) - 1, targetHeading, power);
+            robot.intakeHoist.setPosition(hoistPosition);
+            //hoist.Stack();
         }
 
 
@@ -1101,14 +1100,15 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {
         ResetEncoders();
 
-        double currentStrafeInches = GetAverageStrafePositionInches();
+        double currentStrafeInches =  (Math.abs(robot.frontLeft.getCurrentPosition()) + Math.abs(robot.frontRight.getCurrentPosition()) + Math.abs(robot.backLeft.getCurrentPosition()) + Math.abs(robot.backRight.getCurrentPosition()) / 4.0) / (100.0 / (7.0/4.0));
+
         double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
 
         if (targetTag != -1) {
             lift.SetPosition(lift.liftAprilTags, 0);
         }
         double targetRange = 0;
-        while (Math.abs(strafeDistanceToTarget) > 1 && opModeIsActive()) {
+        while (Math.abs(strafeDistanceToTarget) > 2 && opModeIsActive()) {
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
 
