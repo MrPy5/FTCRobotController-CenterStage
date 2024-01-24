@@ -12,9 +12,9 @@ public class TestAutoTwo extends AutoControlsCombined {
         switchToContourPipeline();
         waitForStart();
         hoist.Stack();
-        DriveWithCorrectionToStackTwo(24, 0, 0.2);
-        intake.StartIntake(0.75);
 
+        DriveAtAngleToStack(26, 0.2);
+        intake.StartIntake(1);
         sleep(3000);
         intake.StopIntake();
 

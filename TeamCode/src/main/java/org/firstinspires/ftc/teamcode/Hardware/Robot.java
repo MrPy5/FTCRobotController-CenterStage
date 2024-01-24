@@ -522,7 +522,10 @@ public class Robot {
     }
     public class IntakeHoist {
 
-        public double stackPosition = 0.47;
+        public double stackPosition5 = 0.52;
+        public double stackPosition3 = 0.48;
+
+
         public double groundPosition = 0.29;
         public double hoistedPosition = 0.99;
 
@@ -538,7 +541,7 @@ public class Robot {
         }
 
         public void Stack() {
-            intakeHoist.setPosition(stackPosition);
+            intakeHoist.setPosition(stackPosition3);
         }
         public void Ground() {
             intakeHoist.setPosition(groundPosition);

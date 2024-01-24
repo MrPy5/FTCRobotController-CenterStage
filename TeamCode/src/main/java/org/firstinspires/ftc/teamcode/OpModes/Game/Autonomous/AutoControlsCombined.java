@@ -99,10 +99,13 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public double GetAverageStrafePositionInches() {
         return (robot.frontLeft.getCurrentPosition() - robot.frontRight.getCurrentPosition() - robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition() / 4.0) / robot.strafeTicksPerInch;
     }
-    // Assuming you have motors and encoders defined in your OpMode class
-
-
-    // Function to move the robot forward and sideways
+    
+    public double GetAverageVelocity() {
+        double averageVelocity;
+        averageVelocity = (robot.backRight.getVelocity() + robot.backLeft.getVelocity() + robot.frontLeft.getVelocity() + robot.frontRight.getVelocity()) / 4;
+        averageVelocity = (averageVelocity / robot.ticksPerInch) / 12;
+        return averageVelocity;
+    }
 
 
 
@@ -703,6 +706,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             double rrPower = power;
 
             double reverse;
+            boolean strafeDone = false;
 
             currentInches = GetAverageWheelPositionInches();
             distanceToTarget = targetInchesY - currentInches;
@@ -726,13 +730,14 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                     reverse = 1;
                 }
                 double strafePower = (Math.pow(strafeDistanceToTarget / 10, 2) + 0.05) * powerX * aggresion;
-                if (Math.abs(strafeDistanceToTarget) > 1) {
+                if (Math.abs(strafeDistanceToTarget) > 1 && !strafeDone) {
                     robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + (strafePower));
                     robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - (strafePower));
                     robot.backRight.setPower((rrPower * reverse) - turnAdjustment + (strafePower));
                     robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - (strafePower));
                 }
                 else {
+                    strafeDone = true;
                     robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
                     robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
                     robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
@@ -1103,7 +1108,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double currentInches;
         double distanceToTarget;
         double frameWidthInPixels = robot.STREAM_WIDTH;
-        double cameraCenterAdjustPixels = 100;
+        double cameraCenterAdjustPixels = 0;
         double frameCenterX = frameWidthInPixels / 2.0 + cameraCenterAdjustPixels;  // adjust this +/- some pixels to adjust off center camera
         double strafePower;
         double strafeAgressiveness = 0.5;
@@ -1116,6 +1121,10 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double stackNotFound = -1;
         double stackCenterXTolerance = .03;
         boolean strafeDone = false;
+        boolean startCollisionDetection = false;
+        boolean collidedWithWall = false;
+        double collidedVelocity = 0.03;
+
         currentInches = GetAverageWheelPositionInches();
         distanceToTarget = targetInches - currentInches;
 
@@ -1167,14 +1176,20 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
             currentInches = GetAverageWheelPositionInches();
             distanceToTarget = targetInches - currentInches;
+            if (GetAverageVelocity() > collidedVelocity) {
+                startCollisionDetection = true;
+            }
+            if (startCollisionDetection && GetAverageVelocity() < collidedVelocity) {
+                collidedWithWall = true;
+            }
 
-            telemetry.addData("stackCenterX", stackCenterX);
+            /*telemetry.addData("stackCenterX", stackCenterX);
             telemetry.addData("frameCenter", frameCenterX);
             telemetry.addData("frameWidthInPixels", frameWidthInPixels);
             telemetry.addData("strafePower", strafePower);
             telemetry.addData("stackPercentFromCenter", stackPercentFromCenter);
-            telemetry.addData("distanceToTarget", distanceToTarget);
-
+            telemetry.addData("distanceToTarget", distanceToTarget);*/
+            telemetry.addData("velocity", imu.getVelocity().xVeloc);
 
             telemetry.update();
 
@@ -1184,6 +1199,67 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.frontRight.setPower(0);
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
+    }
+    public void DriveAtAngleToStack(double targetInches, double power) {
+        ResetEncoders();
+
+        double currentInches;
+        double distanceToTarget;
+        double frameWidthInPixels = robot.STREAM_WIDTH;
+        double cameraCenterAdjustPixels = -50;
+        double frameCenterX = frameWidthInPixels / 2.0 + cameraCenterAdjustPixels;  // adjust this +/- some pixels to adjust off center camera
+        double strafePower;
+        double strafeAgressiveness = 0.5;
+        double strafeSpeedMinimum = .08;
+        double forwardSpeedMinimum = .06;
+        double forwardPower;
+        double speedModifier = 6;
+        double stackCenterX;
+        double stackPercentFromCenter = 1;
+        double stackNotFound = -1;
+
+        double targetHeading;
+
+        stackCenterX = robot.getCenter();
+
+        if (stackCenterX != stackNotFound) {
+            stackPercentFromCenter = (stackCenterX - frameCenterX) / frameWidthInPixels;  // This returns percent of frame. if stack is to the left of center (lower X), negative strafePower should go left
+        }
+
+        double stackPercentMultiplied = stackPercentFromCenter * -50;
+
+
+        if (stackPercentMultiplied < 0) {
+            targetHeading = 360 + stackPercentMultiplied;
+        }
+        else {
+            targetHeading = stackPercentMultiplied;
+        }
+
+        while (stackCenterX == stackNotFound) {
+            stackCenterX = robot.getCenter();
+
+            if (stackCenterX != stackNotFound) {
+                stackPercentFromCenter = (stackCenterX - frameCenterX) / frameWidthInPixels;  // This returns percent of frame. if stack is to the left of center (lower X), negative strafePower should go left
+            }
+
+            stackPercentMultiplied = stackPercentFromCenter * -50;
+
+
+            if (stackPercentMultiplied < 0) {
+                targetHeading = 360 + stackPercentMultiplied;
+            }
+            else {
+                targetHeading = stackPercentMultiplied;
+            }
+        }
+
+
+        telemetry.addData("stackPErcet", stackPercentFromCenter);
+        telemetry.addData("angle", targetHeading);
+        telemetry.update();
+
+        DriveWithCorrection(targetInches, targetHeading, power);
     }
 
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {
