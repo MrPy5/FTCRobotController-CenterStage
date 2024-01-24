@@ -1097,6 +1097,95 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
     }
 
+    public void DriveWithCorrectionToStackTwo(double targetInches, double targetHeading, double power) {
+        ResetEncoders();
+
+        double currentInches;
+        double distanceToTarget;
+        double frameWidthInPixels = robot.STREAM_WIDTH;
+        double cameraCenterAdjustPixels = 100;
+        double frameCenterX = frameWidthInPixels / 2.0 + cameraCenterAdjustPixels;  // adjust this +/- some pixels to adjust off center camera
+        double strafePower;
+        double strafeAgressiveness = 0.5;
+        double strafeSpeedMinimum = .08;
+        double forwardSpeedMinimum = .06;
+        double forwardPower;
+        double speedModifier = 6;
+        double stackCenterX;
+        double stackPercentFromCenter = 1;
+        double stackNotFound = -1;
+        double stackCenterXTolerance = .03;
+        boolean strafeDone = false;
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
+
+        stackCenterX = robot.getCenter();
+
+        if (stackCenterX != stackNotFound) {
+            stackPercentFromCenter = (stackCenterX - frameCenterX) / frameWidthInPixels;  // This returns percent of frame. if stack is to the left of center (lower X), negative strafePower should go left
+        }
+
+        while (!strafeDone || Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            if (stackCenterX != stackNotFound && Math.abs(stackPercentFromCenter) > stackCenterXTolerance && !strafeDone) {
+                strafePower = Math.abs(stackPercentFromCenter) * strafeAgressiveness + strafeSpeedMinimum; // Example: 10% of frame could be like 2 inches.  So .1 to go 2 inches might be too much
+                if (stackPercentFromCenter < 0) {
+                    strafePower = strafePower * -1;
+                }
+                telemetry.addData("adjustment", strafePower);
+                //telemetry.update();
+                // Here we should recalculate distance to target using the stack width and proper pixels per inch
+            } else {
+                strafePower = 0;
+                if (stackCenterX != stackNotFound) {
+                    strafeDone = true;
+                }
+            }
+
+            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE) {
+                forwardPower = power;
+                if (distanceToTarget < 0) {
+                    forwardPower = forwardPower * -1;
+                }
+            } else {
+                forwardPower = 0;
+            }
+
+            robot.frontLeft.setPower(forwardPower + turnAdjustment + strafePower);
+            robot.frontRight.setPower(forwardPower - turnAdjustment - strafePower);
+            robot.backRight.setPower(forwardPower - turnAdjustment + strafePower);
+            robot.backLeft.setPower(forwardPower + turnAdjustment - strafePower);
+
+            stackCenterX = robot.getCenter();
+
+            if (stackCenterX != stackNotFound) {
+                stackPercentFromCenter = (stackCenterX - frameCenterX) / frameWidthInPixels;  // This returns percent of frame. if stack is to the left of center (lower X), negative strafePower should go left
+            }
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            telemetry.addData("stackCenterX", stackCenterX);
+            telemetry.addData("frameCenter", frameCenterX);
+            telemetry.addData("frameWidthInPixels", frameWidthInPixels);
+            telemetry.addData("strafePower", strafePower);
+            telemetry.addData("stackPercentFromCenter", stackPercentFromCenter);
+            telemetry.addData("distanceToTarget", distanceToTarget);
+
+
+            telemetry.update();
+
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+    }
+
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {
         ResetEncoders();
 
