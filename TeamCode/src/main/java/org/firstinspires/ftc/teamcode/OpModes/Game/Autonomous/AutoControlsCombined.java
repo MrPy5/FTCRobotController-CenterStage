@@ -107,7 +107,11 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         return averageVelocity;
     }
 
-
+    public double GetLowestWheelVelocity() {
+        double lowestWheelVelocity = Math.min(robot.backRight.getVelocity(), Math.min(robot.backLeft.getVelocity(), Math.min(robot.frontLeft.getVelocity(), robot.frontRight.getVelocity())));
+        lowestWheelVelocity = (lowestWheelVelocity / robot.ticksPerInch) / 12;
+        return lowestWheelVelocity;
+    }
 
 
     public enum MoveState {
@@ -927,7 +931,6 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public void DriveWithCorrection (double targetInches, double targetHeading, double power) {
         ResetEncoders();
 
-
         double currentInches;
         double distanceToTarget;
 
@@ -940,8 +943,6 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
         currentInches = GetAverageWheelPositionInches();
         distanceToTarget = targetInches - currentInches;
-
-
 
         while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
 
@@ -967,7 +968,101 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
 
+    }
 
+    public void DriveShortDistance (double targetInches, double power) {
+        ResetEncoders();
+
+        double currentInches;
+        double distanceToTarget;
+        double reverse;
+        boolean targetReached = false; // actually means target passed
+
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
+
+        while (!targetReached && opModeIsActive()) {
+
+            if (distanceToTarget < 0) {
+                reverse = -1;
+            } else {
+                reverse = 1;
+            }
+
+            robot.frontLeft.setPower(power * reverse);
+            robot.frontRight.setPower(power * reverse);
+            robot.backRight.setPower(power * reverse);
+            robot.backLeft.setPower(power * reverse);
+
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            if (targetInches < 0){     // This makes it so it can't oscillate.  No distance tolerance.  Even if it overshoots, it's done
+                targetReached = (distanceToTarget > 0);
+            } else {
+                targetReached = (distanceToTarget < 0);
+            }
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+    }
+
+    public void DriveWithCorrectionDetectStop (double targetInches, double targetHeading, double power) {
+        ResetEncoders();
+
+        double currentInches;
+        double distanceToTarget;
+        double reverse;
+        boolean stopped = false;
+        boolean beginDetecting = false;
+        double speedToBeginDetecting = .25;
+        double stoppedSpeed = .05;
+        boolean targetReached = false; // actually means target passed
+
+        currentInches = GetAverageWheelPositionInches();
+        distanceToTarget = targetInches - currentInches;
+
+        while (!targetReached && !stopped && opModeIsActive()) {
+
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            if (distanceToTarget < 0) {
+                reverse = -1;
+            } else {
+                reverse = 1;
+            }
+            currentInches = GetAverageWheelPositionInches();
+            distanceToTarget = targetInches - currentInches;
+
+            robot.frontLeft.setPower(power * reverse + turnAdjustment);
+            robot.frontRight.setPower(power * reverse - turnAdjustment);
+            robot.backRight.setPower(power * reverse - turnAdjustment);
+            robot.backLeft.setPower(power *reverse + turnAdjustment);
+
+            double currentLowestWheelVelocity = GetLowestWheelVelocity();
+
+            if (currentLowestWheelVelocity > speedToBeginDetecting) {
+                beginDetecting = true;
+            }
+            if (currentLowestWheelVelocity < stoppedSpeed && beginDetecting) {
+                stopped = true;
+            }
+            if (targetInches < 0){   // This makes it so it can't oscillate.  No distance tolerance.  Even if it overshoots, it's done
+                targetReached = (distanceToTarget >= 0);
+            } else {
+                targetReached = (distanceToTarget <= 0);
+            }
+        }
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
     }
 
     public void DriveWithCorrectionToAprilTag(double targetInches, double targetHeading, double power, int targetTag) {
@@ -1203,17 +1298,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public void DriveAtAngleToStack(double targetInches, double power) {
         ResetEncoders();
 
-        double currentInches;
-        double distanceToTarget;
         double frameWidthInPixels = robot.STREAM_WIDTH;
         double cameraCenterAdjustPixels = -50;
         double frameCenterX = frameWidthInPixels / 2.0 + cameraCenterAdjustPixels;  // adjust this +/- some pixels to adjust off center camera
-        double strafePower;
-        double strafeAgressiveness = 0.5;
-        double strafeSpeedMinimum = .08;
-        double forwardSpeedMinimum = .06;
-        double forwardPower;
-        double speedModifier = 6;
         double stackCenterX;
         double stackPercentFromCenter = 1;
         double stackNotFound = -1;
@@ -1255,11 +1342,11 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         }
 
 
-        telemetry.addData("stackPErcet", stackPercentFromCenter);
+        telemetry.addData("stackPercentFromCenter", stackPercentFromCenter);
         telemetry.addData("angle", targetHeading);
         telemetry.update();
 
-        DriveWithCorrection(targetInches, targetHeading, power);
+        DriveWithCorrectionDetectStop(targetInches, targetHeading, power);
     }
 
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {

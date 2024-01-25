@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 @Autonomous(name = "TestAutoTWO")
 public class TestAutoTwo extends AutoControlsCombined {
 
@@ -11,16 +15,15 @@ public class TestAutoTwo extends AutoControlsCombined {
         robot.alliance = "red";
         switchToContourPipeline();
         waitForStart();
-        hoist.Stack();
-
-        DriveAtAngleToStack(26, 0.2);
+        sleep (5000);
+        robot.intakeHoist.setPosition(hoist.stackPosition5);
+        DriveAtAngleToStack(26, 0.5);  // Hit the stack
+        DriveShortDistance(-.2, .08); // back off a tiny bit
         intake.StartIntake(1);
-        sleep(3000);
+        sleep(800);
+        robot.intakeHoist.setPosition(hoist.stackPosition4);
+        sleep(800);
         intake.StopIntake();
-
-
-
-
     }
 
 }

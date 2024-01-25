@@ -79,7 +79,7 @@ public class CombinedAuto extends AutoControlsCombined {
         driveThree.Start(0);
 
         //Strafe to stack
-        DriveWithCorrectionToStackTwo(26, 90, 0.4);
+        DriveAtAngleToStack(26, .5);
 
         Motion driveFour = new Motion();
             //Intake pixels and move to backboard

@@ -523,6 +523,7 @@ public class Robot {
     public class IntakeHoist {
 
         public double stackPosition5 = 0.52;
+        public double stackPosition4 = 0.50;
         public double stackPosition3 = 0.48;
 
 

@@ -24,7 +24,7 @@ public class RemasteredAuto extends AutoControlsRemastered {
             driveOne.add(new Drive(new MillisecondTrigger(0), 28, 0.5, 0));
             driveOne.add(new Drive(new IndexTrigger(1, driveOne), -5, 0.4, 90));
             driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
-            driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition + 0.07));
+            driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition5));
             driveOne.add(new Drive(new IndexTrigger(3, driveOne), 5, 0.25, 90));
             driveOne.add(new CatWalk(new IndexTrigger(5, driveOne), 23, 18.5, 0.4, 90, 0.9, new Vision()));
             driveOne.add(new MoveIntake(new IndexTrigger(6, driveOne), 1500));

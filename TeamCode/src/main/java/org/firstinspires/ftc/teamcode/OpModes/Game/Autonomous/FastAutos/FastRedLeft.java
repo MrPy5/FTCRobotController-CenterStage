@@ -47,7 +47,7 @@ public class FastRedLeft extends AutoControls {
             Turn(90);
 
             DriveWithCorrectionToStack(10, 90, 0.3);
-            robot.intakeHoist.setPosition(hoist.stackPosition - 0.07);
+            robot.intakeHoist.setPosition(hoist.stackPosition5);
             DriveWithCorrection(4, 90, 0.2);
             intake.StartIntake(1);
             sleep(1750);
