@@ -36,6 +36,9 @@ import org.opencv.imgproc.Moments;
 import java.util.ArrayList;
 import java.util.List;
 
+//To-do
+//Check for farthest right blob
+//Fix vision
 
 public class Robot {
 
@@ -522,9 +525,10 @@ public class Robot {
     }
     public class IntakeHoist {
 
+        public double stackPosition6 = 0.55;
         public double stackPosition5 = 0.52;
-        public double stackPosition4 = 0.50;
-        public double stackPosition3 = 0.48;
+        public double stackPosition4 = 0.49;
+        public double stackPosition3 = 0.47;
 
 
         public double groundPosition = 0.29;

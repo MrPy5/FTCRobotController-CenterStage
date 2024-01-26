@@ -686,8 +686,10 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             super(triggerPARAM, true);
             targetInchesY = targetInchesYPARAM;
             targetInchesX = targetInchesXPARAM;
+
             power = powerPARAM;
             powerX = Math.signum(targetInchesXPARAM);
+
             targetPower = powerPARAM;
             targetHeading = targetHeadingPARAM;
             aggresion = aggresionPARAM;
@@ -1042,7 +1044,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             robot.frontLeft.setPower(power * reverse + turnAdjustment);
             robot.frontRight.setPower(power * reverse - turnAdjustment);
             robot.backRight.setPower(power * reverse - turnAdjustment);
-            robot.backLeft.setPower(power *reverse + turnAdjustment);
+            robot.backLeft.setPower(power * reverse + turnAdjustment);
 
             double currentLowestWheelVelocity = GetLowestWheelVelocity();
 
@@ -1057,12 +1059,19 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             } else {
                 targetReached = (distanceToTarget <= 0);
             }
+
+            telemetry.addData("Current Velocity: ", currentLowestWheelVelocity);
+            telemetry.addData("Stopped: ", stopped);
+            telemetry.update();
         }
 
         robot.frontLeft.setPower(0);
         robot.frontRight.setPower(0);
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
+
+        DriveShortDistance(-0.5, 0.1);
+
     }
 
     public void DriveWithCorrectionToAprilTag(double targetInches, double targetHeading, double power, int targetTag) {
@@ -1299,7 +1308,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         ResetEncoders();
 
         double frameWidthInPixels = robot.STREAM_WIDTH;
-        double cameraCenterAdjustPixels = -50;
+        double cameraCenterAdjustPixels = -60;
         double frameCenterX = frameWidthInPixels / 2.0 + cameraCenterAdjustPixels;  // adjust this +/- some pixels to adjust off center camera
         double stackCenterX;
         double stackPercentFromCenter = 1;
@@ -1316,37 +1325,43 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double stackPercentMultiplied = stackPercentFromCenter * -50;
 
 
-        if (stackPercentMultiplied < 0) {
+        /*if (stackPercentMultiplied < 0) {
             targetHeading = 360 + stackPercentMultiplied;
         }
         else {
             targetHeading = stackPercentMultiplied;
-        }
+        }*/
+        targetHeading = stackPercentMultiplied;
 
         while (stackCenterX == stackNotFound) {
             stackCenterX = robot.getCenter();
 
-            if (stackCenterX != stackNotFound) {
-                stackPercentFromCenter = (stackCenterX - frameCenterX) / frameWidthInPixels;  // This returns percent of frame. if stack is to the left of center (lower X), negative strafePower should go left
-            }
-
-            stackPercentMultiplied = stackPercentFromCenter * -50;
-
-
-            if (stackPercentMultiplied < 0) {
-                targetHeading = 360 + stackPercentMultiplied;
-            }
-            else {
-                targetHeading = stackPercentMultiplied;
-            }
         }
+
+        stackCenterX = robot.getCenter();
+
+        if (stackCenterX != stackNotFound) {
+            stackPercentFromCenter = (stackCenterX - frameCenterX) / frameWidthInPixels;  // This returns percent of frame. if stack is to the left of center (lower X), negative strafePower should go left
+        }
+
+        stackPercentMultiplied = stackPercentFromCenter * -50;
+
+        targetHeading = stackPercentMultiplied;
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double currentHeading = (360 + angles.firstAngle) % 360;
 
 
         telemetry.addData("stackPercentFromCenter", stackPercentFromCenter);
         telemetry.addData("angle", targetHeading);
         telemetry.update();
 
+        targetHeading = currentHeading + targetHeading;
+        targetHeading = (targetHeading + 360) % 360;
         DriveWithCorrectionDetectStop(targetInches, targetHeading, power);
+
+        //DriveWithCorrection(targetInches, targetHeading, power);
     }
 
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {

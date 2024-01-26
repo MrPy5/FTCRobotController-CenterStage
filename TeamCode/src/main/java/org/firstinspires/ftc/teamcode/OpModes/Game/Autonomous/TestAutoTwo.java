@@ -17,8 +17,8 @@ public class TestAutoTwo extends AutoControlsCombined {
         waitForStart();
         sleep (5000);
         robot.intakeHoist.setPosition(hoist.stackPosition5);
-        DriveAtAngleToStack(26, 0.5);  // Hit the stack
-        DriveShortDistance(-.2, .08); // back off a tiny bit
+        DriveAtAngleToStack(26, 0.35);  // Hit the stack
+        //DriveShortDistance(-.2, .08); // back off a tiny bit
         intake.StartIntake(1);
         sleep(800);
         robot.intakeHoist.setPosition(hoist.stackPosition4);
