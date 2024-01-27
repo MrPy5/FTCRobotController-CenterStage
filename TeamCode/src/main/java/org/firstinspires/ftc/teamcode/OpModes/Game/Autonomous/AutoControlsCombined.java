@@ -797,7 +797,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 }
 
                 if (Math.abs(strafeDistanceToTarget) > 1.5 && !done && !vision.CheckVision()) {
-                    double strafePower = (Math.pow(strafeDistanceToTarget / 10, 2)  * powerX) + 0.1;
+                    double strafePower = (Math.pow(strafeDistanceToTarget / 10, 2)  * powerX) + 0.05;
+
                     robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + (strafePower));
                     robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - (strafePower));
                     robot.backRight.setPower((rrPower * reverse) - turnAdjustment + (strafePower));
@@ -810,6 +811,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 if (done) {
                     telemetry.addData("Done", "true");
                     double powerCurve = (Math.pow(distanceToTarget / 10, 2) + 0.05);
+                    if (powerCurve > 0.4) {
+                        turnAdjustment = turnAdjustment * 4;
+                    }
                     lfPower = powerCurve;
                     rfPower = powerCurve;
                     lrPower = powerCurve;
@@ -1420,7 +1424,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             lift.SetPosition(lift.liftAprilTags, 0);
         }
         double targetRange = 0;
-        while (Math.abs(strafeDistanceToTarget) > 0.5 && opModeIsActive()) {
+        //Math.abs(strafeDistanceToTarget) > 0.5 &&
+        while (opModeIsActive()) {
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
 
@@ -1432,16 +1437,20 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             robot.frontRight.setPower(-1 *(power) - turnAdjustment);
             robot.backRight.setPower(power - turnAdjustment);
             telemetry.addData("distance to target", strafeDistanceToTarget);
-            if (robot.getTargetAprilTagPos(targetTag) != null) {
+            AprilTagPoseFtc tagSeen = robot.getTargetAprilTagPos(targetTag);
+            if (tagSeen != null) {
+                telemetry.addData("Target Tag Seen", tagSeen.x);
 
-                if (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2) {
-                    telemetry.addData("target tag", robot.getTargetAprilTagPos(targetTag).x);
+                if (tagSeen.x < 4 && tagSeen.x > -4) {
+                    telemetry.addData("Done", tagSeen.x);
 
                     targetRange = robot.getTargetAprilTagPos(targetTag).range;
                     robot.frontLeft.setPower(0);
                     robot.frontRight.setPower(0);
                     robot.backLeft.setPower(0);
                     robot.backRight.setPower(0);
+                    telemetry.update();
+                    sleep(5000);
                     break;
                 }
 

@@ -526,7 +526,7 @@ public class Robot {
     public class IntakeHoist {
 
         public double stackPosition6 = 0.55;
-        public double stackPosition5 = 0.51;
+        public double stackPosition5 = 0.52;
         public double stackPosition4 = 0.49;
         public double stackPosition3 = 0.46;
 
@@ -733,14 +733,14 @@ public class Robot {
             colorMask = preprocessFrame(input);
             Rect ro1 = new Rect(0,130,250,300);
             Rect ro2 = new Rect(390,95,350,200);
-            Rect ro3 = new Rect(970, 130, 250, 300);
+            Rect ro3 = new Rect(970, 100, 250, 270);
             croppedSectorOne = new Mat(colorMask, ro1);
             croppedSectorTwo = new Mat(colorMask, ro2);
             croppedSectorThree = new Mat(colorMask, ro3);
 
-            Size sz1 = new Size(25,20);
-            Size sz2 = new Size(35,10);
-            Size sz3 = new Size(25, 20);
+            Size sz1 = new Size(25,30);
+            Size sz2 = new Size(35,20);
+            Size sz3 = new Size(25, 27);
 
             Imgproc.resize(croppedSectorOne, resizedOne, sz1);
             Imgproc.resize(croppedSectorTwo, resizedTwo, sz2);
@@ -807,14 +807,25 @@ public class Robot {
 
     public int ScanForElementBitmap(int preferredFailOutput) {
         int returnSpike = preferredFailOutput;
-
-        if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 60) {
-            returnSpike = 2;
-        } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 60) {
-            returnSpike = 3;
-        } else {
-            returnSpike = 1;
+        if (alliance.equals("red")) {
+            if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 60) {
+                returnSpike = 2;
+            } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 60) {
+                returnSpike = 3;
+            } else {
+                returnSpike = 1;
+            }
         }
+        if (alliance.equals("blue")) {
+            if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 50) {
+                returnSpike = 2;
+            } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 50) {
+                returnSpike = 3;
+            } else {
+                returnSpike = 1;
+            }
+        }
+
 
         return returnSpike;
     }

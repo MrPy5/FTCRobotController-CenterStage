@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombin
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsRemastered;
 
 @Autonomous(name = "Combined Red Left", group = "Remastered")
-public class CombinedAuto extends AutoControlsCombined {
+public class CombinedRedLeft extends AutoControlsCombined {
 
     @Override
     public void runOpMode() {
