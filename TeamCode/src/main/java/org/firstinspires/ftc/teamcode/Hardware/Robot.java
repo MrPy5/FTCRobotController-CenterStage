@@ -565,7 +565,7 @@ public class Robot {
         public double liftPowerUp = 1;
         public double liftPowerDown = 0.7;
 
-        public double servoUpPosition = 0.5;
+        public double servoUpPosition = 0.54;
         public double servoDownPosition = 0.13;
         public Suspension() {
             suspensionMotor = hardwareMap.get(DcMotor.class, "suspension");
@@ -666,11 +666,19 @@ public class Robot {
                 double area = Imgproc.contourArea(contour);
                 Moments moments = Imgproc.moments(contour);
                 double cX_Compare = moments.get_m10() / moments.get_m00();
-
-                if (area > maxArea && cX_Compare > 270 && area > 1000) {
-                    maxArea = area;
-                    UpdateArea(maxArea);
-                    largestContour = contour;
+                if (alliance == "red") {
+                    if (area > maxArea && cX_Compare > 270 && area > 1000) {
+                        maxArea = area;
+                        UpdateArea(maxArea);
+                        largestContour = contour;
+                    }
+                }
+                else {
+                    if (area > maxArea && cX_Compare < 1010 && area > 1000) {
+                        maxArea = area;
+                        UpdateArea(maxArea);
+                        largestContour = contour;
+                    }
                 }
             }
 
