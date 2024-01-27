@@ -33,18 +33,21 @@ public class CombinedAuto extends AutoControlsCombined {
         Motion driveOne = new Motion();
         if (spikeLocation == 1) {
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
-            driveOne.add(new CatWalk(new MillisecondTrigger(0), 37.5, -20, 0.5, 0, 0.5, new Vision(), 0.5));
+            driveOne.add(new Drive(new MillisecondTrigger(0), 35, 0.4, 0));
+            driveOne.add(new CatWalk(new IndexTrigger(1, driveOne), 5, -21, 0.3, 0, 0.5, new Vision(), 0.5));
             driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
             driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition4));
-            driveOne.add(new Drive(new IndexTrigger(2, driveOne), -20, 0.4, 90));
+            driveOne.add(new Drive(new IndexTrigger(3, driveOne), 4, 0.25, 0));
+            driveOne.add(new Drive(new IndexTrigger(5, driveOne), -11, 0.4, 90));
         }
 
         else if (spikeLocation == 2) {
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
-            driveOne.add(new CatWalk(new MillisecondTrigger(0), 37.5, -10, 0.5, 0, 0.5, new Vision(), 0.5));
-            driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
-            driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition4));
-            driveOne.add(new Drive(new IndexTrigger(2, driveOne), -10, 0.4, 90));
+            driveOne.add(new CatWalk(new MillisecondTrigger(0), 40, -18, 0.5, 0, 0.5, new Vision(), 0.5));
+            driveOne.add(new SpikeDrop(new IndexTrigger(1, driveOne)));
+            driveOne.add(new MoveHoist(new IndexTrigger(2, driveOne), hoist.stackPosition4));
+            driveOne.add(new Drive(new IndexTrigger(2, driveOne), 4, 0.25, 0));
+            driveOne.add(new Drive(new IndexTrigger(4, driveOne), -8, 0.4, 90));
 
 
         }
@@ -65,8 +68,16 @@ public class CombinedAuto extends AutoControlsCombined {
             //driveOne.add(new MoveIntake(new IndexTrigger(6, driveOne), 1500));
         }
         driveOne.Start(0);
+        if (spikeLocation == 1) {
+            DriveAtAngleToStack(18, 0.3);
+        }
+        if (spikeLocation == 2) {
+            DriveAtAngleToStack(21.5, 0.3);
+        }
+        if (spikeLocation == 3) {
+            DriveAtAngleToStack(22.5, 0.3);
+        }
 
-       DriveAtAngleToStack(22.5, 0.3);
 
 
        Motion driveTwo = new Motion();
@@ -83,7 +94,15 @@ public class CombinedAuto extends AutoControlsCombined {
         driveTwo.Start(0);
 
        //Strafe on backboard
-       StrafeWithInchesWithCorrection(34, -0.3, 6, 90);
+       if (spikeLocation == 1) {
+           StrafeWithInchesWithCorrection(15, -0.3, 4, 90);
+       }
+       if (spikeLocation == 2) {
+            StrafeWithInchesWithCorrection(24, -0.3, 5, 90);
+       }
+       if (spikeLocation == 3) {
+            StrafeWithInchesWithCorrection(34, -0.3, 6, 90);
+       }
        DriveWithCorrection(-14, 90, 0.4);
 
        Motion driveThree = new Motion();
@@ -92,7 +111,18 @@ public class CombinedAuto extends AutoControlsCombined {
             driveThree.add(new MoveLift(new IndexTriggerWithDelay(0, 1500, driveThree), lift.liftBottom, lift.liftLow - 3));
             driveThree.add(new Drive(new IndexTriggerWithDelay(0, 1000, driveThree), 10, 0.5, 90));
             driveThree.add(new MoveDropper(new IndexTriggerWithDelay(0, 2000, driveThree), "close"));
-            driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 28, 0.5, 90, 0.5, new Vision(), 1));
+            if (spikeLocation == 1) {
+                driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 18, 0.5, 90, 0.5, new Vision(), 1));
+
+            }
+            if (spikeLocation == 2) {
+                driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 23, 0.5, 90, 0.5, new Vision(), 1));
+
+            }
+            if (spikeLocation == 3) {
+                driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 29, 0.5, 90, 0.5, new Vision(), 1));
+
+            }
             driveThree.add(new MoveHoist(new IndexTrigger(2, driveThree), hoist.stackPosition3));
 
 

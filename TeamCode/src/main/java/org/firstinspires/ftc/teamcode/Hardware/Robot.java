@@ -732,8 +732,8 @@ public class Robot {
         public Mat processFrame(Mat input) {
             colorMask = preprocessFrame(input);
             Rect ro1 = new Rect(0,130,250,300);
-            Rect ro2 = new Rect(465,130,350,180);
-            Rect ro3 = new Rect(1030, 130, 250, 300);
+            Rect ro2 = new Rect(390,115,350,180);
+            Rect ro3 = new Rect(970, 130, 250, 300);
             croppedSectorOne = new Mat(colorMask, ro1);
             croppedSectorTwo = new Mat(colorMask, ro2);
             croppedSectorThree = new Mat(colorMask, ro3);
@@ -808,9 +808,9 @@ public class Robot {
     public int ScanForElementBitmap(int preferredFailOutput) {
         int returnSpike = preferredFailOutput;
 
-        if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 50) {
+        if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 60) {
             returnSpike = 2;
-        } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 50) {
+        } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 60) {
             returnSpike = 3;
         } else {
             returnSpike = 1;
