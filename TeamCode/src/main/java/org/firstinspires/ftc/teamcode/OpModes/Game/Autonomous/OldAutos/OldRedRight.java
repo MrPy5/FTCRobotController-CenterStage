@@ -88,8 +88,15 @@ public class OldRedRight extends AutoControls {
         sleep(1000);
         lift.SetPosition(lift.liftBottom, lift.liftLow);
         sleep(1000);
-        StrafeWithInches(26, 0, -1);
-
+        if (spikeLocation == 1) {
+            StrafeWithInches(14, 0, -1);
+        }
+        if (spikeLocation == 2) {
+            StrafeWithInches(18, 0, -1);
+        }
+        if (spikeLocation == 3) {
+            StrafeWithInches(26, 0, -1);
+        }
 
     }
 

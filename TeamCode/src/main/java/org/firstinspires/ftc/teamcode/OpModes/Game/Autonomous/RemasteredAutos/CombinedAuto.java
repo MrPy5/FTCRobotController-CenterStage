@@ -43,7 +43,7 @@ public class CombinedAuto extends AutoControlsCombined {
 
         else if (spikeLocation == 2) {
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
-            driveOne.add(new CatWalk(new MillisecondTrigger(0), 40, -18, 0.5, 0, 0.5, new Vision(), 0.5));
+            driveOne.add(new CatWalk(new MillisecondTrigger(0), 40, -15, 0.5, 0, 0.5, new Vision(), 0.5));
             driveOne.add(new SpikeDrop(new IndexTrigger(1, driveOne)));
             driveOne.add(new MoveHoist(new IndexTrigger(2, driveOne), hoist.stackPosition4));
             driveOne.add(new Drive(new IndexTrigger(2, driveOne), 4, 0.25, 0));
@@ -72,7 +72,7 @@ public class CombinedAuto extends AutoControlsCombined {
             DriveAtAngleToStack(18, 0.3);
         }
         if (spikeLocation == 2) {
-            DriveAtAngleToStack(21.5, 0.3);
+            DriveAtAngleToStack(21, 0.3);
         }
         if (spikeLocation == 3) {
             DriveAtAngleToStack(22.5, 0.3);
@@ -95,13 +95,13 @@ public class CombinedAuto extends AutoControlsCombined {
 
        //Strafe on backboard
        if (spikeLocation == 1) {
-           StrafeWithInchesWithCorrection(15, -0.3, 4, 90);
+           StrafeWithInchesWithCorrection(15, -0.25, 4, 90);
        }
        if (spikeLocation == 2) {
-            StrafeWithInchesWithCorrection(24, -0.3, 5, 90);
+            StrafeWithInchesWithCorrection(26, -0.25, 5, 90);
        }
        if (spikeLocation == 3) {
-            StrafeWithInchesWithCorrection(34, -0.3, 6, 90);
+            StrafeWithInchesWithCorrection(34, -0.25, 6, 90);
        }
        DriveWithCorrection(-14, 90, 0.4);
 

@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.FastAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
-
+@Disabled
 @Autonomous(name = "Fast Blue Right", group = "Fast Autos")
 public class FastBlueRight extends AutoControls {
 

@@ -732,7 +732,7 @@ public class Robot {
         public Mat processFrame(Mat input) {
             colorMask = preprocessFrame(input);
             Rect ro1 = new Rect(0,130,250,300);
-            Rect ro2 = new Rect(390,115,350,180);
+            Rect ro2 = new Rect(390,95,350,200);
             Rect ro3 = new Rect(970, 130, 250, 300);
             croppedSectorOne = new Mat(colorMask, ro1);
             croppedSectorTwo = new Mat(colorMask, ro2);
