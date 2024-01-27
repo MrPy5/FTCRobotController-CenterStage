@@ -526,9 +526,9 @@ public class Robot {
     public class IntakeHoist {
 
         public double stackPosition6 = 0.55;
-        public double stackPosition5 = 0.52;
+        public double stackPosition5 = 0.51;
         public double stackPosition4 = 0.49;
-        public double stackPosition3 = 0.47;
+        public double stackPosition3 = 0.46;
 
 
         public double groundPosition = 0.29;
@@ -646,7 +646,7 @@ public class Robot {
             Imgproc.cvtColor(frame, hsvFrame, Imgproc.COLOR_BGR2HSV);
 
             Scalar lowerWhite = new Scalar(0, 0, 175);
-            Scalar upperWhite = new Scalar(90, 90, 255);
+            Scalar upperWhite = new Scalar(90, 140, 255);
 
             Core.inRange(hsvFrame, lowerWhite, upperWhite, colorMask);
 
@@ -664,7 +664,10 @@ public class Robot {
 
             for (MatOfPoint contour : contours) {
                 double area = Imgproc.contourArea(contour);
-                if (area > maxArea) {
+                Moments moments = Imgproc.moments(contour);
+                double cX_Compare = moments.get_m10() / moments.get_m00();
+
+                if (area > maxArea && cX_Compare > 270 && area > 1000) {
                     maxArea = area;
                     UpdateArea(maxArea);
                     largestContour = contour;
@@ -797,9 +800,9 @@ public class Robot {
     public int ScanForElementBitmap(int preferredFailOutput) {
         int returnSpike = preferredFailOutput;
 
-        if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 55) {
+        if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 50) {
             returnSpike = 2;
-        } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 55) {
+        } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 50) {
             returnSpike = 3;
         } else {
             returnSpike = 1;

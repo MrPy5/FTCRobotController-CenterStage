@@ -1074,7 +1074,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
 
-        DriveShortDistance(-0.5, 0.1);
+        DriveShortDistance(-0.3, 0.1);
 
     }
 
@@ -1312,7 +1312,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         ResetEncoders();
 
         double frameWidthInPixels = robot.STREAM_WIDTH;
-        double cameraCenterAdjustPixels = -50;
+        double cameraCenterAdjustPixels = -60;
         double frameCenterX = frameWidthInPixels / 2.0 + cameraCenterAdjustPixels;  // adjust this +/- some pixels to adjust off center camera
         double stackCenterX;
         double stackPercentFromCenter = 1;
@@ -1320,9 +1320,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
         double targetHeading;
 
+       /* stackCenterX = robot.getCenter();
 
-
-        /*if (stackCenterX != stackNotFound) {
+        if (stackCenterX != stackNotFound) {
             stackPercentFromCenter = (stackCenterX - frameCenterX) / frameWidthInPixels;  // This returns percent of frame. if stack is to the left of center (lower X), negative strafePower should go left
         }
 
@@ -1335,9 +1335,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         else {
             targetHeading = stackPercentMultiplied;
         }*/
+        /*
 
-
-        /*while (stackCenterX == stackNotFound) {
+        while (stackCenterX == stackNotFound) {
            stackCenterX = robot.getCenter();
 
         }
@@ -1371,25 +1371,41 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             telemetry.addData("targetHeadingWithAdjustedAngle", targetHeading);
             telemetry.update();
             sleep(1000);
-        }*/
+        }
         //DriveWithCorrectionDetectStop(targetInches, targetHeading, power);
 
-        //DriveWithCorrection(targetInches, targetHeading, power);
+        //DriveWithCorrection(targetInches, targetHeading, power);*/
         stackCenterX = robot.getCenter();
+
+        while (stackCenterX == stackNotFound) {
+            stackCenterX = robot.getCenter();
+        }
+
+
+        double currentHeading = 0;
+
+        for (int i = 0; i < 50; i++) {
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            currentHeading = (360 + angles.firstAngle) % 360;
+
+            stackCenterX = robot.getCenter();
+
+        }
 
         if (stackCenterX != stackNotFound) {
             stackPercentFromCenter = (stackCenterX - frameCenterX) / frameWidthInPixels;  // This returns percent of frame. if stack is to the left of center (lower X), negative strafePower should go left
         }
 
-        double stackPercentMultiplied = stackPercentFromCenter * 50;
+        double stackPercentMultiplied = stackPercentFromCenter * -50;
 
+        targetHeading = currentHeading + stackPercentMultiplied;
+        targetHeading = (targetHeading + 360) % 360;
 
-
-
-        targetHeading = 90 + stackPercentMultiplied;
-
-        telemetry.addData("stackPercentFromCenter", stackPercentFromCenter);
+        telemetry.addData("adjustmentAngle", stackPercentMultiplied);
+        telemetry.addData("stackPercentFromCenter", stackPercentFromCenter * -50);
         telemetry.addData("angle", targetHeading);
+
         telemetry.update();
         DriveWithCorrectionDetectStop(targetInches, targetHeading, power);
     }
@@ -1398,36 +1414,40 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         ResetEncoders();
 
         double currentStrafeInches =  GetAverageStrafePositionInches();
-        double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+        double strafeDistanceToTarget = (targetStrafeInches * Math.signum(power)) - currentStrafeInches;
 
         if (targetTag != -1) {
             lift.SetPosition(lift.liftAprilTags, 0);
         }
         double targetRange = 0;
-        while (Math.abs(strafeDistanceToTarget) > 2 && opModeIsActive()) {
+        while (Math.abs(strafeDistanceToTarget) > 0.5 && opModeIsActive()) {
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
 
             currentStrafeInches =  GetAverageStrafePositionInches();
-            strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
+            strafeDistanceToTarget = (targetStrafeInches * Math.signum(power)) - currentStrafeInches;
 
             robot.frontLeft.setPower(power + turnAdjustment);
             robot.backLeft.setPower(-1 * (power) + turnAdjustment);
             robot.frontRight.setPower(-1 *(power) - turnAdjustment);
             robot.backRight.setPower(power - turnAdjustment);
-
+            telemetry.addData("distance to target", strafeDistanceToTarget);
             if (robot.getTargetAprilTagPos(targetTag) != null) {
-                telemetry.addData("boolean", (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2));
 
                 if (robot.getTargetAprilTagPos(targetTag).x < 2 && robot.getTargetAprilTagPos(targetTag).x > -2) {
                     telemetry.addData("target tag", robot.getTargetAprilTagPos(targetTag).x);
 
                     targetRange = robot.getTargetAprilTagPos(targetTag).range;
+                    robot.frontLeft.setPower(0);
+                    robot.frontRight.setPower(0);
+                    robot.backLeft.setPower(0);
+                    robot.backRight.setPower(0);
                     break;
                 }
-                telemetry.update();
+
 
             }
+            telemetry.update();
         }
 
 
