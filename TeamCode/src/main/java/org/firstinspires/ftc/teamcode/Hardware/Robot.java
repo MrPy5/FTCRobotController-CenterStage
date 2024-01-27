@@ -565,8 +565,8 @@ public class Robot {
         public double liftPowerUp = 1;
         public double liftPowerDown = 0.7;
 
-        public double servoUpPosition = 0.85;
-        public double servoDownPosition = 0.48;
+        public double servoUpPosition = 0.5;
+        public double servoDownPosition = 0.13;
         public Suspension() {
             suspensionMotor = hardwareMap.get(DcMotor.class, "suspension");
             suspensionMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -666,6 +666,7 @@ public class Robot {
                 double area = Imgproc.contourArea(contour);
                 if (area > maxArea) {
                     maxArea = area;
+                    UpdateArea(maxArea);
                     largestContour = contour;
                 }
             }

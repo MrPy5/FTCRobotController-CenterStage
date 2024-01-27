@@ -13,7 +13,7 @@ public class WhiteTest extends AutoControls {
         robot.alliance = "red";
 
         //Vision
-        switchToContourPipeline();
+        robot.ScanForElement(1);
 
         while (opModeInInit()) {
             telemetry.addData("Width", robot.objectWidth);
@@ -24,19 +24,7 @@ public class WhiteTest extends AutoControls {
         waitForStart();
 
         robot.gameTimer.startTime();
-        DriveWithCorrectionToStack(40, 0, 0.2);
-        //DriveAfterStrafeStack(0, 0.3);
 
-        while (opModeIsActive()) {
-            telemetry.addData("Coordinate", "(" + (int) robot.centerX + ", " + (int) robot.centerY + ")");
-            telemetry.addData("Width", robot.objectWidth);
-            telemetry.addData("Height", robot.objectHeight);
-            telemetry.addData("inches", robot.convertPixelsToInches(robot.objectWidth));
-            double h = robot.getDistance(robot.objectWidth);
-            telemetry.addData("Distance in Inch", h);
-            telemetry.addData("Distance from Robot", robot.getDistanceFromRobot(h));
-            telemetry.update();
-        }
 
 
     }
