@@ -826,9 +826,9 @@ public abstract class AutoControlsRemastered extends LinearOpMode {
             liftPast = liftPastPARAM;
         }
 
-        public void Init() {
-            state = MoveState.Init;
-            lift.SetPosition(liftTarget, liftPast);
+        public void Check() {
+
+            lift.SetPosition(liftTarget, liftPast, -1);
             state = MoveState.Finished;
 
         }

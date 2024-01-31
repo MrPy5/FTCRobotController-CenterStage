@@ -73,7 +73,7 @@ public class OldRedRight extends AutoControls {
 
         Drive(-drive);
         sleep(1000);
-        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags, -1);
         sleep(500);
         Drive(-5);
         sleep(2000);
@@ -81,12 +81,12 @@ public class OldRedRight extends AutoControls {
         sleep(1000);
         dropper.CloseDropper();
         sleep(500);
-        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5, -1);
         sleep(1000);
 
         Drive(3);
         sleep(1000);
-        lift.SetPosition(lift.liftBottom, lift.liftLow);
+        lift.SetPosition(lift.liftBottom, lift.liftLow, -1);
         sleep(1000);
         if (spikeLocation == 1) {
             StrafeWithInches(14, 0, -1);

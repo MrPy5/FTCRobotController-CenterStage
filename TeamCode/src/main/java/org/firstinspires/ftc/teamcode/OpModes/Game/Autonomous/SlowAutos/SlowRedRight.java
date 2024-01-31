@@ -81,19 +81,19 @@ public class SlowRedRight extends AutoControls {
             StrafeWithInchesWithCorrection(35, -0.2, 6, 90);
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 6);
         }
-        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags, -1);
         sleep(500);
         DriveWithCorrection(-2, 90, 0.3);
         sleep(500);
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();
-        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5, -1);
         sleep(500);
 
         Drive(3);
         sleep(500);
-        lift.SetPosition(lift.liftBottom, lift.liftLow);
+        lift.SetPosition(lift.liftBottom, lift.liftLow, -1);
         sleep(500);
         StrafeWithInchesWithCorrection(12, 0.2, -1, 90);
         sleep(500);

@@ -104,19 +104,19 @@ public class FastRedLeft extends AutoControls {
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 6);
         }
 
-        lift.SetPosition(lift.liftLow - 5,  lift.liftAprilTags);
+        lift.SetPosition(lift.liftLow - 5,  lift.liftAprilTags, -1);
         sleep(200);
         DriveWithCorrection(-3, 90, 0.3);
         sleep(50);
         dropper.OpenDropper();
         sleep(600);
         dropper.CloseDropper();
-        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5, -1);
         sleep(50);
 
         Drive(3);
         sleep(200);
-        lift.SetPosition(lift.liftBottom, lift.liftLow);
+        lift.SetPosition(lift.liftBottom, lift.liftLow, -1);
         sleep(500);
 
         if (spikeLocation == 1) {
@@ -144,19 +144,19 @@ public class FastRedLeft extends AutoControls {
         StrafeWithInchesWithCorrection(48, -0.3, 4, 90);
         DriveWithCorrectionToAprilTag(-55, 90, 0.4, 4);
 
-        lift.SetPosition(lift.liftLow - 1,  lift.liftAprilTags);
+        lift.SetPosition(lift.liftLow - 1,  lift.liftAprilTags, -1);
         sleep(300);
         DriveWithCorrection(-2, 90, 0.3);
         sleep(50);
         dropper.OpenDropper();
         sleep(600);
         dropper.CloseDropper();
-        lift.SetPosition(lift.liftLow + 2, lift.liftLow - 5);
+        lift.SetPosition(lift.liftLow + 2, lift.liftLow - 5, -1);
         sleep(50);
 
         Drive(3);
         sleep(200);
-        lift.SetPosition(lift.liftBottom, lift.liftLow);
+        lift.SetPosition(lift.liftBottom, lift.liftLow, -1);
         sleep(500);
     }
 

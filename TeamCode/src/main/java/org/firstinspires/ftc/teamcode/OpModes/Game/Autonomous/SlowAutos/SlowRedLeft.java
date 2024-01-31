@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 
-@Disabled
+
 @Autonomous(name = "Red Left", group = "Slow Autos")
 public class SlowRedLeft extends AutoControls {
 
@@ -124,19 +124,19 @@ public class SlowRedLeft extends AutoControls {
             DriveWithCorrectionToAprilTag(-20, 90, 0.4, 6);
         }
 
-        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags, -1);
         sleep(500);
         DriveWithCorrection(-2, 90, 0.3);
         sleep(500);
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();
-        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5, -1);
         sleep(500);
 
         Drive(3);
         sleep(1000);
-        lift.SetPosition(lift.liftBottom, lift.liftLow);
+        lift.SetPosition(lift.liftBottom, lift.liftLow, -1);
         sleep(1000);
 
 

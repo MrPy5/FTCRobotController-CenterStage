@@ -96,19 +96,19 @@ public class SlowBlueLeft extends AutoControls {
             DriveWithCorrectionToAprilTag(-20, 270, 0.4, 3);
         }
 
-        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags, -1);
         sleep(500);
         DriveWithCorrection(-2, 270, 0.3);
         sleep(500);
         dropper.OpenDropper();
         sleep(500);
         dropper.CloseDropper();
-        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5, -1);
         sleep(500);
 
         Drive(3);
         sleep(1000);
-        lift.SetPosition(lift.liftBottom, lift.liftLow);
+        lift.SetPosition(lift.liftBottom, lift.liftLow, -1);
 
         if (spikeLocation == 2 || spikeLocation == 3) {
             StrafeWithInchesWithCorrection(12, -0.2, -1, 270);

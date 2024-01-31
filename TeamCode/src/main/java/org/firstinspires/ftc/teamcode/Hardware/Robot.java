@@ -423,14 +423,24 @@ public class Robot {
         }
 
 
-        public void SetPosition(double liftTargetPosition, double liftPastPosition) {
+        public void SetPosition(double liftTargetPosition, double liftPastPosition, double specialPower) {
             liftMotor.setTargetPosition((int) (liftTargetPosition * liftTicksPerInch));
             liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             if (liftTargetPosition >= liftPastPosition) {
-                liftMotor.setPower(liftPowerUp);
+                if (specialPower != -1) {
+                    liftMotor.setPower(specialPower);
+                }
+                else {
+                    liftMotor.setPower(liftPowerUp);
+                }
             }
             else {
-                liftMotor.setPower(liftPowerDown);
+                if (specialPower != -1) {
+                    liftMotor.setPower(specialPower);
+                }
+                else {
+                    liftMotor.setPower(liftPowerDown);
+                }
 
             }
 
@@ -550,6 +560,9 @@ public class Robot {
         }
         public void Ground() {
             intakeHoist.setPosition(groundPosition);
+        }
+        public void SetPosition(double position) {
+            intakeHoist.setPosition(position);
         }
     }
 
@@ -817,9 +830,9 @@ public class Robot {
             }
         }
         if (alliance.equals("blue")) {
-            if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 50) {
+            if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 60) {
                 returnSpike = 2;
-            } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 50) {
+            } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 65) {
                 returnSpike = 3;
             } else {
                 returnSpike = 1;

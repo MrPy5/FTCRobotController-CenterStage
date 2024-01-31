@@ -125,7 +125,7 @@ public class SlowBlueRight extends AutoControls {
 
         }
 
-        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags);
+        lift.SetPosition(lift.liftLow - 4,  lift.liftAprilTags, -1);
         sleep(500);
         DriveWithCorrection(-2, 270, 0.3);
         sleep(500);
@@ -133,12 +133,12 @@ public class SlowBlueRight extends AutoControls {
         sleep(500);
         dropper.CloseDropper();
         sleep(500);
-        lift.SetPosition(lift.liftLow, lift.liftLow - 5);
+        lift.SetPosition(lift.liftLow, lift.liftLow - 5, -1);
         sleep(500);
 
         Drive(3);
         sleep(1000);
-        lift.SetPosition(lift.liftBottom, lift.liftLow);
+        lift.SetPosition(lift.liftBottom, lift.liftLow, -1);
         sleep(1000);
 
     }

@@ -69,13 +69,13 @@ public class GameTeleop extends LinearOpMode {
         //---Lift---//
         boolean manualLiftMode = false;
         double liftCurrent = 0;
-        double liftPast = 0;
+
         double lastManualIncrement = 0;
 
         //---Init Motion---//
         robot.pixelDropper.setPosition(dropper.closedDropper);
         intake.StopIntake();
-        lift.SetPosition(0, 0);
+        lift.SetPosition(0, 0, -1);
         dropper.CloseDropper();
         spikeHook.ResetSpike();
 
@@ -187,20 +187,20 @@ public class GameTeleop extends LinearOpMode {
             //---Lift---//
             //Preset Positions
             if (gamepad2.right_bumper) {
-                lift.SetPosition(lift.liftBottom, liftCurrent);
+                lift.SetPosition(lift.liftBottom, liftCurrent, -1);
                 liftCurrent = lift.liftBottom;
                 dropper.CloseDropper();
             }
             if (gamepad2.cross) {
-                lift.SetPosition(lift.liftLow, liftCurrent);
+                lift.SetPosition(lift.liftLow, liftCurrent, -1);
                 liftCurrent = lift.liftLow;
             }
             if (gamepad2.circle) {
-                lift.SetPosition(lift.liftMedium, liftCurrent);
+                lift.SetPosition(lift.liftMedium, liftCurrent, -1);
                 liftCurrent = lift.liftMedium;
             }
             if (gamepad2.triangle) {
-                lift.SetPosition(lift.liftHigh, liftCurrent);
+                lift.SetPosition(lift.liftHigh, liftCurrent, -1);
                 liftCurrent = lift.liftHigh;
             }
             if (gamepad2.left_bumper) {
@@ -214,13 +214,13 @@ public class GameTeleop extends LinearOpMode {
             //Manual Control
             if (gamepad2.dpad_up && lastManualIncrement + 250 < robot.gameTimer.milliseconds()) {
 
-                lift.SetPosition(liftCurrent + 3, liftCurrent);
+                lift.SetPosition(liftCurrent + 3, liftCurrent, -1);
                 liftCurrent = liftCurrent + 3;
                 lastManualIncrement = robot.gameTimer.milliseconds();
             }
             if (gamepad2.dpad_down && lastManualIncrement + 250 < robot.gameTimer.milliseconds()) {
 
-                lift.SetPosition(liftCurrent - 3, liftCurrent);
+                lift.SetPosition(liftCurrent - 3, liftCurrent, -1);
                 liftCurrent = liftCurrent - 3;
                 lastManualIncrement = robot.gameTimer.milliseconds();
             }
@@ -231,30 +231,21 @@ public class GameTeleop extends LinearOpMode {
                 dropper.OpenDropper();
             }
 
+            //---Auto Score---//
+            if (gamepad1.start) {
+                dropper.OpenDropper();
+                sleep(150);
+                lift.SetPosition(liftCurrent + 2, liftCurrent, 0.5);
+                sleep(600);
+
+            }
+
             //---Drone---//
             if (gamepad1.triangle) {
                 droneLauncher.ReleaseDrone();
             }
 
-            //---Pixel Splitter---//
-            /*if (gamepad2.left_trigger > robot.triggerSensitivity) {
-                if (pixelSplitter.pixelSplitterReset) {
 
-                    if (pixelSplitter.splitterState == pixelSplitterState.Open) {
-                        pixelSplitter.SplitPixel();
-                        pixelSplitter.pixelSplitterReset = false;
-                    }
-                    if (pixelSplitter.splitterState == pixelSplitterState.Split) {
-                        pixelSplitter.OpenSplitter();
-                        pixelSplitter.pixelSplitterReset = false;
-                    }
-
-                }
-
-            }
-            else {
-                pixelSplitter.pixelSplitterReset = true;
-            }*/
 
             //---Suspension---//
             //Servo

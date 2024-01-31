@@ -171,8 +171,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         }
 
      */
-
-        speedModifier = 5;
+        if (speedModifier == 0) {
+            speedModifier = 5;
+        }
         speedMinimum = 3;
 
         if (degreesOff < .3) {
@@ -226,8 +227,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             gameTimer.reset();
             boolean done = false;
             while (opModeIsActive() && !done) {
-                telemetry.addData("time: ", gameTimer.milliseconds());
-                telemetry.update();
+
 
                 int totalFinished = 0;
 
@@ -235,7 +235,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                     //init
                     if (move.trigger.CheckTrigger()) {
                         if (move.state == MoveState.Dead) {
-                            move.Init();
+                            move.state = MoveState.Init;
                         }
 
                     }
@@ -252,9 +252,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                         done = true;
                     }
                 }
-                telemetry.addData("finished", totalFinished);
-                telemetry.addData("size", moves.size());
-                telemetry.update();
+
             }
 
         }
@@ -404,8 +402,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             super(triggerPARAM, false);
         }
 
-        public void Init() {
-            state = MoveState.Init;
+        public void Check() {
+
             spike.DropSpike();
             state = MoveState.Finished;
         }
@@ -418,8 +416,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             hoistPosition = hoistPositionPARAM;
         }
 
-        public void Init() {
-            state = MoveState.Init;
+        public void Check() {
             robot.intakeHoist.setPosition(hoistPosition);
             state = MoveState.Finished;
         }
@@ -430,18 +427,19 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double moveIntakeForMilliseconds;
 
         ElapsedTime moveTimer = new ElapsedTime();
+        boolean timerStarted = false;
         public MoveIntake(Trigger triggerPARAM, double moveIntakeForMillisecondsPARAM) {
             super(triggerPARAM, true);
             moveIntakeForMilliseconds = moveIntakeForMillisecondsPARAM;
         }
 
-        public void Init() {
-            state = MoveState.Init;
-            intake.StartIntake(0.9);
-            moveTimer.reset();
-
-        }
         public void Check() {
+            intake.StartIntake(0.9);
+            if (!timerStarted) {
+                moveTimer.reset();
+                timerStarted = true;
+            }
+
             if (moveTimer.milliseconds() > moveIntakeForMilliseconds) {
                 intake.StopIntake();
                 state = MoveState.Finished;
@@ -456,8 +454,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double minPower = 0.1;
         double targetPower;
         double power = minPower;
-
+        double headingAdjustmentMultiplier = 2;
         double targetHeading;
+        boolean driveStarted = false;
         public Drive(Trigger triggerPARAM, double targetInchesPARAM, double powerPARAM, double targetHeadingPARAM) {
             super(triggerPARAM, true);
             targetInches = targetInchesPARAM;
@@ -465,51 +464,13 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             targetHeading = targetHeadingPARAM;
         }
 
-        public void Init() {
-            state = MoveState.Init;
-            ResetEncoders();
 
-            double currentInches;
-            double distanceToTarget;
-
-
-
-            double lfPower = power;
-            double rfPower = power;
-            double lrPower = power;
-            double rrPower = power;
-
-            double reverse;
-
-            currentInches = GetAverageWheelPositionInches();
-            distanceToTarget = targetInches - currentInches;
-
-            currentInchesCompare = currentInches;
-
-            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
-
-                double turnAdjustment;
-                turnAdjustment = headingAdjustment(targetHeading, 0);
-
-                currentInches = GetAverageWheelPositionInches();
-                distanceToTarget = targetInches - currentInches;
-
-                if (distanceToTarget < 0) {
-                    reverse = -1;
-                } else {
-                    reverse = 1;
-                }
-
-                robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
-                robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
-                robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
-                robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+        public void Check() {
+            if (!driveStarted) {
+                ResetEncoders();
+                driveStarted = true;
             }
 
-        }
-        public void Check() {
-
-
             double currentInches;
             double distanceToTarget;
 
@@ -519,8 +480,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             distanceToTarget = targetInches - currentInches;
 
             currentInchesCompare = currentInches;
-            telemetry.addData("compare", currentInchesCompare);
-            telemetry.update();
+
             //acceleration
             if (Math.abs(distanceToTarget) / Math.abs(targetInches) < 0.15) {
                 power -= 0.05;
@@ -536,10 +496,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
             }
 
-            double lfPower = power;
-            double rfPower = power;
-            double lrPower = power;
-            double rrPower = power;
+
 
             if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
 
@@ -554,16 +511,19 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 } else {
                     reverse = 1;
                 }
-                robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
-                robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
-                robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
-                robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+                //recalculate turn adjustment based on speed
+                turnAdjustment = turnAdjustment * power * headingAdjustmentMultiplier;
+                robot.frontLeft.setPower(power * reverse + turnAdjustment);
+                robot.frontRight.setPower(power * reverse - turnAdjustment);
+                robot.backRight.setPower(power * reverse - turnAdjustment);
+                robot.backLeft.setPower(power * reverse + turnAdjustment);
             }
             else {
                 robot.frontLeft.setPower(0);
                 robot.frontRight.setPower(0);
                 robot.backLeft.setPower(0);
                 robot.backRight.setPower(0);
+
                 state = MoveState.Finished;
             }
 
@@ -573,47 +533,19 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public class Turn extends Move {
         double targetHeading;
         ElapsedTime turnTimer = new ElapsedTime();
+        boolean turnStarted = false;
         public Turn(Trigger triggerPARAM, double targetHeadingPARAM) {
             super(triggerPARAM, true);
             targetHeading = targetHeadingPARAM;
         }
 
-        public void Init() {
-            turnTimer.reset();
-            double lfPower;
-            double rfPower;
-            double lrPower;
-            double rrPower;
-            double currentHeading;
 
-            double lastAngle = -1;
-            if (degreesOff(targetHeading) > 1 && opModeIsActive()) {
-
-                double adjustment = 0;
-                adjustment = headingAdjustment(targetHeading, 0);
-
-                lfPower = adjustment;
-                rfPower = -adjustment;
-                lrPower = adjustment;
-                rrPower = -adjustment;
-
-                robot.frontLeft.setPower(lfPower);
-                robot.frontRight.setPower(rfPower);
-                robot.backLeft.setPower(lrPower);
-                robot.backRight.setPower(rrPower);
-
-
-                angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-                currentHeading = (360 + angles.firstAngle) % 360;
-
-                lastAngle = currentHeading;
-
-            }
-
-        }
         public void Check() {
-            turnTimer.reset();
+            if (!turnStarted) {
+                turnTimer.reset();
+                turnStarted = true;
+                ResetEncoders();
+            }
             double lfPower;
             double rfPower;
             double lrPower;
@@ -671,9 +603,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double targetInchesY;
         double targetInchesX;
 
-        double minPower = 0.1;
-        double targetPower;
-        double power = minPower;
+
+
+        double power;
 
         double powerX;
 
@@ -681,7 +613,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double aggresion;
         boolean done;
         double distanceTolerance;
-
+        boolean catWalkStarted = false;
         Vision vision;
         public CatWalk(Trigger triggerPARAM, double targetInchesYPARAM, double targetInchesXPARAM, double powerPARAM, double targetHeadingPARAM, double aggresionPARAM, Vision visionPARAM, double distancTolerancePARAM) {
             super(triggerPARAM, true);
@@ -691,73 +623,18 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             power = powerPARAM;
             powerX = Math.signum(targetInchesXPARAM);
 
-            targetPower = powerPARAM;
             targetHeading = targetHeadingPARAM;
             aggresion = aggresionPARAM;
             vision = visionPARAM;
             distanceTolerance = distancTolerancePARAM;
         }
 
-        public void Init() {
-            state = MoveState.Init;
-            ResetEncoders();
 
-            double currentInches;
-            double distanceToTarget;
-
-            double currentStrafeInches;
-            double strafeDistanceToTarget;
-
-            double lfPower = power;
-            double rfPower = power;
-            double lrPower = power;
-            double rrPower = power;
-
-            double reverse;
-            boolean strafeDone = false;
-
-            currentInches = GetAverageWheelPositionInches();
-            distanceToTarget = targetInchesY - currentInches;
-
-            currentInchesCompare = currentInches;
-
-            if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
-
-                double turnAdjustment;
-                turnAdjustment = headingAdjustment(targetHeading, 0);
-
-                currentStrafeInches = GetAverageStrafePositionInches();
-                strafeDistanceToTarget = targetInchesX - currentStrafeInches;
-
-                currentInches = GetAverageWheelPositionInches();
-                distanceToTarget = targetInchesY - currentInches;
-
-                if (distanceToTarget < 0) {
-                    reverse = -1;
-                } else {
-                    reverse = 1;
-                }
-                double strafePower = (Math.pow(strafeDistanceToTarget / 10, 2) + 0.05) * powerX * aggresion;
-
-                if (Math.abs(strafeDistanceToTarget) > 1) {
-                        robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + (strafePower));
-                        robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - (strafePower));
-                        robot.backRight.setPower((rrPower * reverse) - turnAdjustment + (strafePower));
-                        robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - (strafePower));
-
-                }
-                else {
-
-                    robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
-                    robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
-                    robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
-                    robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
-                }
-            }
-
-        }
         public void Check() {
-
+            if (!catWalkStarted) {
+                ResetEncoders();
+                catWalkStarted = true;
+            }
             double currentInches;
             double distanceToTarget;
 
@@ -770,6 +647,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             double rrPower = power;
 
             double reverse;
+            double headingAdjustmentMultiplier = 2;
 
             currentInches = GetAverageWheelPositionInches();
             distanceToTarget = targetInchesY - currentInches;
@@ -796,39 +674,33 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                     reverse = 1;
                 }
 
-                if (Math.abs(strafeDistanceToTarget) > 1.5 && !done && !vision.CheckVision()) {
-                    double strafePower = (Math.pow(strafeDistanceToTarget / 10, 2)  * powerX) + 0.05;
-
-                    robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment + (strafePower));
-                    robot.frontRight.setPower((rfPower * reverse) - turnAdjustment - (strafePower));
-                    robot.backRight.setPower((rrPower * reverse) - turnAdjustment + (strafePower));
-                    robot.backLeft.setPower((lrPower * reverse) + turnAdjustment - (strafePower));
+                if (Math.abs(strafeDistanceToTarget) > 2 && !done) {
+                    double strafePower = (Math.pow(strafeDistanceToTarget / 12, 2)  * powerX) + 0.05;
+                    turnAdjustment = turnAdjustment * power * headingAdjustmentMultiplier;
+                    robot.frontLeft.setPower((power * reverse) + turnAdjustment + (strafePower));
+                    robot.frontRight.setPower((power * reverse) - turnAdjustment - (strafePower));
+                    robot.backRight.setPower((power * reverse) - turnAdjustment + (strafePower));
+                    robot.backLeft.setPower((power * reverse) + turnAdjustment - (strafePower));
 
                 }
-                if (Math.abs(strafeDistanceToTarget) <= 1.5) {
+                if (Math.abs(strafeDistanceToTarget) <= 2) {
                     done = true;
                 }
                 if (done) {
                     telemetry.addData("Done", "true");
-                    double powerCurve = (Math.pow(distanceToTarget / 10, 2) + 0.05);
-                    if (powerCurve > 0.4) {
-                        turnAdjustment = turnAdjustment * 4;
-                    }
-                    lfPower = powerCurve;
-                    rfPower = powerCurve;
-                    lrPower = powerCurve;
-                    rrPower = powerCurve;
-                    robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
-                    robot.frontRight.setPower((rfPower * reverse) - turnAdjustment);
-                    robot.backRight.setPower((rrPower * reverse) - turnAdjustment);
-                    robot.backLeft.setPower((lrPower * reverse) + turnAdjustment);
+                    double powerCurve = power;
+
+
+                    turnAdjustment = turnAdjustment * powerCurve * headingAdjustmentMultiplier;
+                    robot.frontLeft.setPower((powerCurve * reverse) + turnAdjustment);
+                    robot.frontRight.setPower((powerCurve * reverse) - turnAdjustment);
+                    robot.backRight.setPower((powerCurve * reverse) - turnAdjustment);
+                    robot.backLeft.setPower((powerCurve * reverse) + turnAdjustment);
                 }
-                telemetry.addData("distance", strafeDistanceToTarget);
+                telemetry.update();
             }
             else {
-                telemetry.addData("strafeInchesPerTick", robot.strafeTicksPerInch);
-                telemetry.addData("ticks", ((robot.frontLeft.getCurrentPosition() - robot.frontRight.getCurrentPosition() - robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition()) / 4.0));
-                telemetry.update();
+
 
                 robot.frontLeft.setPower(0);
                 robot.frontRight.setPower(0);
@@ -853,9 +725,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             liftPast = liftPastPARAM;
         }
 
-        public void Init() {
-            state = MoveState.Init;
-            lift.SetPosition(liftTarget, liftPast);
+        public void Check() {
+
+            lift.SetPosition(liftTarget, liftPast, -1);
             state = MoveState.Finished;
 
         }
@@ -871,8 +743,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             dropState = statePARAM;
         }
 
-        public void Init() {
-            state = MoveState.Init;
+        public void Check() {
+
             if (dropState.equals("open")) {
                 dropper.OpenDropper();
             }
@@ -883,6 +755,82 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
         }
 
+    }
+
+    public class Strafe extends Move {
+        boolean strafeStarted = false;
+        double targetStrafeInches;
+        double power;
+        int targetTag;
+        double targetHeading;
+        boolean tagDetected = false;
+        double headingAdjustmentMultiplier = 2;
+        public Strafe(Trigger triggerPARAM, double targetInchesPARAM, double powerPARAM, double headingPARAM, int tagPARAM) {
+            super(triggerPARAM, true);
+            targetStrafeInches = targetInchesPARAM;
+            power = powerPARAM;
+            targetHeading = headingPARAM;
+            targetTag = tagPARAM;
+        }
+
+        public void Check() {
+            if (!strafeStarted) {
+                ResetEncoders();
+                if (targetTag != -1) {
+                    lift.SetPosition(lift.liftAprilTags, 0, -1);
+                }
+
+                strafeStarted = true;
+
+            }
+
+            double currentStrafeInches =  GetAverageStrafePositionInches();
+            double strafeDistanceToTarget = (targetStrafeInches * Math.signum(power)) - currentStrafeInches;
+
+
+
+            if (Math.abs(strafeDistanceToTarget) > 0.5 && !tagDetected) {
+                double turnAdjustment;
+                turnAdjustment = headingAdjustment(targetHeading, 0);
+                turnAdjustment = turnAdjustment * power * headingAdjustmentMultiplier;
+                robot.frontLeft.setPower(power + turnAdjustment);
+                robot.backLeft.setPower(-1 * (power) + turnAdjustment);
+                robot.frontRight.setPower(-1 *(power) - turnAdjustment);
+                robot.backRight.setPower(power - turnAdjustment);
+                telemetry.addData("distance to target", strafeDistanceToTarget);
+                AprilTagPoseFtc tagSeen = robot.getTargetAprilTagPos(targetTag);
+                if (tagSeen != null) {
+                    telemetry.addData("Target Tag Seen", tagSeen.x);
+
+                    if (tagSeen.x < 2 && tagSeen.x > -2) {
+                        telemetry.addData("Done", tagSeen.x);
+
+
+                        robot.frontLeft.setPower(0);
+                        robot.frontRight.setPower(0);
+                        robot.backLeft.setPower(0);
+                        robot.backRight.setPower(0);
+                        telemetry.update();
+                        tagDetected = true;
+
+
+                    }
+
+
+                }
+                telemetry.update();
+            }
+            else {
+
+                robot.frontLeft.setPower(0);
+                robot.frontRight.setPower(0);
+                robot.backLeft.setPower(0);
+                robot.backRight.setPower(0);
+                state = MoveState.Finished;
+            }
+
+
+        }
     }
 
     //Old Auto Controls
@@ -1068,9 +1016,6 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 targetReached = (distanceToTarget <= 0);
             }
 
-            telemetry.addData("Current Velocity: ", currentLowestWheelVelocity);
-            telemetry.addData("Stopped: ", stopped);
-            telemetry.update();
         }
 
         robot.frontLeft.setPower(0);
@@ -1101,7 +1046,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         distanceToTarget = targetInches - currentInches;
 
         if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0);
+            lift.SetPosition(lift.liftAprilTags, 0, -1);
         }
 
         while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && (fetchedPose == null ? true : fetchedPose.range > TAG_DISTANCE) && opModeIsActive()) {
@@ -1169,8 +1114,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             double left;
             if (robot.getCenter() != -1) {
                 tagAdjustment = (((robot.getCenter() + (1280/34.0)) / 1280.0) - 0.5) * (1/3.0);
-                telemetry.addData("adjustment", tagAdjustment);
-                //telemetry.update();
+
             }
             if (tagAdjustment < 0) {
                 left = -1;
@@ -1256,8 +1200,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 if (stackPercentFromCenter < 0) {
                     strafePower = strafePower * -1;
                 }
-                telemetry.addData("adjustment", strafePower);
-                //telemetry.update();
+
                 // Here we should recalculate distance to target using the stack width and proper pixels per inch
             } else {
                 strafePower = 0;
@@ -1301,9 +1244,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             telemetry.addData("strafePower", strafePower);
             telemetry.addData("stackPercentFromCenter", stackPercentFromCenter);
             telemetry.addData("distanceToTarget", distanceToTarget);*/
-            telemetry.addData("velocity", imu.getVelocity().xVeloc);
 
-            telemetry.update();
 
         }
 
@@ -1406,11 +1347,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         targetHeading = currentHeading + stackPercentMultiplied;
         targetHeading = (targetHeading + 360) % 360;
 
-        telemetry.addData("adjustmentAngle", stackPercentMultiplied);
-        telemetry.addData("stackPercentFromCenter", stackPercentFromCenter * -50);
-        telemetry.addData("angle", targetHeading);
 
-        telemetry.update();
         DriveWithCorrectionDetectStop(targetInches, targetHeading, power);
     }
 
@@ -1421,11 +1358,11 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double strafeDistanceToTarget = (targetStrafeInches * Math.signum(power)) - currentStrafeInches;
 
         if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0);
+            lift.SetPosition(lift.liftAprilTags, 0, -1);
         }
         double targetRange = 0;
-        //Math.abs(strafeDistanceToTarget) > 0.5 &&
-        while (opModeIsActive()) {
+        //
+        while (Math.abs(strafeDistanceToTarget) > 0.5 && opModeIsActive()) {
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
 
@@ -1441,7 +1378,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             if (tagSeen != null) {
                 telemetry.addData("Target Tag Seen", tagSeen.x);
 
-                if (tagSeen.x < 4 && tagSeen.x > -4) {
+                if (tagSeen.x < 2 && tagSeen.x > -2) {
                     telemetry.addData("Done", tagSeen.x);
 
                     targetRange = robot.getTargetAprilTagPos(targetTag).range;
@@ -1450,7 +1387,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                     robot.backLeft.setPower(0);
                     robot.backRight.setPower(0);
                     telemetry.update();
-                    sleep(5000);
+                    sleep(500);
                     break;
                 }
 

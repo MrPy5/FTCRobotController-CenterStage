@@ -329,7 +329,7 @@ public abstract class AutoControls extends LinearOpMode {
         distanceToTarget = targetInches - currentInches;
 
         if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0);
+            lift.SetPosition(lift.liftAprilTags, 0, -1);
         }
 
         while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && (fetchedPose == null ? true : fetchedPose.range > TAG_DISTANCE) && opModeIsActive()) {
@@ -484,7 +484,7 @@ public abstract class AutoControls extends LinearOpMode {
         double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
 
         if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0);
+            lift.SetPosition(lift.liftAprilTags, 0, -1);
         }
         double targetRange = 0;
         while (Math.abs(strafeDistanceToTarget) > 1 && opModeIsActive()) {
@@ -526,7 +526,7 @@ public abstract class AutoControls extends LinearOpMode {
         double strafeDistanceToTarget = targetStrafeInches - currentStrafeInches;
 
         if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0);
+            lift.SetPosition(lift.liftAprilTags, 0, -1);
         }
         double targetRange = 0;
         while (Math.abs(strafeDistanceToTarget) > 1 && opModeIsActive()) {
@@ -623,7 +623,7 @@ public abstract class AutoControls extends LinearOpMode {
 
 
 
-        lift.SetPosition(lift.liftAprilTags, 0);
+        lift.SetPosition(lift.liftAprilTags, 0, -1);
         //sleep(1000);
         AprilTagPoseFtc targetPose = robot.getTargetAprilTagPos(targetTag);
 
