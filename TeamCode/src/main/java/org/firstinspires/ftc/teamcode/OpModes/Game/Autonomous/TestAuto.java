@@ -13,6 +13,8 @@ public class TestAuto extends AutoControlsCombined {
         initMethods(hardwareMap);
         robot.alliance = "red";
 
+        double previousStrafe = 0;
+
         //Vision
         int spikeLocation = robot.ScanForElementBitmap(2);
         sleep(1000);
@@ -26,7 +28,12 @@ public class TestAuto extends AutoControlsCombined {
 
         //int spikeLocation = 1;
         waitForStart();
-        StrafeWithInchesWithCorrection(30, 0.25, 2, 0);
+        previousStrafe = StrafeWithInchesWithCorrection(30, -0.25, 6, 0);
+
+        telemetry.addData("InchesStrafed: ", previousStrafe);
+        telemetry.update();
+
+        StrafeWithInchesWithCorrection(previousStrafe, 0.25, -1, 0);
 
 
 

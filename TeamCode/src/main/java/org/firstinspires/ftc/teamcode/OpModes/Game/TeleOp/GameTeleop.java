@@ -4,7 +4,6 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
@@ -14,7 +13,6 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Suspension;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.DroneLauncher;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.pixelSplitterState;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.IntakeHoist;
 
 
@@ -98,13 +96,13 @@ public class GameTeleop extends LinearOpMode {
 
             //---Gamepad2 controls---//
             //
-            // lift presets -> Right Bumper, a, b, y
-            // lift position reset -> Left Bumper
+            // lift presets -> Right Bumper, a, b, x, y
+            // drop pixel -> Left Bumper
             // manual lift -> D-Pad up & down
-            // drop pixel -> Right trigger
+            // auto score -> Right trigger
             // toggle suspension activation -> Left Trigger
             // raise & lower suspension -> D-Pad left & right
-
+            // reset lift -> Start
             /*
 
 
@@ -196,14 +194,18 @@ public class GameTeleop extends LinearOpMode {
                 liftCurrent = lift.liftLow;
             }
             if (gamepad2.circle) {
-                lift.SetPosition(lift.liftMedium, liftCurrent, -1);
-                liftCurrent = lift.liftMedium;
+                lift.SetPosition(lift.liftMediumOne, liftCurrent, -1);
+                liftCurrent = lift.liftMediumOne;
+            }
+            if (gamepad2.square) {
+                lift.SetPosition(lift.liftMediumTwo, liftCurrent, -1);
+                liftCurrent = lift.liftMediumTwo;
             }
             if (gamepad2.triangle) {
                 lift.SetPosition(lift.liftHigh, liftCurrent, -1);
                 liftCurrent = lift.liftHigh;
             }
-            if (gamepad2.left_bumper) {
+            if (gamepad2.start) {
                 robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
@@ -227,15 +229,15 @@ public class GameTeleop extends LinearOpMode {
 
 
             //---Dropper---//
-            if (gamepad2.right_trigger > robot.triggerSensitivity) {
+            if (gamepad2.left_bumper) {
                 dropper.OpenDropper();
             }
 
             //---Auto Score---//
-            if (gamepad1.start) {
+            if (gamepad2.right_trigger > robot.triggerSensitivity) {
                 dropper.OpenDropper();
                 sleep(150);
-                lift.SetPosition(liftCurrent + 2, liftCurrent, 0.5);
+                lift.SetPosition(liftCurrent + 5, liftCurrent, 0.7);
                 sleep(600);
 
             }

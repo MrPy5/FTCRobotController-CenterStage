@@ -1354,6 +1354,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {
         ResetEncoders();
 
+        double initialInches = GetAverageStrafePositionInches();
+        double inchesStrafed;
+
         double currentStrafeInches =  GetAverageStrafePositionInches();
         double strafeDistanceToTarget = (targetStrafeInches * Math.signum(power)) - currentStrafeInches;
 
@@ -1361,7 +1364,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             lift.SetPosition(lift.liftAprilTags, 0, -1);
         }
         double targetRange = 0;
-        //
+
         while (Math.abs(strafeDistanceToTarget) > 0.5 && opModeIsActive()) {
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
@@ -1379,16 +1382,21 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 telemetry.addData("Target Tag Seen", tagSeen.x);
 
                 if (tagSeen.x < 2 && tagSeen.x > -2) {
-                    telemetry.addData("Done", tagSeen.x);
-
+                    //telemetry.addData("Done", tagSeen.x);
                     targetRange = robot.getTargetAprilTagPos(targetTag).range;
+
                     robot.frontLeft.setPower(0);
                     robot.frontRight.setPower(0);
                     robot.backLeft.setPower(0);
                     robot.backRight.setPower(0);
+
+                    inchesStrafed = GetAverageStrafePositionInches() - initialInches;
+
+                    telemetry.addData("Inches Strafed: ", inchesStrafed);
                     telemetry.update();
                     sleep(500);
-                    break;
+
+                    return inchesStrafed;
                 }
 
 
@@ -1402,7 +1410,10 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
 
-        return targetRange;
+        inchesStrafed = GetAverageStrafePositionInches() - initialInches;
+
+        //return targetRange;
+        return inchesStrafed;
     }
 
 

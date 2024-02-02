@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -16,7 +15,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Scalar;
-import org.openftc.apriltag.AprilTagPose;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -398,9 +396,11 @@ public class Robot {
 
         public double liftBottom = 0;
         public double liftAprilTags = 10;
-        public double liftLow = 12;
-        public double liftMedium = 20;
-        public double liftHigh = 28;
+
+        public double liftLow = 7.5; //12
+        public double liftMediumOne = 11.5;
+        public double liftMediumTwo = 15.5;
+        public double liftHigh = 19.5;
 
         public double liftMotorTicksPerRevolution = 384.5;
         public double liftSpoolDiameter = 7.0/8.0;
@@ -408,7 +408,7 @@ public class Robot {
         public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI);
 
         public double liftPowerUp = 1;
-        public double liftPowerDown = 0.7;
+        public double liftPowerDown = 0.8;
 
 
 
@@ -465,8 +465,8 @@ public class Robot {
     public class Dropper {
 
         public boolean dropperOpen = false;
-        public double openDropper = 0.12;
-        public double closedDropper = 0.31;
+        public double openDropper = 0.14;
+        public double closedDropper = 0.33;
 
         public boolean resetDropper = true;
 
