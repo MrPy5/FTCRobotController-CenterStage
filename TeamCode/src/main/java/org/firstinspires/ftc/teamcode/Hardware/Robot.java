@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Hardware;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -73,6 +74,11 @@ public class Robot {
 
     //---INTAKE HOIST---//
     public Servo intakeHoist;
+
+    //---DISTANCE SENSORS---//
+    public DistanceSensor leftDS;
+    public DistanceSensor rightDS;
+    public DistanceSensor frontDS;
 
     //---DRIVING---//
 
@@ -185,8 +191,11 @@ public class Robot {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //---Distance Sensors---//
 
-
+        leftDS = hardwareMap.get(DistanceSensor.class, "leftDistance");
+        rightDS = hardwareMap.get(DistanceSensor.class, "rightDistance");
+        frontDS = hardwareMap.get(DistanceSensor.class, "frontDistance");
 
 
         //---Odometer---//
@@ -207,6 +216,7 @@ public class Robot {
 
 
     }
+
     public void initEasyOpenCV() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamNamed = null;

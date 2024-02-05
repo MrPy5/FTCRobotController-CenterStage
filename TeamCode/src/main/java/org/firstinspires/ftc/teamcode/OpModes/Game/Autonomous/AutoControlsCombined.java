@@ -1390,7 +1390,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                     robot.backLeft.setPower(0);
                     robot.backRight.setPower(0);
 
-                    inchesStrafed = GetAverageStrafePositionInches() - initialInches;
+                    inchesStrafed = Math.abs(GetAverageStrafePositionInches() - initialInches);
 
                     telemetry.addData("Inches Strafed: ", inchesStrafed);
                     telemetry.update();
@@ -1410,7 +1410,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
 
-        inchesStrafed = GetAverageStrafePositionInches() - initialInches;
+        inchesStrafed = Math.abs(GetAverageStrafePositionInches() - initialInches);
 
         //return targetRange;
         return inchesStrafed;
