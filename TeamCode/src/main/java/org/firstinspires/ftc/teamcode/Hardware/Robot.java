@@ -78,7 +78,7 @@ public class Robot {
     //---DISTANCE SENSORS---//
     public DistanceSensor leftDS;
     public DistanceSensor rightDS;
-    public DistanceSensor frontDS;
+    public DistanceSensor backDS;
 
     //---DRIVING---//
 
@@ -195,7 +195,7 @@ public class Robot {
 
         leftDS = hardwareMap.get(DistanceSensor.class, "leftDistance");
         rightDS = hardwareMap.get(DistanceSensor.class, "rightDistance");
-        frontDS = hardwareMap.get(DistanceSensor.class, "frontDistance");
+        backDS = hardwareMap.get(DistanceSensor.class, "backDistance");
 
 
         //---Odometer---//

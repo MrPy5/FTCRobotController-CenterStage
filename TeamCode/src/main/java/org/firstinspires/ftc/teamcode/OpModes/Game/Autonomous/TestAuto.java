@@ -32,15 +32,12 @@ public class TestAuto extends AutoControlsCombined {
         //Distance Sensor Telemetry
         while (opModeIsActive()) {
 
-            telemetry.addData("Left Distance: ", robot.leftDS.getDistance(DistanceUnit.INCH));
-            telemetry.addData("Right Distance: ", robot.rightDS.getDistance(DistanceUnit.INCH));
-            telemetry.addData("Front Distance: ", robot.frontDS.getDistance(DistanceUnit.INCH));
-            telemetry.update();
+            StrafeFromDistanceSensor(0.25, 0);
 
         }
 
-        //Strafe Testing
         /*
+        //Strafe Testing
         previousStrafe = StrafeWithInchesWithCorrection(30, -0.25, 5, 0);
 
         telemetry.addData("InchesStrafed: ", previousStrafe);
@@ -49,9 +46,13 @@ public class TestAuto extends AutoControlsCombined {
         sleep(2000);
 
         StrafeWithInchesWithCorrection(previousStrafe, 0.25, -1, 0);
-         */
+        */
 
-
+        /*
+        StrafeWithInchesWithCorrection(21, 0.8, -1, 0);
+        DriveWithCorrection(80, 0, 1);
+        sleep(2000);
+        */
 
     }
 
