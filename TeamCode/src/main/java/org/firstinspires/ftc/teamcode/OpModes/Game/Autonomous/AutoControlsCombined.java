@@ -457,7 +457,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double targetPower;
         double power = minPower;
 
-        double headingAdjustmentMultiplier = 2.2;
+        double headingAdjustmentMultiplier = 2.75;
         double targetHeading;
         public Drive(Trigger triggerPARAM, double targetInchesPARAM, double powerPARAM, double targetHeadingPARAM) {
             super(triggerPARAM, true);
@@ -520,8 +520,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             distanceToTarget = targetInches - currentInches;
 
             currentInchesCompare = currentInches;
-            telemetry.addData("compare", currentInchesCompare);
-            telemetry.update();
+            //telemetry.addData("compare", currentInchesCompare);
+            //telemetry.update();
             //acceleration
             if (Math.abs(distanceToTarget) / Math.abs(targetInches) < 0.15) {
                 power -= 0.05;
@@ -541,6 +541,14 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
                 double turnAdjustment;
                 turnAdjustment = headingAdjustment(targetHeading, 0);
+
+                angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+                double currentHeading = (360 + angles.firstAngle) % 360;
+
+                telemetry.addData("headingAdjustment: ", turnAdjustment);
+                telemetry.addData("heading: ", currentHeading);
+                telemetry.update();
 
                 currentInches = GetAverageWheelPositionInches();
                 distanceToTarget = targetInches - currentInches;
@@ -768,7 +776,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             double rrPower = power;
 
             double reverse;
-            double headingAdjustmentMultiplier = 2;
+            double headingAdjustmentMultiplier = 1.75;
 
             currentInches = GetAverageWheelPositionInches();
             distanceToTarget = targetInchesY - currentInches;
@@ -1021,7 +1029,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double rrPower = power;
 
         double reverse;
-        double headingAdjustmentMultiplier = 2.2;
+        double headingAdjustmentMultiplier = 2.75;
 
         currentInches = GetAverageWheelPositionInches();
         distanceToTarget = targetInches - currentInches;
@@ -1030,6 +1038,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            double currentHeading = (360 + angles.firstAngle) % 360;
 
             currentInches = GetAverageWheelPositionInches();
             distanceToTarget = targetInches - currentInches;
@@ -1045,6 +1056,10 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             robot.frontRight.setPower(power * reverse - turnAdjustment);
             robot.backRight.setPower(power * reverse - turnAdjustment);
             robot.backLeft.setPower(power * reverse + turnAdjustment);
+
+            telemetry.addData("headingAdjustment: ", turnAdjustment);
+            telemetry.addData("heading: ", currentHeading);
+            telemetry.update();
 
             /*
             robot.frontLeft.setPower((lfPower * reverse) + turnAdjustment);
@@ -1483,7 +1498,10 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         }
 
         double stackPercentMultiplied = stackPercentFromCenter * -50;
-
+        if (Math.abs(stackPercentMultiplied) > 10) {
+            sleep(5000);
+            stackPercentMultiplied = 0;
+        }
         targetHeading = currentHeading + stackPercentMultiplied;
         targetHeading = (targetHeading + 360) % 360;
 
@@ -1505,9 +1523,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
         double strafeDistanceToTarget = (targetStrafeInches * Math.signum(power)) - currentStrafeInches;
 
-        if (targetTag != -1) {
-            lift.SetPosition(lift.liftAprilTags, 0, -1);
-        }
+
         double targetRange = 0;
 
         while (opModeIsActive() && Math.abs(strafeDistanceToTarget) > 0.5) {

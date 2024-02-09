@@ -63,6 +63,7 @@ public class GameTeleop extends LinearOpMode {
         double lrPower;
         double rrPower;
         double liftUpModifier = 1;
+        double multiplier = 1;
 
         //---Lift---//
         boolean manualLiftMode = false;
@@ -158,10 +159,10 @@ public class GameTeleop extends LinearOpMode {
             rrPower = wheelPower * cosAngleRadians * factor - rightStickX;
 
 
-            robot.backLeft.setPower(lrPower);
-            robot.backRight.setPower(rrPower);
-            robot.frontLeft.setPower(lfPower);
-            robot.frontRight.setPower(rfPower);
+            robot.backLeft.setPower(lrPower * multiplier);
+            robot.backRight.setPower(rrPower * multiplier);
+            robot.frontLeft.setPower(lfPower * multiplier);
+            robot.frontRight.setPower(rfPower * multiplier);
 
             //---Intake---//
 
@@ -208,9 +209,12 @@ public class GameTeleop extends LinearOpMode {
             if (gamepad2.start) {
                 robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftCurrent = lift.liftBottom;
             }
 
-
+            if (liftCurrent > lift.liftLow) {
+                multiplier = 0.5;
+            }
 
 
             //Manual Control
