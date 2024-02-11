@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.MeetAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
-
+@Disabled
 @Autonomous(name = "Function Test", group = "testAutos")
 public class FunctionTest extends AutoControlsCombined {
 

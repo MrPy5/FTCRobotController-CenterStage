@@ -842,7 +842,7 @@ public class Robot {
         if (alliance.equals("blue")) {
             if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 60) {
                 returnSpike = 2;
-            } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 65) {
+            } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 115) {
                 returnSpike = 3;
             } else {
                 returnSpike = 1;

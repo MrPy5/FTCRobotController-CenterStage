@@ -453,7 +453,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public class Drive extends Move {
         double targetInches;
 
-        double minPower = 0.1;
+        double minPower = 0.3;
         double targetPower;
         double power = minPower;
 
@@ -523,7 +523,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             //telemetry.addData("compare", currentInchesCompare);
             //telemetry.update();
             //acceleration
-            if (Math.abs(distanceToTarget) / Math.abs(targetInches) < 0.15) {
+            if (Math.abs(targetInches) > 70 && Math.abs(distanceToTarget) / Math.abs(targetInches) < 0.25) {
                 power -= 0.05;
                 if (power < minPower) {
                     power = minPower;
@@ -925,7 +925,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             if (Math.abs(strafeDistanceToTarget) > 0.5 && !tagDetected) {
                 double turnAdjustment;
                 turnAdjustment = headingAdjustment(targetHeading, 0);
-                turnAdjustment = turnAdjustment * power * headingAdjustmentMultiplier;
+                turnAdjustment = turnAdjustment; // * power * headingAdjustmentMultiplier;
                 robot.frontLeft.setPower(power + turnAdjustment);
                 robot.backLeft.setPower(-1 * (power) + turnAdjustment);
                 robot.frontRight.setPower(-1 *(power) - turnAdjustment);
