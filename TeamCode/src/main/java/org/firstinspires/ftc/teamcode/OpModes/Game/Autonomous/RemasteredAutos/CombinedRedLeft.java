@@ -35,21 +35,21 @@ public class CombinedRedLeft extends AutoControlsCombined {
         Motion driveOne = new Motion();
         if (spikeLocation == 1) {
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
-            driveOne.add(new Drive(new MillisecondTrigger(0), 35, 0.4, 0));
-            driveOne.add(new CatWalk(new IndexTrigger(1, driveOne), 5, -21, 0.3, 0, 0.5, new Vision(), 0.5));
+            driveOne.add(new Drive(new MillisecondTrigger(0), 41, 0.5, 0));
+            driveOne.add(new Strafe(new IndexTrigger(1, driveOne), 19.5, -0.4, 0, -1));
             driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
             driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition4));
-            driveOne.add(new Drive(new IndexTrigger(3, driveOne), 6, 0.25, 0));
-            driveOne.add(new Drive(new IndexTrigger(5, driveOne), -11, 0.4, 90));
+            driveOne.add(new Drive(new IndexTrigger(3, driveOne), 5, 0.25, 0));
+            driveOne.add(new Drive(new IndexTrigger(5, driveOne), -10, 0.4, 90));
         }
 
         else if (spikeLocation == 2) {
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
-            driveOne.add(new CatWalk(new MillisecondTrigger(0), 40.5, -15, 0.5, 0, 0.5, new Vision(), 0.5));
+            driveOne.add(new CatWalk(new MillisecondTrigger(0), 42.5, -17, 0.5, 0, 0.5, new Vision(), 0.5));
             driveOne.add(new SpikeDrop(new IndexTrigger(1, driveOne)));
             driveOne.add(new MoveHoist(new IndexTrigger(2, driveOne), hoist.stackPosition4));
             driveOne.add(new Drive(new IndexTrigger(2, driveOne), 6, 0.25, 0));
-            driveOne.add(new Drive(new IndexTrigger(4, driveOne), -8, 0.4, 90));
+            driveOne.add(new Drive(new IndexTrigger(4, driveOne), -3.5, 0.4, 90));
 
 
         }
@@ -71,10 +71,10 @@ public class CombinedRedLeft extends AutoControlsCombined {
         }
         driveOne.Start(0);
         if (spikeLocation == 1) {
-            DriveAtAngleToStack(18, 0.3);
+            DriveAtAngleToStack(14, 0.3);
         }
         if (spikeLocation == 2) {
-            DriveAtAngleToStack(24, 0.3);
+            DriveAtAngleToStack(22.5, 0.3);
         }
         if (spikeLocation == 3) {
             DriveAtAngleToStack(19.5, 0.3);
@@ -90,14 +90,14 @@ public class CombinedRedLeft extends AutoControlsCombined {
             //Drive back toward backboard
             driveTwo.add(new MoveIntake(new IndexTrigger(1, driveTwo), 2000));
             driveTwo.add(new Drive(new IndexTrigger(1, driveTwo), -100, 1, 90));
-            driveTwo.add(new MoveLift(new IndexTrigger(3, driveTwo), lift.liftLow, 0));
+            driveTwo.add(new MoveLift(new IndexTrigger(3, driveTwo), lift.liftLow - 1, 0));
             //driveTwo.add(new CatWalk(new IndexTrigger(1, driveTwo), -28, -28, 0.5, 90, 0.5, new Vision()));
 
         driveTwo.Start(0);
 
        //Strafe on backboard
        if (spikeLocation == 1) {
-           previousStrafe = StrafeWithInchesWithCorrection(15, -0.25, 4, 90);
+           previousStrafe = StrafeWithInchesWithCorrection(21, -0.25, 4, 90);
        }
        if (spikeLocation == 2) {
             previousStrafe = StrafeWithInchesWithCorrection(26, -0.25, 5, 90);
@@ -110,7 +110,7 @@ public class CombinedRedLeft extends AutoControlsCombined {
        Motion driveThree = new Motion();
             //Drop pixel and move back to stack
             driveThree.add(new MoveDropper(new MillisecondTrigger(0), "open"));
-            driveThree.add(new MoveLift(new IndexTriggerWithDelay(0, 300, driveThree), lift.liftLow + 4, lift.liftLow));
+            driveThree.add(new MoveLift(new IndexTriggerWithDelay(0, 300, driveThree), lift.liftLow + 4, lift.liftLow - 1));
             driveThree.add(new Drive(new IndexTriggerWithDelay(1, 0, driveThree), 5, 0.5, 90));
             driveThree.add(new MoveLift(new IndexTriggerWithDelay(2, 0, driveThree), lift.liftBottom, lift.liftLow + 4));
             driveThree.add(new MoveDropper(new IndexTriggerWithDelay(2, 0, driveThree), "close"));
@@ -123,18 +123,18 @@ public class CombinedRedLeft extends AutoControlsCombined {
 
         if (spikeLocation == 1) {
             //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 18, 0.5, 90, 0.5, new Vision(), 1));
-            StrafeWithInchesWithCorrection(8, 0.5, -1, 90);
-            DriveWithCorrection(75, 90, 0.9);
+            StrafeWithInchesWithCorrection(17, 0.5, -1, 90);
+            DriveWithCorrection(80, 90, 0.9);
         }
         if (spikeLocation == 2) {
             //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 23, 0.5, 90, 0.5, new Vision(), 1));
-            StrafeWithInchesWithCorrection(19, 0.5, -1, 90);
-            DriveWithCorrection(75, 90, 0.9);
+            StrafeWithInchesWithCorrection(23, 0.5, -1, 90);
+            DriveWithCorrection(80, 90, 0.9);
         }
         if (spikeLocation == 3) {
             //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 29, 0.5, 90, 0.5, new Vision(), 1));
             StrafeWithInchesWithCorrection(29, 0.5, -1, 90);
-            DriveWithCorrection(75, 90, 0.9);
+            DriveWithCorrection(80, 90, 0.9);
         }
 
 
@@ -144,7 +144,7 @@ public class CombinedRedLeft extends AutoControlsCombined {
          */
 
         //Align to stack
-        DriveAtAngleToStack(29.5, .2);
+        DriveAtAngleToStack(24.5, .2);
 
         Motion driveFour = new Motion();
             //Intake pixels and move to backboard
@@ -152,14 +152,21 @@ public class CombinedRedLeft extends AutoControlsCombined {
             driveFour.add(new MoveHoist(new IndexTrigger(0, driveFour), hoist.stackPosition3));
             driveFour.add(new MoveIntake(new IndexTrigger(1, driveFour), 1800));
             driveFour.add(new Drive(new MillisecondTrigger(1500), -100, 0.9, 90));
-            driveFour.add(new MoveLift(new IndexTrigger(3, driveFour), lift.liftLow, 0));
+            if (spikeLocation == 1) {
+                driveFour.add(new MoveLift(new IndexTrigger(3, driveFour), lift.liftLow + 2, 0));
+
+            }
+            else {
+                driveFour.add(new MoveLift(new IndexTrigger(3, driveFour), lift.liftLow, 0));
+
+            }
 
         driveFour.Start(0);
         //Strafe along board
         StrafeWithInchesWithCorrection(27, -0.3, 4, 90);
         DriveWithCorrection(-12, 90, 0.4);
         dropper.OpenDropper();
-        sleep(150);
+        sleep(500);
         lift.SetPosition(lift.liftLow + 5, lift.liftLow, -1);
         sleep(600);
     }

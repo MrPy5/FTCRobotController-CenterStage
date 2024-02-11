@@ -457,7 +457,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double targetPower;
         double power = minPower;
 
-        double headingAdjustmentMultiplier = 2.75;
+        double headingAdjustmentMultiplier = 2.5;
         double targetHeading;
         public Drive(Trigger triggerPARAM, double targetInchesPARAM, double powerPARAM, double targetHeadingPARAM) {
             super(triggerPARAM, true);
@@ -903,7 +903,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             targetHeading = headingPARAM;
             targetTag = tagPARAM;
         }
-
+        public void Init() {
+            state = MoveState.Init;
+        }
         public void Check() {
             if (!strafeStarted) {
                 ResetEncoders();
@@ -1029,7 +1031,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double rrPower = power;
 
         double reverse;
-        double headingAdjustmentMultiplier = 2.75;
+        double headingAdjustmentMultiplier = 2.5;
 
         currentInches = GetAverageWheelPositionInches();
         distanceToTarget = targetInches - currentInches;
@@ -1174,7 +1176,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
 
-        DriveShortDistance(-0.3, 0.1);
+        DriveShortDistance(-0.5, 0.1);
 
     }
 
@@ -1498,8 +1500,14 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         }
 
         double stackPercentMultiplied = stackPercentFromCenter * -50;
-        if (Math.abs(stackPercentMultiplied) > 10) {
+        if (Math.abs(stackPercentMultiplied) > 15) {
+            telemetry.addData("adjustmentAngle", stackPercentMultiplied);
+            telemetry.addData("stackPercentFromCenter", stackPercentFromCenter * -50);
+
+
+            telemetry.update();
             sleep(5000);
+
             stackPercentMultiplied = 0;
         }
         targetHeading = currentHeading + stackPercentMultiplied;

@@ -418,7 +418,7 @@ public class Robot {
         public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI);
 
         public double liftPowerUp = 1;
-        public double liftPowerDown = 0.8;
+        public double liftPowerDown = 1;
 
 
 
@@ -755,7 +755,7 @@ public class Robot {
         public Mat processFrame(Mat input) {
             colorMask = preprocessFrame(input);
             Rect ro1 = new Rect(0,130,250,300);
-            Rect ro2 = new Rect(390,95,350,200);
+            Rect ro2 = new Rect(390,0,350,200);
             Rect ro3 = new Rect(970, 100, 250, 270);
             croppedSectorOne = new Mat(colorMask, ro1);
             croppedSectorTwo = new Mat(colorMask, ro2);
@@ -833,7 +833,7 @@ public class Robot {
         if (alliance.equals("red")) {
             if (whiteTwo > whiteOne && whiteTwo > whiteThree && whiteTwo > 60) {
                 returnSpike = 2;
-            } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 60) {
+            } else if (whiteThree > whiteOne && whiteThree > whiteTwo && whiteThree > 110) {
                 returnSpike = 3;
             } else {
                 returnSpike = 1;

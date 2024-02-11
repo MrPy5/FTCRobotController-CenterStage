@@ -215,6 +215,9 @@ public class GameTeleop extends LinearOpMode {
             if (liftCurrent > lift.liftLow) {
                 multiplier = 0.5;
             }
+            else {
+                multiplier = 1;
+            }
 
 
             //Manual Control
