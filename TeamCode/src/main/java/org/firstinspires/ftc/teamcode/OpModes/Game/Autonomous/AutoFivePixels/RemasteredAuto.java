@@ -1,12 +1,10 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.RemasteredAutos;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoFivePixels;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsRemastered;
 
-import java.util.ArrayList;
-import java.util.List;
 @Disabled
 @Autonomous(name = "Remastered Red Left", group = "Remastered")
 public class RemasteredAuto extends AutoControlsRemastered {

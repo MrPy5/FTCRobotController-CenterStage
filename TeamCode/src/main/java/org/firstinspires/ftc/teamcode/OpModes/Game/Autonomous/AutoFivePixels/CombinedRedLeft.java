@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.RemasteredAutos;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoFivePixels;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
-import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsRemastered;
 
 @Autonomous(name = "Combined Red Left", group = "Remastered")
 public class CombinedRedLeft extends AutoControlsCombined {
@@ -35,10 +34,13 @@ public class CombinedRedLeft extends AutoControlsCombined {
         Motion driveOne = new Motion();
         if (spikeLocation == 1) {
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
+
+            //Drive to spike drop position, drop purple pixel
             driveOne.add(new Drive(new MillisecondTrigger(0), 39, 0.5, 0));
             driveOne.add(new Strafe(new IndexTrigger(1, driveOne), 18.5, -0.4, 0, -1));
             driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
             driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition4));
+
             driveOne.add(new Drive(new IndexTrigger(3, driveOne), 5, 0.25, 0));
             driveOne.add(new Drive(new IndexTrigger(5, driveOne), -10, 0.4, 90));
         }
@@ -95,7 +97,7 @@ public class CombinedRedLeft extends AutoControlsCombined {
 
         driveTwo.Start(0);
 
-       //Strafe on backboard
+       //Strafe on backboard - based on spike position
        if (spikeLocation == 1) {
            previousStrafe = StrafeWithInchesWithCorrection(21, -0.25, 4, 90);
        }
@@ -105,10 +107,12 @@ public class CombinedRedLeft extends AutoControlsCombined {
        if (spikeLocation == 3) {
             previousStrafe = StrafeWithInchesWithCorrection(36, -0.25, 6, 90);
        }
+
+       //Drive back to backboard
        DriveWithCorrection(-12, 90, 0.4);
 
        Motion driveThree = new Motion();
-            //Drop pixel and move back to stack
+            //Drop pixel, raise lift, drive forward
             driveThree.add(new MoveDropper(new MillisecondTrigger(0), "open"));
             driveThree.add(new MoveLift(new IndexTriggerWithDelay(0, 300, driveThree), lift.liftLow + 5, lift.liftLow - 1));
             driveThree.add(new Drive(new IndexTriggerWithDelay(1, 300, driveThree), 5, 0.5, 90));

@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.RemasteredAutos;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoFivePixels;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
-import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsRemastered;
 
 @Autonomous(name = "Combined Blue Right", group = "Remastered")
 public class CombinedBlueRight extends AutoControlsCombined {
@@ -99,7 +98,7 @@ public class CombinedBlueRight extends AutoControlsCombined {
 
         //Strafe on backboard
         if (spikeLocation == 1) {
-            previousStrafe = StrafeWithInchesWithCorrection(36, 0.25, 1, 270);
+            previousStrafe = StrafeWithInchesWithCorrection(31, 0.25, 1, 270);
         }
         if (spikeLocation == 2) {
             previousStrafe = StrafeWithInchesWithCorrection(26, 0.25, 2, 270);

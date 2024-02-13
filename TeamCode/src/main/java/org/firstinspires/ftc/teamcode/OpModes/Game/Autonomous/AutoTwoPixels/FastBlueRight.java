@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.FastAutos;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoTwoPixels;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

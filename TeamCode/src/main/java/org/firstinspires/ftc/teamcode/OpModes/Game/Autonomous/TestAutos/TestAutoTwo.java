@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.TestAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
+
 @Disabled
 @Autonomous(name = "TestAutoTWO")
 public class TestAutoTwo extends AutoControlsCombined {

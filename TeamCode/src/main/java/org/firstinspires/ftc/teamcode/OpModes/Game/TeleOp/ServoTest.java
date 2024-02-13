@@ -58,13 +58,24 @@ public class ServoTest extends LinearOpMode {
 
             if (gamepad1.right_bumper == true) {
 
-                currentPosition += .01;
+                currentPosition += .05;
                 sleep(300);
             }
             if (gamepad1.left_bumper == true) {
-                currentPosition -= .01;
+                currentPosition -= .05;
                 sleep(300);
             }
+
+            if (gamepad1.circle) {
+                currentPosition += .005;
+                sleep(300);
+            }
+
+            if (gamepad1.square) {
+                currentPosition -= .005;
+                sleep(300);
+            }
+
             if (gamepad1.a) {
                 testServo.getController().pwmDisable();
             }

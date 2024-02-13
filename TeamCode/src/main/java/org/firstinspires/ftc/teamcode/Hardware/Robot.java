@@ -413,7 +413,7 @@ public class Robot {
         public double liftHigh = 19.5;
 
         public double liftMotorTicksPerRevolution = 384.5;
-        public double liftSpoolDiameter = 7.0/8.0;
+        public double liftSpoolDiameter = 17.0/16.0;
         //public double liftCascadeMultiplier = 3;
         public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI);
 

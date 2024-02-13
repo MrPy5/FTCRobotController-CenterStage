@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.TestAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
