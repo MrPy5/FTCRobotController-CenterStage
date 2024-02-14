@@ -38,7 +38,7 @@ public class CombinedBlueRight extends AutoControlsCombined {
             driveOne.add(new Strafe(new IndexTrigger(1, driveOne), 4.5, 0.4, 0, -1));
             driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
             driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition4));
-            driveOne.add(new Drive(new IndexTrigger(3, driveOne), 6, 0.25, 0));
+            driveOne.add(new Drive(new IndexTrigger(3, driveOne), 7, 0.25, 0));
             driveOne.add(new Drive(new IndexTrigger(5, driveOne), -2, 0.4, 270));
         }
 
@@ -121,20 +121,24 @@ public class CombinedBlueRight extends AutoControlsCombined {
 
         driveThree.Start(0);
 
-
-        if (spikeLocation == 1) {
-            //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 18, 0.5, 90, 0.5, new Vision(), 1));
-            StrafeWithInchesWithCorrection(29.5, -0.5, -1, 270);
-            DriveWithCorrection(80, 270, 0.9);
-        }
-        if (spikeLocation == 2) {
-            //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 23, 0.5, 90, 0.5, new Vision(), 1));
-            StrafeWithInchesWithCorrection(24.5, -0.5, -1, 270);
-            DriveWithCorrection(80, 270, 0.9);
-        }
-        if (spikeLocation == 3) {
-            //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 29, 0.5, 90, 0.5, new Vision(), 1));
-            StrafeWithInchesWithCorrection(17, -0.5, -1, 270);
+        if (previousStrafe == -1) {
+            if (spikeLocation == 1) {
+                //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 18, 0.5, 90, 0.5, new Vision(), 1));
+                StrafeWithInchesWithCorrection(29.5, -0.5, -1, 270);
+                DriveWithCorrection(80, 270, 0.9);
+            }
+            if (spikeLocation == 2) {
+                //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 23, 0.5, 90, 0.5, new Vision(), 1));
+                StrafeWithInchesWithCorrection(23, -0.5, -1, 270);
+                DriveWithCorrection(80, 270, 0.9);
+            }
+            if (spikeLocation == 3) {
+                //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 29, 0.5, 90, 0.5, new Vision(), 1));
+                StrafeWithInchesWithCorrection(17, -0.5, -1, 270);
+                DriveWithCorrection(80, 270, 0.9);
+            }
+        } else {
+            StrafeWithInchesWithCorrection(previousStrafe, -0.5, -1, 270);
             DriveWithCorrection(80, 270, 0.9);
         }
 
@@ -154,17 +158,22 @@ public class CombinedBlueRight extends AutoControlsCombined {
         driveFour.add(new MoveIntake(new IndexTrigger(1, driveFour), 1800));
         driveFour.add(new Drive(new MillisecondTrigger(1500), -100, 0.9, 270));
 
-        driveFour.add(new MoveLift(new IndexTrigger(3, driveFour), lift.liftLow + 2, 0));
+        driveFour.add(new MoveLift(new IndexTrigger(3, driveFour), lift.liftLow + 5, 0));
 
 
 
         driveFour.Start(0);
         //Strafe along board
-        StrafeWithInchesWithCorrection(27, 0.3, 3, 270);
+        if (spikeLocation == 3) {
+            StrafeWithInchesWithCorrection(33, 0.3, 2, 270);
+        } else {
+            StrafeWithInchesWithCorrection(27, 0.3, 3, 270);
+        }
+
         DriveWithCorrection(-12, 270, 0.4);
         dropper.OpenDropper();
         sleep(500);
-        lift.SetPosition(lift.liftLow + 6, lift.liftLow, -1);
+        lift.SetPosition(lift.liftLow + 9, lift.liftLow, -1);
         sleep(600);
     }
 

@@ -578,21 +578,25 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     }
     public class Turn extends Move {
         double targetHeading;
-        ElapsedTime turnTimer = new ElapsedTime();
+        double lastTurnTime = -1;
+        boolean stalledTurn = false;
+        double lastAngle = -1;
+
         public Turn(Trigger triggerPARAM, double targetHeadingPARAM) {
             super(triggerPARAM, true);
             targetHeading = targetHeadingPARAM;
         }
 
         public void Init() {
-            turnTimer.reset();
+
+            state = MoveState.Init;
             double lfPower;
             double rfPower;
             double lrPower;
             double rrPower;
             double currentHeading;
 
-            double lastAngle = -1;
+
             if (degreesOff(targetHeading) > 1 && opModeIsActive()) {
 
                 double adjustment = 0;
@@ -619,14 +623,13 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
         }
         public void Check() {
-            turnTimer.reset();
+
             double lfPower;
             double rfPower;
             double lrPower;
             double rrPower;
             double currentHeading;
 
-            double lastAngle = -1;
             if (degreesOff(targetHeading) > 1 && opModeIsActive()) {
 
                 double adjustment = 0;
@@ -637,18 +640,17 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 lrPower = adjustment;
                 rrPower = -adjustment;
 
-                robot.frontLeft.setPower(lfPower);
-                robot.frontRight.setPower(rfPower);
-                robot.backLeft.setPower(lrPower);
-                robot.backRight.setPower(rrPower);
+                robot.frontLeft.setPower(lfPower * 1.08);
+                robot.frontRight.setPower(rfPower * 1.08);
+                robot.backLeft.setPower(lrPower * 1.08);
+                robot.backRight.setPower(rrPower * 1.08);
 
 
                 angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
                 currentHeading = (360 + angles.firstAngle) % 360;
                 if (currentHeading == lastAngle) {
-                    turnTimer.startTime();
-                    if (turnTimer.milliseconds() >= 2000) {
+                    if (robot.gameTimer.milliseconds() - lastTurnTime > 2000) {
 
                         robot.frontLeft.setPower(0);
                         robot.frontRight.setPower(0);
@@ -656,10 +658,10 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                         robot.backRight.setPower(0);
                         state = MoveState.Finished;
                     }
+                } else {
+                    lastTurnTime = robot.gameTimer.milliseconds();
+                    lastAngle = currentHeading;
                 }
-
-                lastAngle = currentHeading;
-
             }
             else {
 
@@ -1019,16 +1021,13 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     }
 
 
-    public void DriveWithCorrection (double targetInches, double targetHeading, double power) {
+    public void DriveWithCorrection (double targetInches, double targetHeading, double targetPower) {
         ResetEncoders();
 
         double currentInches;
         double distanceToTarget;
 
-        double lfPower = power;
-        double rfPower = power;
-        double lrPower = power;
-        double rrPower = power;
+
 
         double reverse;
         double headingAdjustmentMultiplier = 2.5;
@@ -1036,7 +1035,25 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         currentInches = GetAverageWheelPositionInches();
         distanceToTarget = targetInches - currentInches;
 
+        double minPower = 0.3;
+
+        double power = minPower;
+
         while (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
+
+            if (Math.abs(targetInches) > 70 && Math.abs(distanceToTarget) / Math.abs(targetInches) < 0.25) {
+                power -= 0.05;
+                if (power < minPower) {
+                    power = minPower;
+                }
+            }
+            else {
+                power += 0.05;
+                if (power > targetPower) {
+                    power = targetPower;
+                }
+
+            }
 
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
@@ -1553,7 +1570,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 if (tagSeen.x < 2 && tagSeen.x > -2) {
                     //telemetry.addData("Done", tagSeen.x);
                     //targetRange = robot.getTargetAprilTagPos(targetTag).range;
-                    inchesStrafed = Math.abs(currentStrafeInches - initialStrafeInches);
+                    inchesStrafed = -1;
 
                     robot.frontLeft.setPower(0);
                     robot.frontRight.setPower(0);
