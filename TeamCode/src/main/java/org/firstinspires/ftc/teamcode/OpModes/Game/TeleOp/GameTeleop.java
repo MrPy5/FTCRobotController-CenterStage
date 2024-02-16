@@ -74,7 +74,7 @@ public class GameTeleop extends LinearOpMode {
         //---Init Motion---//
         robot.pixelDropper.setPosition(dropper.closedDropper);
         intake.StopIntake();
-        lift.SetPosition(0, 0, -1);
+        lift.SetPosition(lift.liftLow + 6, 0, -1);
         dropper.CloseDropper();
         spikeHook.ResetSpike();
 

@@ -36,12 +36,12 @@ public class CombinedRedLeft extends AutoControlsCombined {
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
 
             //Drive to spike drop position, drop purple pixel
-            driveOne.add(new Drive(new MillisecondTrigger(0), 39, 0.5, 0));
-            driveOne.add(new Strafe(new IndexTrigger(1, driveOne), 18.5, -0.4, 0, -1));
+            driveOne.add(new Drive(new MillisecondTrigger(0), 37.5, 0.5, 0));
+            driveOne.add(new Strafe(new IndexTrigger(1, driveOne), 18, -0.4, 0, -1));
             driveOne.add(new SpikeDrop(new IndexTrigger(2, driveOne)));
             driveOne.add(new MoveHoist(new IndexTrigger(3, driveOne), hoist.stackPosition4));
 
-            driveOne.add(new Drive(new IndexTrigger(3, driveOne), 5, 0.25, 0));
+            driveOne.add(new Drive(new IndexTrigger(4, driveOne), 6, 0.25, 0));
             driveOne.add(new Drive(new IndexTrigger(5, driveOne), -10, 0.4, 90));
         }
 
@@ -127,7 +127,7 @@ public class CombinedRedLeft extends AutoControlsCombined {
 
         if (spikeLocation == 1) {
             //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 18, 0.5, 90, 0.5, new Vision(), 1));
-            StrafeWithInchesWithCorrection(17, 0.5, -1, 90);
+            StrafeWithInchesWithCorrection(18, 0.5, -1, 90);
             DriveWithCorrection(80, 90, 0.9);
         }
         if (spikeLocation == 2) {
@@ -157,7 +157,7 @@ public class CombinedRedLeft extends AutoControlsCombined {
             driveFour.add(new MoveIntake(new IndexTrigger(1, driveFour), 1800));
             driveFour.add(new Drive(new MillisecondTrigger(1500), -100, 0.9, 90));
 
-            driveFour.add(new MoveLift(new IndexTrigger(3, driveFour), lift.liftLow + 2, 0));
+            driveFour.add(new MoveLift(new IndexTrigger(3, driveFour), lift.liftLow + 4, 0));
 
 
 

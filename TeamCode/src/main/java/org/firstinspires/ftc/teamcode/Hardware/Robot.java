@@ -251,7 +251,8 @@ public class Robot {
         aprilTag = new AprilTagProcessor.Builder()
                 //.setDrawAxes(false)
                 //.setDrawCubeProjection(false)
-                //.setDrawTagOutline(true)
+                //.setDrawTagOutline(false)
+
                 //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
@@ -274,7 +275,7 @@ public class Robot {
 
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new android.util.Size(1280, 800));
+        builder.setCameraResolution(new android.util.Size(800, 600));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableLiveView(false);
@@ -344,11 +345,13 @@ public class Robot {
 
         // Step through the list of detections and display info for each one.
         AprilTagPoseFtc pose = null;
+
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 if (detection.id == targetID) {
 
                     pose = detection.ftcPose;
+                    break;
                 }
 
             }
@@ -359,6 +362,19 @@ public class Robot {
         return pose;
 
 
+    }
+
+    public AprilTagPoseFtc getTargetAprilTagTwo(int targetID) {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        AprilTagPoseFtc returnValue = null;
+
+        for (AprilTagDetection detection : currentDetections) {
+            if ((detection.metadata != null) && (detection.id == targetID)) {
+                returnValue =  detection.ftcPose;
+                break;  // don't look any further.
+            }
+        }
+        return returnValue;
     }
 
 

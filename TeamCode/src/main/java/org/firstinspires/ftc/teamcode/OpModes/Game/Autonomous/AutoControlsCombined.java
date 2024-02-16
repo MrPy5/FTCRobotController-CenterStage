@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1541,6 +1542,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {
         ResetEncoders();
 
+        disableExcessVision();
+
         double initialStrafeInches = GetAverageStrafePositionInches();
         double currentStrafeInches =  GetAverageStrafePositionInches();
 
@@ -1562,7 +1565,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             robot.backLeft.setPower(-1 * (power) + turnAdjustment);
             robot.frontRight.setPower(-1 *(power) - turnAdjustment);
             robot.backRight.setPower(power - turnAdjustment);
-            telemetry.addData("distance to target", strafeDistanceToTarget);
+            //telemetry.addData("tag", robot.getFirstAprilTagID());
             AprilTagPoseFtc tagSeen = robot.getTargetAprilTagPos(targetTag);
             if (tagSeen != null) {
                 telemetry.addData("Target Tag Seen", tagSeen.x);
@@ -1577,6 +1580,9 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                     robot.backLeft.setPower(0);
                     robot.backRight.setPower(0);
                     telemetry.update();
+
+                    resumeVision();
+
                     return inchesStrafed;
                 }
 
@@ -1591,6 +1597,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.frontRight.setPower(0);
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
+
+        resumeVision();
 
         return inchesStrafed;
     }
@@ -1630,6 +1638,14 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
 
+    }
+    public void disableExcessVision() {
+        //robot.visionPortal.stopLiveView();
+        //robot.webcam.stopStreaming();
+    }
+    public void resumeVision() {
+        //robot.visionPortal.resumeLiveView();
+        //robot.webcam.startStreaming(robot.STREAM_WIDTH, robot.STREAM_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
     }
 
 
