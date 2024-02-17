@@ -62,6 +62,11 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.initEasyOpenCV();
 
         initIMU();
+        resetZeroes();
+    }
+    public void resetZeroes() {
+        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void initIMU() {
@@ -1431,6 +1436,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public void DriveAtAngleToStack(double targetInches, double power) {
         ResetEncoders();
 
+        //disableTagVision();
+
         double frameWidthInPixels = robot.STREAM_WIDTH;
         double cameraCenterAdjustPixels = -60;
         double frameCenterX = frameWidthInPixels / 2.0 + cameraCenterAdjustPixels;  // adjust this +/- some pixels to adjust off center camera
@@ -1518,16 +1525,19 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         }
 
         double stackPercentMultiplied = stackPercentFromCenter * -50;
+
+        /*
         if (Math.abs(stackPercentMultiplied) > 15) {
             telemetry.addData("adjustmentAngle", stackPercentMultiplied);
             telemetry.addData("stackPercentFromCenter", stackPercentFromCenter * -50);
 
 
             telemetry.update();
-            sleep(5000);
 
             stackPercentMultiplied = 0;
         }
+        */
+
         targetHeading = currentHeading + stackPercentMultiplied;
         targetHeading = (targetHeading + 360) % 360;
 
@@ -1536,13 +1546,16 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         telemetry.addData("angle", targetHeading);
 
         telemetry.update();
+
+        resumeAllVision();
+
         DriveWithCorrectionDetectStop(targetInches, targetHeading, power);
     }
 
     public double StrafeWithInchesWithCorrection(double targetStrafeInches, double power, int targetTag, int targetHeading) {
         ResetEncoders();
 
-        disableExcessVision();
+        disableStackVision();
 
         double initialStrafeInches = GetAverageStrafePositionInches();
         double currentStrafeInches =  GetAverageStrafePositionInches();
@@ -1570,39 +1583,62 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             if (tagSeen != null) {
                 telemetry.addData("Target Tag Seen", tagSeen.x);
 
-                if (tagSeen.x < 2 && tagSeen.x > -2) {
-                    //telemetry.addData("Done", tagSeen.x);
-                    //targetRange = robot.getTargetAprilTagPos(targetTag).range;
-                    inchesStrafed = -1;
+                if (robot.alliance == "red") {
+                    if (tagSeen.x > -1.5) {
+                        //telemetry.addData("Done", tagSeen.x);
+                        //targetRange = robot.getTargetAprilTagPos(targetTag).range;
+                        inchesStrafed = -1;
 
-                    robot.frontLeft.setPower(0);
-                    robot.frontRight.setPower(0);
-                    robot.backLeft.setPower(0);
-                    robot.backRight.setPower(0);
-                    telemetry.update();
+                        robot.frontLeft.setPower(0);
+                        robot.frontRight.setPower(0);
+                        robot.backLeft.setPower(0);
+                        robot.backRight.setPower(0);
+                        telemetry.update();
 
-                    resumeVision();
+                        resumeAllVision();
 
-                    return inchesStrafed;
+                        return inchesStrafed;
+                    }
+                } else {
+                    if (tagSeen.x < 1.5) {
+                        //telemetry.addData("Done", tagSeen.x);
+                        //targetRange = robot.getTargetAprilTagPos(targetTag).range;
+                        inchesStrafed = -1;
+
+                        robot.frontLeft.setPower(0);
+                        robot.frontRight.setPower(0);
+                        robot.backLeft.setPower(0);
+                        robot.backRight.setPower(0);
+                        telemetry.update();
+
+                        resumeAllVision();
+
+                        return inchesStrafed;
+                    }
                 }
 
 
             }
+            else {
+                telemetry.addData("no tag", "");
+            }
+            telemetry.addData("fps", robot.visionPortal.getFps());
             telemetry.update();
         }
 
-        inchesStrafed = Math.abs(currentStrafeInches - initialStrafeInches);
+        inchesStrafed = Math.abs(currentStrafeInches - initialStrafeInches) + 2;
 
         robot.frontLeft.setPower(0);
         robot.frontRight.setPower(0);
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
 
-        resumeVision();
+        resumeAllVision();
 
         return inchesStrafed;
     }
 
+    /*
     public void StrafeFromDistanceSensor(double power, int targetHeading) {
         ResetEncoders();
 
@@ -1639,13 +1675,25 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.backRight.setPower(0);
 
     }
-    public void disableExcessVision() {
-        //robot.visionPortal.stopLiveView();
-        //robot.webcam.stopStreaming();
+    */
+
+    public void disableStackVision() {
+        robot.visionPortal.stopLiveView();
+
+        robot.webcam.stopStreaming();
     }
-    public void resumeVision() {
-        //robot.visionPortal.resumeLiveView();
-        //robot.webcam.startStreaming(robot.STREAM_WIDTH, robot.STREAM_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
+    public void disableTagVision() {
+        robot.visionPortal.stopLiveView();
+
+        robot.visionPortal.stopStreaming();
+
+    }
+
+    public void resumeAllVision() {
+
+        //robot.visionPortal.resumeStreaming();
+
+        robot.webcam.startStreaming(robot.STREAM_WIDTH, robot.STREAM_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
     }
 
 

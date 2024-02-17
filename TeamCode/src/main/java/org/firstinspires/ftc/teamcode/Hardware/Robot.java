@@ -75,10 +75,12 @@ public class Robot {
     //---INTAKE HOIST---//
     public Servo intakeHoist;
 
+    /*
     //---DISTANCE SENSORS---//
     public DistanceSensor leftDS;
     public DistanceSensor rightDS;
     public DistanceSensor backDS;
+    */
 
     //---DRIVING---//
 
@@ -193,10 +195,11 @@ public class Robot {
 
         //---Distance Sensors---//
 
+        /*
         leftDS = hardwareMap.get(DistanceSensor.class, "leftDistance");
         rightDS = hardwareMap.get(DistanceSensor.class, "rightDistance");
         backDS = hardwareMap.get(DistanceSensor.class, "backDistance");
-
+        */
 
         //---Odometer---//
         /*
@@ -260,7 +263,8 @@ public class Robot {
                 // == CAMERA CALIBRATION ==
                 // If you do not manually specify calibration parameters, the SDK will attempt
                 // to load a predefined calibration for your camera.
-                .setLensIntrinsics(912.854, 912.854, 621.648, 372.268)
+                //.setLensIntrinsics(912.854, 912.854, 621.648, 372.268)
+                .setLensIntrinsics(902.235, 902.235, 633.041, 378.356)
 
                 // ... these parameters are fx, fy, cx, cy.
 
@@ -275,7 +279,7 @@ public class Robot {
 
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new android.util.Size(800, 600));
+        builder.setCameraResolution(new android.util.Size(1280, 720));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableLiveView(false);
