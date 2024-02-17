@@ -45,7 +45,7 @@ public class CombinedBlueRight extends AutoControlsCombined {
         else if (spikeLocation == 2) {
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
             driveOne.add(new Strafe(new MillisecondTrigger(0), 10, 0.5, 0, -1));
-            driveOne.add(new Drive(new IndexTrigger(1, driveOne), 41, 0.6, 0));
+            driveOne.add(new Drive(new IndexTrigger(1, driveOne), 38, 0.6, 0));
             driveOne.add(new Strafe(new IndexTrigger(2, driveOne), 13, -0.4, 0, -1));
 
             driveOne.add(new SpikeDrop(new IndexTrigger(3, driveOne)));
