@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
 
-@Autonomous(name = "Combined Red Left", group = "Remastered")
-public class CombinedRedLeft extends AutoControlsCombined {
+@Autonomous(name = "Combined Red Left - Aztechs", group = "Remastered")
+public class CombinedRedLeft_AZTECHS extends AutoControlsCombined {
 
     @Override
     public void runOpMode() {

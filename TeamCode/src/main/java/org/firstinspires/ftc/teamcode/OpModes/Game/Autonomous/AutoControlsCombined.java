@@ -233,7 +233,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             boolean done = false;
             while (opModeIsActive() && !done) {
                 telemetry.addData("time: ", gameTimer.milliseconds());
-                telemetry.update();
+
 
                 int totalFinished = 0;
 
@@ -258,8 +258,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                         done = true;
                     }
                 }
-                telemetry.addData("finished", totalFinished);
-                telemetry.addData("size", moves.size());
+
                 telemetry.update();
             }
 
@@ -1199,7 +1198,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
 
-        DriveShortDistance(-0.5, 0.1);
+        DriveShortDistance(-0.6, 0.1);
 
     }
 
@@ -1622,8 +1621,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             else {
                 telemetry.addData("no tag", "");
             }
-            telemetry.addData("fps", robot.visionPortal.getFps());
-            telemetry.update();
+
+
         }
 
         inchesStrafed = Math.abs(currentStrafeInches - initialStrafeInches) + 2;
