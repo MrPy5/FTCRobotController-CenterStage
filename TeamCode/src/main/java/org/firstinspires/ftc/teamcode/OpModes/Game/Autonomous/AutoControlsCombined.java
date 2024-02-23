@@ -520,7 +520,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             double distanceToTarget;
 
             double reverse;
-
+            double distanceSensorTolerance = 6;
             currentInches = GetAverageWheelPositionInches();
             distanceToTarget = targetInches - currentInches;
 
@@ -541,6 +541,25 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 }
 
             }
+            double lastSeenBack = -1;
+            while (robot.backDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance && Math.abs(targetInches) > 70) {
+
+
+                if (robot.backDS.getDistance(DistanceUnit.INCH) < lastSeenBack) {
+                    robot.frontLeft.setPower(0.25);
+                    robot.frontRight.setPower(0.25);
+                    robot.backLeft.setPower(0.25);
+                    robot.backRight.setPower(0.25);
+                }
+                else {
+                    robot.frontLeft.setPower(0);
+                    robot.frontRight.setPower(0);
+                    robot.backLeft.setPower(0);
+                    robot.backRight.setPower(0);
+                }
+                lastSeenBack = robot.backDS.getDistance(DistanceUnit.INCH);
+            }
+
 
             if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
 
@@ -1637,14 +1656,140 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         return inchesStrafed;
     }
 
-    /*
+    public double StrafeWithInchesWithCorrectionWithDistanceSensors(double targetStrafeInches, double power, int targetTag, int targetHeading) {
+        ResetEncoders();
+
+        disableStackVision();
+
+        double initialStrafeInches = GetAverageStrafePositionInches();
+        double currentStrafeInches =  GetAverageStrafePositionInches();
+
+        double inchesStrafed;
+
+        double strafeDistanceToTarget = (targetStrafeInches * Math.signum(power)) - currentStrafeInches;
+
+
+        double targetRange = 0;
+
+        double distanceSensorTolerance = 6;
+
+        while (opModeIsActive() && Math.abs(strafeDistanceToTarget) > 0.5) {
+            double turnAdjustment;
+            turnAdjustment = headingAdjustment(targetHeading, 0);
+
+            currentStrafeInches =  GetAverageStrafePositionInches();
+            strafeDistanceToTarget = (targetStrafeInches * Math.signum(power)) - currentStrafeInches;
+
+            robot.frontLeft.setPower(power + turnAdjustment);
+            robot.backLeft.setPower(-1 * (power) + turnAdjustment);
+            robot.frontRight.setPower(-1 *(power) - turnAdjustment);
+            robot.backRight.setPower(power - turnAdjustment);
+            //telemetry.addData("tag", robot.getFirstAprilTagID());
+            AprilTagPoseFtc tagSeen = robot.getTargetAprilTagPos(targetTag);
+            double lastSeenLeft = -1;
+            double lastSeenRight = -1;
+            while (robot.leftDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance) {
+
+
+
+                if (robot.leftDS.getDistance(DistanceUnit.INCH) < lastSeenLeft) {
+                    robot.frontLeft.setPower(0.25);
+                    robot.frontRight.setPower(-0.25);
+                    robot.backLeft.setPower(-0.25);
+                    robot.backRight.setPower(0.25);
+                }
+                else {
+                    robot.frontLeft.setPower(0);
+                    robot.frontRight.setPower(0);
+                    robot.backLeft.setPower(0);
+                    robot.backRight.setPower(0);
+                }
+                lastSeenLeft = robot.leftDS.getDistance(DistanceUnit.INCH);
+            }
+            while (robot.rightDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance) {
+
+
+                if (robot.rightDS.getDistance(DistanceUnit.INCH) < lastSeenRight) {
+                    robot.frontLeft.setPower(-0.25);
+                    robot.frontRight.setPower(0.25);
+                    robot.backLeft.setPower(0.25);
+                    robot.backRight.setPower(-0.25);
+                }
+                else {
+                    robot.frontLeft.setPower(0);
+                    robot.frontRight.setPower(0);
+                    robot.backLeft.setPower(0);
+                    robot.backRight.setPower(0);
+                }
+                lastSeenRight = robot.leftDS.getDistance(DistanceUnit.INCH);
+            }
+
+            if (tagSeen != null) {
+                telemetry.addData("Target Tag Seen", tagSeen.x);
+
+                if (robot.alliance == "red") {
+                    if (tagSeen.x > -1.5) {
+                        //telemetry.addData("Done", tagSeen.x);
+                        //targetRange = robot.getTargetAprilTagPos(targetTag).range;
+                        inchesStrafed = -1;
+
+                        robot.frontLeft.setPower(0);
+                        robot.frontRight.setPower(0);
+                        robot.backLeft.setPower(0);
+                        robot.backRight.setPower(0);
+                        telemetry.update();
+
+                        resumeAllVision();
+
+                        return inchesStrafed;
+                    }
+                } else {
+                    if (tagSeen.x < 1.5) {
+                        //telemetry.addData("Done", tagSeen.x);
+                        //targetRange = robot.getTargetAprilTagPos(targetTag).range;
+                        inchesStrafed = -1;
+
+                        robot.frontLeft.setPower(0);
+                        robot.frontRight.setPower(0);
+                        robot.backLeft.setPower(0);
+                        robot.backRight.setPower(0);
+                        telemetry.update();
+
+                        resumeAllVision();
+
+                        return inchesStrafed;
+                    }
+                }
+
+
+            }
+            else {
+                telemetry.addData("no tag", "");
+            }
+
+
+        }
+
+        inchesStrafed = Math.abs(currentStrafeInches - initialStrafeInches) + 2;
+
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.backLeft.setPower(0);
+        robot.backRight.setPower(0);
+
+        resumeAllVision();
+
+        return inchesStrafed;
+    }
+
+
     public void StrafeFromDistanceSensor(double power, int targetHeading) {
         ResetEncoders();
 
         double positivePower = power;
         double negativePower = -power;
 
-        double distanceSensorTolerance = 5;
+        double distanceSensorTolerance = 6;
 
         while ((robot.leftDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance || robot.rightDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance) && opModeIsActive()) {
 
@@ -1674,7 +1819,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         robot.backRight.setPower(0);
 
     }
-    */
+
 
     public void disableStackVision() {
         robot.visionPortal.stopLiveView();

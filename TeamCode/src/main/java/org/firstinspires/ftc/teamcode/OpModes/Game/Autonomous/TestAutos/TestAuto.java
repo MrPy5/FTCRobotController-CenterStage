@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
 
-@Disabled
+
 @Autonomous(name = "TestAuto")
 public class TestAuto extends AutoControlsCombined {
 
@@ -35,7 +35,7 @@ public class TestAuto extends AutoControlsCombined {
         //Distance Sensor Telemetry
         while (opModeIsActive()) {
 
-            //StrafeFromDistanceSensor(0.25, 0);
+            StrafeFromDistanceSensor(0.25, 0);
 
         }
 

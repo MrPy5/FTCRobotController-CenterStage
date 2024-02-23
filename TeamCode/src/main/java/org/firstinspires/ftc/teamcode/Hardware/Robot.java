@@ -75,12 +75,12 @@ public class Robot {
     //---INTAKE HOIST---//
     public Servo intakeHoist;
 
-    /*
+
     //---DISTANCE SENSORS---//
     public DistanceSensor leftDS;
     public DistanceSensor rightDS;
     public DistanceSensor backDS;
-    */
+
 
     //---DRIVING---//
 
@@ -195,11 +195,11 @@ public class Robot {
 
         //---Distance Sensors---//
 
-        /*
+
         leftDS = hardwareMap.get(DistanceSensor.class, "leftDistance");
         rightDS = hardwareMap.get(DistanceSensor.class, "rightDistance");
         backDS = hardwareMap.get(DistanceSensor.class, "backDistance");
-        */
+
 
         //---Odometer---//
         /*

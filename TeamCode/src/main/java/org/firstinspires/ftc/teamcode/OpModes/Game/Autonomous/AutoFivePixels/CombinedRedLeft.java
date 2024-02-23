@@ -110,13 +110,13 @@ public class CombinedRedLeft extends AutoControlsCombined {
         hoist.Hoist();
        //Strafe on backboard - based on spike position
        if (spikeLocation == 1) {
-           previousStrafe = StrafeWithInchesWithCorrection(21, -0.25, 4, 90);
+           previousStrafe = StrafeWithInchesWithCorrectionWithDistanceSensors(21, -0.25, 4, 90);
        }
        if (spikeLocation == 2) {
-            previousStrafe = StrafeWithInchesWithCorrection(26, -0.25, 5, 90);
+            previousStrafe = StrafeWithInchesWithCorrectionWithDistanceSensors(26, -0.25, 5, 90);
        }
        if (spikeLocation == 3) {
-            previousStrafe = StrafeWithInchesWithCorrection(36, -0.25, 6, 90);
+            previousStrafe = StrafeWithInchesWithCorrectionWithDistanceSensors(36, -0.25, 6, 90);
        }
 
        //Drive back to backboard
@@ -144,8 +144,8 @@ public class CombinedRedLeft extends AutoControlsCombined {
         }
         if (spikeLocation == 2) {
             //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 23, 0.5, 90, 0.5, new Vision(), 1));
-            StrafeWithInchesWithCorrection(22.5, 0.5, -1, 90);
-
+            StrafeWithInchesWithCorrection(26, 0.5, -1, 90);
+            //22.5 ORIGINALLY
             DriveWithCorrection(80, 90, 0.9);
         }
         if (spikeLocation == 3) {
@@ -180,9 +180,9 @@ public class CombinedRedLeft extends AutoControlsCombined {
         driveFour.Start(0);
         //Strafe along board
         if (spikeLocation == 1) {
-            StrafeWithInchesWithCorrection(33, -0.3, 5, 90);
+            StrafeWithInchesWithCorrectionWithDistanceSensors(33, -0.3, 5, 90);
         } else {
-            StrafeWithInchesWithCorrection(21, -0.3, 4, 90);
+            StrafeWithInchesWithCorrectionWithDistanceSensors(21, -0.3, 4, 90);
         }
 
 
