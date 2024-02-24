@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoFivePixels;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
-
+@Disabled
 @Autonomous(name = "Combined Red Left", group = "Remastered")
 public class CombinedRedLeft extends AutoControlsCombined {
 

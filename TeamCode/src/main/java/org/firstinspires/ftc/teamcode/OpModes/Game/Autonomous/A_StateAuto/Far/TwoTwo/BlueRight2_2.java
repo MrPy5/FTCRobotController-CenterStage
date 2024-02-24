@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoFivePixels;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.A_StateAuto.Far.TwoTwo;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
-@Disabled
-@Autonomous(name = "Combined Blue Right", group = "Remastered")
-public class CombinedBlueRight extends AutoControlsCombined {
+
+@Autonomous(name = "BlueRight 2+2", group = "2+2")
+public class BlueRight2_2 extends AutoControlsCombined {
 
     @Override
     public void runOpMode() {
@@ -85,30 +84,18 @@ public class CombinedBlueRight extends AutoControlsCombined {
             //driveOne.add(new MoveIntake(new IndexTrigger(6, driveOne), 1500));
         }
         driveOne.Start(0);
-        if (spikeLocation == 1) {
-            DriveAtAngleToStack(20, 0.3);
-        }
-        if (spikeLocation == 2) {
-            DriveAtAngleToStack(22.5, 0.3);
-        }
-        if (spikeLocation == 3) {
-            DriveAtAngleToStack(19.5, 0.3);
-        }
+
 
 
 
         Motion driveTwo = new Motion();
 
-        driveTwo.add(new MoveHoist(new MillisecondTrigger(0), hoist.stackPosition5));
-        driveTwo.add(new MoveIntake(new MillisecondTrigger(0), 1000));
 
-        //Drive back toward backboard
-        driveTwo.add(new MoveIntake(new IndexTrigger(1, driveTwo), 2000));
-        driveTwo.add(new Drive(new IndexTrigger(1, driveTwo), -100, 1, 270));
+        driveTwo.add(new Drive(new MillisecondTrigger(0), -100, 1, 270));
 
         //CHANGE FOR THOR
 
-        driveTwo.add(new MoveLift(new IndexTrigger(3, driveTwo), lift.liftLow + 1, 0));
+        driveTwo.add(new MoveLift(new IndexTrigger(1, driveTwo), lift.liftLow + 1, 0));
 
 
         //driveTwo.add(new CatWalk(new IndexTrigger(1, driveTwo), -28, -28, 0.5, 90, 0.5, new Vision()));

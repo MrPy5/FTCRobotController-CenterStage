@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoFivePixels;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.A_StateAuto.Far.TwoThree;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
-@Disabled
-@Autonomous(name = "Combined Blue Right", group = "Remastered")
-public class CombinedBlueRight extends AutoControlsCombined {
+
+@Autonomous(name = "BlueRight 2+2", group = "2+2")
+public class BlueRight2_3 extends AutoControlsCombined {
 
     @Override
     public void runOpMode() {
