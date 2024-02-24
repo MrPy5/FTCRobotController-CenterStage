@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.IntakeHoist;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -30,7 +29,6 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public Robot robot;
     public Dropper dropper;
     public Lift lift;
-    public PixelSplitter splitter;
     public Intake intake;
     public SpikeHook spike;
     public IntakeHoist hoist;
@@ -44,19 +42,22 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
     public ElapsedTime gameTimer = new ElapsedTime();
 
-
+    public void resetZeroes() {
+        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     public void initMethods(HardwareMap hwMap) {
         robot = new Robot(hwMap, false);
         dropper = robot.new Dropper();
         lift = robot.new Lift();
         intake = robot.new Intake();
         spike = robot.new SpikeHook();
-        splitter = robot.new PixelSplitter();
+
         hoist = robot.new IntakeHoist();
 
         spike.ResetSpike();
         dropper.CloseDropper();
-        splitter.OpenSplitter();
+
 
         robot.initAprilTag();
         robot.initEasyOpenCV();
@@ -64,10 +65,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         initIMU();
         resetZeroes();
     }
-    public void resetZeroes() {
-        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
+
 
     public void initIMU() {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -264,38 +262,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
         }
     }
-    //VISION//
-    public class Vision {
 
-        public Vision() {
-
-        }
-        public boolean CheckVision() {
-            return false;
-        }
-    }
-    public class TagVision extends Vision {
-        int targetTag;
-        Motion drive;
-        public TagVision(int targetTagPARAM) {
-            targetTag = targetTagPARAM;
-        }
-        public boolean CheckVision() {
-            boolean value = false;
-            if (robot.getTargetAprilTagPos(targetTag) != null) {
-
-                if (robot.getTargetAprilTagPos(targetTag).x < 1.5 && robot.getTargetAprilTagPos(targetTag).x > -1.5) {
-                    value = true;
-
-                }
-
-
-            }
-
-            return value;
-        }
-
-    }
 
 
 
@@ -714,8 +681,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         boolean done;
         double distanceTolerance;
 
-        Vision vision;
-        public CatWalk(Trigger triggerPARAM, double targetInchesYPARAM, double targetInchesXPARAM, double powerPARAM, double targetHeadingPARAM, double aggresionPARAM, Vision visionPARAM, double distancTolerancePARAM) {
+
+        public CatWalk(Trigger triggerPARAM, double targetInchesYPARAM, double targetInchesXPARAM, double powerPARAM, double targetHeadingPARAM, double aggresionPARAM, double distancTolerancePARAM) {
             super(triggerPARAM, true);
             targetInchesY = targetInchesYPARAM;
             targetInchesX = targetInchesXPARAM;
@@ -726,7 +693,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             targetPower = powerPARAM;
             targetHeading = targetHeadingPARAM;
             aggresion = aggresionPARAM;
-            vision = visionPARAM;
+
             distanceTolerance = distancTolerancePARAM;
         }
 

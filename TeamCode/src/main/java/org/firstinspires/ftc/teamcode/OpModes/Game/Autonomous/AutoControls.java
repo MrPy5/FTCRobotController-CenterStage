@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Dropper;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Intake;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
+
 import org.firstinspires.ftc.teamcode.Hardware.Robot.IntakeHoist;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
@@ -25,7 +25,6 @@ public abstract class AutoControls extends LinearOpMode {
     public Robot robot;
     public Dropper dropper;
     public Lift lift;
-    public PixelSplitter splitter;
     public Intake intake;
     public SpikeHook spike;
     public IntakeHoist hoist;
@@ -42,12 +41,12 @@ public abstract class AutoControls extends LinearOpMode {
         lift = robot.new Lift();
         intake = robot.new Intake();
         spike = robot.new SpikeHook();
-        splitter = robot.new PixelSplitter();
+
         hoist = robot.new IntakeHoist();
 
         spike.ResetSpike();
         dropper.CloseDropper();
-        splitter.OpenSplitter();
+
 
         robot.initAprilTag();
         robot.initEasyOpenCV();

@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Suspension;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.DroneLauncher;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.SpikeHook;
-import org.firstinspires.ftc.teamcode.Hardware.Robot.PixelSplitter;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.IntakeHoist;
 
 
@@ -35,7 +34,6 @@ public class GameTeleop extends LinearOpMode {
         Suspension suspension = robot.new Suspension();
         DroneLauncher droneLauncher = robot.new DroneLauncher();
         SpikeHook spikeHook = robot.new SpikeHook();
-        PixelSplitter pixelSplitter = robot.new PixelSplitter();
         IntakeHoist intakeHoist = robot.new IntakeHoist();
 
 

@@ -59,7 +59,7 @@ public class CombinedRedLeft_AZTECHS extends AutoControlsCombined {
 
         else if (spikeLocation == 2) {
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
-            driveOne.add(new CatWalk(new MillisecondTrigger(0), 40.5, -17, 0.5, 0, 0.5, new Vision(), 0.5));
+            driveOne.add(new CatWalk(new MillisecondTrigger(0), 40.5, -17, 0.5, 0, 0.5, 0.5));
             driveOne.add(new SpikeDrop(new IndexTrigger(1, driveOne)));
             driveOne.add(new MoveHoist(new IndexTrigger(2, driveOne), hoist.stackPosition4));
             driveOne.add(new Drive(new IndexTrigger(2, driveOne), 8, 0.25, 0));

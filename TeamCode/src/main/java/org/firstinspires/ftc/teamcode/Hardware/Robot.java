@@ -39,7 +39,7 @@ import java.util.List;
 //Check for farthest right blob
 //Fix vision
 
-public class Robot {
+public class  Robot {
 
     //---Constants---//
     public double triggerSensitivity = 0.01;
@@ -539,30 +539,7 @@ public class Robot {
         }
     }
 
-    public class PixelSplitter {
-        public double openPosition = 0.69;
-        public double splitPosition = 0.2;
-        public boolean pixelSplitterReset = true;
 
-        public pixelSplitterState splitterState = pixelSplitterState.Open;
-
-        public PixelSplitter() {
-
-            pixelSplitter = hardwareMap.get(Servo.class, "pixelSplitter");
-
-        }
-
-        public void SplitPixel() {
-            pixelSplitter.setPosition(splitPosition);
-            splitterState = pixelSplitterState.Split;
-        }
-
-        public void OpenSplitter() {
-            pixelSplitter.setPosition(openPosition);
-            splitterState = pixelSplitterState.Open;
-
-        }
-    }
     public class IntakeHoist {
 
         public double stackPosition6 = 0.55;
