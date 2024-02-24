@@ -429,7 +429,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double targetPower;
         double power = minPower;
 
-        double headingAdjustmentMultiplier = 2.5;
+        double headingAdjustmentMultiplier = 2.75;
         double targetHeading;
         public Drive(Trigger triggerPARAM, double targetInchesPARAM, double powerPARAM, double targetHeadingPARAM) {
             super(triggerPARAM, true);
@@ -509,7 +509,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
             }
             double lastSeenBack = -1;
-            while (robot.backDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance && Math.abs(targetInches) > 70) {
+            /*while (robot.backDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance && Math.abs(targetInches) > 70) {
 
 
                 if (robot.backDS.getDistance(DistanceUnit.INCH) < lastSeenBack) {
@@ -525,7 +525,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                     robot.backRight.setPower(0);
                 }
                 lastSeenBack = robot.backDS.getDistance(DistanceUnit.INCH);
-            }
+            }*/
 
 
             if (Math.abs(distanceToTarget) > DISTANCE_TOLERANCE && opModeIsActive()) {
@@ -1021,7 +1021,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
 
         double reverse;
-        double headingAdjustmentMultiplier = 2.5;
+        double headingAdjustmentMultiplier = 2.75;
 
         currentInches = GetAverageWheelPositionInches();
         distanceToTarget = targetInches - currentInches;
@@ -1655,7 +1655,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             AprilTagPoseFtc tagSeen = robot.getTargetAprilTagPos(targetTag);
             double lastSeenLeft = -1;
             double lastSeenRight = -1;
-            while (robot.leftDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance) {
+            /*while (robot.leftDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance) {
 
 
 
@@ -1689,7 +1689,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                     robot.backRight.setPower(0);
                 }
                 lastSeenRight = robot.leftDS.getDistance(DistanceUnit.INCH);
-            }
+            }*/
 
             if (tagSeen != null) {
                 telemetry.addData("Target Tag Seen", tagSeen.x);
