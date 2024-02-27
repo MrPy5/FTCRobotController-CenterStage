@@ -179,6 +179,9 @@ public class RedLeft2_2 extends AutoControlsCombined {
         sleep(500);
         lift.SetPosition(lift.liftLow + 6, lift.liftLow, -1);
         sleep(600);
+
+        robot.webcam.closeCameraDevice();
+        robot.visionPortal.close();
     }
 
 }

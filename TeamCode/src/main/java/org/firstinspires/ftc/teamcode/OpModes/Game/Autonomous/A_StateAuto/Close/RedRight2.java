@@ -103,6 +103,9 @@ public class RedRight2 extends AutoControlsCombined {
             StrafeWithInchesWithCorrection(16, -0.3, -1, 90);
         }
 
+        robot.webcam.closeCameraDevice();
+        robot.visionPortal.close();
+
     }
 
 }

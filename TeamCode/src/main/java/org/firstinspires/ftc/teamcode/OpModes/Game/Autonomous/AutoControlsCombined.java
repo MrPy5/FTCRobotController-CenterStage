@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous;
 
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -32,7 +35,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
     public Intake intake;
     public SpikeHook spike;
     public IntakeHoist hoist;
-    public BNO055IMU imu;
+    //public BNO055IMU imu;
+    public BHI260IMU imu;
     public Orientation angles;
 
     public double DISTANCE_TOLERANCE = 0.5;
@@ -58,7 +62,6 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         spike.ResetSpike();
         dropper.CloseDropper();
 
-
         robot.initAprilTag();
         robot.initEasyOpenCV();
 
@@ -68,6 +71,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
 
     public void initIMU() {
+        /*
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -78,8 +82,12 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+        */
 
+        BHI260IMU.Parameters parameters = new BHI260IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
 
+        imu = hardwareMap.get(BHI260IMU.class, "imu");
+        imu.initialize(parameters);
     }
     public void switchToContourPipeline() {
         robot.switchPipeline();
@@ -155,7 +163,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double degreesOff;
         boolean goRight;
 
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         currentHeading = (360 + angles.firstAngle) % 360;
 
@@ -198,7 +206,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double currentHeading;
         double degreesOff;
 
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles   = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         currentHeading = (360 + angles.firstAngle) % 360;
 
@@ -429,7 +437,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double targetPower;
         double power = minPower;
 
-        double headingAdjustmentMultiplier = 2.75;
+        double headingAdjustmentMultiplier = 2.5;
         double targetHeading;
         public Drive(Trigger triggerPARAM, double targetInchesPARAM, double powerPARAM, double targetHeadingPARAM) {
             super(triggerPARAM, true);
@@ -511,20 +519,11 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             double lastSeenBack = -1;
             /*while (robot.backDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance && Math.abs(targetInches) > 70) {
 
-
-                if (robot.backDS.getDistance(DistanceUnit.INCH) < lastSeenBack) {
-                    robot.frontLeft.setPower(0.25);
-                    robot.frontRight.setPower(0.25);
-                    robot.backLeft.setPower(0.25);
-                    robot.backRight.setPower(0.25);
-                }
-                else {
                     robot.frontLeft.setPower(0);
                     robot.frontRight.setPower(0);
                     robot.backLeft.setPower(0);
                     robot.backRight.setPower(0);
-                }
-                lastSeenBack = robot.backDS.getDistance(DistanceUnit.INCH);
+
             }*/
 
 
@@ -533,7 +532,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 double turnAdjustment;
                 turnAdjustment = headingAdjustment(targetHeading, 0);
 
-                angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
                 double currentHeading = (360 + angles.firstAngle) % 360;
 
@@ -604,7 +603,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 robot.backRight.setPower(rrPower);
 
 
-                angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
                 currentHeading = (360 + angles.firstAngle) % 360;
 
@@ -637,7 +636,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
                 robot.backRight.setPower(rrPower * 1.08);
 
 
-                angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
                 currentHeading = (360 + angles.firstAngle) % 360;
                 if (currentHeading == lastAngle) {
@@ -985,7 +984,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             robot.backRight.setPower(rrPower);
 
 
-            angles   = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angles = imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             currentHeading = (360 + angles.firstAngle) % 360;
             if (currentHeading == lastAngle) {
@@ -1021,7 +1020,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
 
         double reverse;
-        double headingAdjustmentMultiplier = 2.75;
+        double headingAdjustmentMultiplier = 2.5;
 
         currentInches = GetAverageWheelPositionInches();
         distanceToTarget = targetInches - currentInches;
@@ -1049,7 +1048,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
 
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angles = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             double currentHeading = (360 + angles.firstAngle) % 360;
 
             currentInches = GetAverageWheelPositionInches();
@@ -1407,7 +1406,6 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             telemetry.addData("strafePower", strafePower);
             telemetry.addData("stackPercentFromCenter", stackPercentFromCenter);
             telemetry.addData("distanceToTarget", distanceToTarget);*/
-            telemetry.addData("velocity", imu.getVelocity().xVeloc);
 
             telemetry.update();
 
@@ -1467,7 +1465,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             telemetry.update();
             //sleep(5000);
 
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angles = imu.getRobotOrientation()(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             double currentHeading = (360 + angles.firstAngle) % 360;
 
@@ -1497,7 +1495,7 @@ public abstract class AutoControlsCombined extends LinearOpMode {
         double currentHeading = 0;
 
         for (int i = 0; i < 50; i++) {
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angles = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             currentHeading = (360 + angles.firstAngle) % 360;
 
@@ -1640,56 +1638,30 @@ public abstract class AutoControlsCombined extends LinearOpMode {
 
         double distanceSensorTolerance = 6;
 
-        while (opModeIsActive() && Math.abs(strafeDistanceToTarget) > 0.5) {
+        double motorPower = power;
+
+        while (opModeIsActive()/* && Math.abs(strafeDistanceToTarget) > 0.5*/) {
+            motorPower = power;
             double turnAdjustment;
             turnAdjustment = headingAdjustment(targetHeading, 0);
 
             currentStrafeInches =  GetAverageStrafePositionInches();
             strafeDistanceToTarget = (targetStrafeInches * Math.signum(power)) - currentStrafeInches;
 
-            robot.frontLeft.setPower(power + turnAdjustment);
-            robot.backLeft.setPower(-1 * (power) + turnAdjustment);
-            robot.frontRight.setPower(-1 *(power) - turnAdjustment);
-            robot.backRight.setPower(power - turnAdjustment);
+            if (robot.leftDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance || robot.rightDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance) {
+
+                motorPower = 0;
+                turnAdjustment = 0;
+            }
+
+            robot.frontLeft.setPower(motorPower + turnAdjustment);
+            robot.backLeft.setPower(-1 * (motorPower) + turnAdjustment);
+            robot.frontRight.setPower(-1 * (motorPower) - turnAdjustment);
+            robot.backRight.setPower(motorPower - turnAdjustment);
             //telemetry.addData("tag", robot.getFirstAprilTagID());
             AprilTagPoseFtc tagSeen = robot.getTargetAprilTagPos(targetTag);
-            double lastSeenLeft = -1;
-            double lastSeenRight = -1;
-            /*while (robot.leftDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance) {
 
 
-
-                if (robot.leftDS.getDistance(DistanceUnit.INCH) < lastSeenLeft) {
-                    robot.frontLeft.setPower(0.25);
-                    robot.frontRight.setPower(-0.25);
-                    robot.backLeft.setPower(-0.25);
-                    robot.backRight.setPower(0.25);
-                }
-                else {
-                    robot.frontLeft.setPower(0);
-                    robot.frontRight.setPower(0);
-                    robot.backLeft.setPower(0);
-                    robot.backRight.setPower(0);
-                }
-                lastSeenLeft = robot.leftDS.getDistance(DistanceUnit.INCH);
-            }
-            while (robot.rightDS.getDistance(DistanceUnit.INCH) < distanceSensorTolerance) {
-
-
-                if (robot.rightDS.getDistance(DistanceUnit.INCH) < lastSeenRight) {
-                    robot.frontLeft.setPower(-0.25);
-                    robot.frontRight.setPower(0.25);
-                    robot.backLeft.setPower(0.25);
-                    robot.backRight.setPower(-0.25);
-                }
-                else {
-                    robot.frontLeft.setPower(0);
-                    robot.frontRight.setPower(0);
-                    robot.backLeft.setPower(0);
-                    robot.backRight.setPower(0);
-                }
-                lastSeenRight = robot.leftDS.getDistance(DistanceUnit.INCH);
-            }*/
 
             if (tagSeen != null) {
                 telemetry.addData("Target Tag Seen", tagSeen.x);
@@ -1733,6 +1705,8 @@ public abstract class AutoControlsCombined extends LinearOpMode {
             else {
                 telemetry.addData("no tag", "");
             }
+
+
 
 
         }

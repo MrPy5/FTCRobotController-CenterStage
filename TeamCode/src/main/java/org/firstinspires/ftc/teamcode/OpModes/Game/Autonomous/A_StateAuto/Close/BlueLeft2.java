@@ -105,6 +105,8 @@ public class BlueLeft2 extends AutoControlsCombined {
             StrafeWithInchesWithCorrection(29, 0.3, -1, 270);
         }
 
+        robot.webcam.closeCameraDevice();
+        robot.visionPortal.close();
     }
 
 }

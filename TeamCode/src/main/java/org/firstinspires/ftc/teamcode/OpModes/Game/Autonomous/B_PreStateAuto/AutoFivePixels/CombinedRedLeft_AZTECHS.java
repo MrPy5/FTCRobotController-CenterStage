@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoFivePixels;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.B_PreStateAuto.AutoFivePixels;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
 @Disabled
-@Autonomous(name = "Combined Red Left", group = "Remastered")
-public class CombinedRedLeft extends AutoControlsCombined {
+@Autonomous(name = "Combined Red Left - Aztechs", group = "Remastered")
+public class CombinedRedLeft_AZTECHS extends AutoControlsCombined {
 
     @Override
     public void runOpMode() {
@@ -111,13 +111,13 @@ public class CombinedRedLeft extends AutoControlsCombined {
         hoist.Hoist();
        //Strafe on backboard - based on spike position
        if (spikeLocation == 1) {
-           previousStrafe = StrafeWithInchesWithCorrectionWithDistanceSensors(21, -0.25, 4, 90);
+           previousStrafe = StrafeWithInchesWithCorrection(21, -0.25, 4, 90);
        }
        if (spikeLocation == 2) {
-            previousStrafe = StrafeWithInchesWithCorrectionWithDistanceSensors(26, -0.25, 5, 90);
+            previousStrafe = StrafeWithInchesWithCorrection(26, -0.25, 5, 90);
        }
        if (spikeLocation == 3) {
-            previousStrafe = StrafeWithInchesWithCorrectionWithDistanceSensors(36, -0.25, 6, 90);
+            previousStrafe = StrafeWithInchesWithCorrection(36, -0.25, 6, 90);
        }
 
        //Drive back to backboard
@@ -145,8 +145,8 @@ public class CombinedRedLeft extends AutoControlsCombined {
         }
         if (spikeLocation == 2) {
             //driveThree.add(new CatWalk(new IndexTrigger(2, driveThree), 85, 23, 0.5, 90, 0.5, new Vision(), 1));
-            StrafeWithInchesWithCorrection(26, 0.5, -1, 90);
-            //22.5 ORIGINALLY
+            StrafeWithInchesWithCorrection(22.5, 0.5, -1, 90);
+
             DriveWithCorrection(80, 90, 0.9);
         }
         if (spikeLocation == 3) {
@@ -181,9 +181,9 @@ public class CombinedRedLeft extends AutoControlsCombined {
         driveFour.Start(0);
         //Strafe along board
         if (spikeLocation == 1) {
-            StrafeWithInchesWithCorrectionWithDistanceSensors(33, -0.3, 5, 90);
+            StrafeWithInchesWithCorrection(33, -0.3, 5, 90);
         } else {
-            StrafeWithInchesWithCorrectionWithDistanceSensors(21, -0.3, 4, 90);
+            StrafeWithInchesWithCorrection(21, -0.3, 4, 90);
         }
 
 

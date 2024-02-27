@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoFivePixels;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.B_PreStateAuto.AutoFivePixels;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
 @Disabled
-@Autonomous(name = "Combined Blue Right - Thor", group = "Remastered")
-public class CombinedBlueRight_THOR extends AutoControlsCombined {
+@Autonomous(name = "Combined Blue Right", group = "Remastered")
+public class CombinedBlueRight extends AutoControlsCombined {
 
     @Override
     public void runOpMode() {
@@ -45,8 +45,7 @@ public class CombinedBlueRight_THOR extends AutoControlsCombined {
 
         Motion driveOne = new Motion();
         if (spikeLocation == 3) {
-            //CHANGE FOR THOR
-            sleep(2000);
+
             driveOne.add(new MoveHoist(new MillisecondTrigger(0), hoist.hoistedPosition));
             driveOne.add(new Drive(new MillisecondTrigger(0), 38.5, 0.5, 0));
             driveOne.add(new Strafe(new IndexTrigger(1, driveOne), 4.5, 0.4, 0, -1));
@@ -108,13 +107,10 @@ public class CombinedBlueRight_THOR extends AutoControlsCombined {
         driveTwo.add(new Drive(new IndexTrigger(1, driveTwo), -100, 1, 270));
 
         //CHANGE FOR THOR
-        if (spikeLocation == 3) {
-            driveTwo.add(new MoveLift(new IndexTrigger(3, driveTwo), lift.liftLow + 2, 0));
-        }
-        else {
-            driveTwo.add(new MoveLift(new IndexTrigger(3, driveTwo), lift.liftLow + 1, 0));
 
-        }
+        driveTwo.add(new MoveLift(new IndexTrigger(3, driveTwo), lift.liftLow + 1, 0));
+
+
         //driveTwo.add(new CatWalk(new IndexTrigger(1, driveTwo), -28, -28, 0.5, 90, 0.5, new Vision()));
 
         driveTwo.Start(0);

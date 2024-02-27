@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.SlowAutos;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.B_PreStateAuto.SlowAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

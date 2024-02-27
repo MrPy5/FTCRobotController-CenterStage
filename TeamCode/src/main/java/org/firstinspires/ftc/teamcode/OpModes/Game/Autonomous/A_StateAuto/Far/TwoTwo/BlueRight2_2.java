@@ -104,13 +104,13 @@ public class BlueRight2_2 extends AutoControlsCombined {
         hoist.Hoist();
         //Strafe on backboard
         if (spikeLocation == 1) {
-            previousStrafe = StrafeWithInchesWithCorrection(31, 0.25, 1, 270);
+            previousStrafe = StrafeWithInchesWithCorrectionWithDistanceSensors(31, 0.25, 1, 270);
         }
         if (spikeLocation == 2) {
-            previousStrafe = StrafeWithInchesWithCorrection(26, 0.25, 2, 270);
+            previousStrafe = StrafeWithInchesWithCorrectionWithDistanceSensors(26, 0.25, 2, 270);
         }
         if (spikeLocation == 3) {
-            previousStrafe = StrafeWithInchesWithCorrection(21, 0.25, 3, 270);
+            previousStrafe = StrafeWithInchesWithCorrectionWithDistanceSensors(21, 0.25, 3, 270);
         }
         DriveWithCorrection(-10, 270, 0.3);
 
@@ -175,9 +175,9 @@ public class BlueRight2_2 extends AutoControlsCombined {
         driveFour.Start(0);
         //Strafe along board
         if (spikeLocation == 3) {
-            StrafeWithInchesWithCorrection(25, 0.3, 2, 270);
+            StrafeWithInchesWithCorrectionWithDistanceSensors(25, 0.3, 2, 270);
         } else {
-            StrafeWithInchesWithCorrection(21, 0.3, 3, 270);
+            StrafeWithInchesWithCorrectionWithDistanceSensors(21, 0.3, 3, 270);
         }
 
         DriveWithCorrection(-10, 270, 0.3);
@@ -185,6 +185,9 @@ public class BlueRight2_2 extends AutoControlsCombined {
         sleep(500);
         lift.SetPosition(lift.liftLow + 9, lift.liftLow, -1);
         sleep(600);
+
+        robot.webcam.closeCameraDevice();
+        robot.visionPortal.close();
     }
 
 }

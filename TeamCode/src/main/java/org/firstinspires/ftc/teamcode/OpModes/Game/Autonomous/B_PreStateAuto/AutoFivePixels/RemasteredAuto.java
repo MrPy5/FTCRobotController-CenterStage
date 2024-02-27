@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoFivePixels;
+package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.B_PreStateAuto.AutoFivePixels;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

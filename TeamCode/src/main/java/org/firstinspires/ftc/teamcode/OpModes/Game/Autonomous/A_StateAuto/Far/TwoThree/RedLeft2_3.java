@@ -24,15 +24,24 @@ public class RedLeft2_3 extends AutoControlsCombined {
             telemetry.addData("White One: ", robot.whiteOne);
             telemetry.addData("White Two: ", robot.whiteTwo);
             telemetry.addData("White Three: ", robot.whiteThree);
-            telemetry.addData("fps: ", robot.visionPortal.getFps());
+            telemetry.addData("arducam fps: ", robot.visionPortal.getFps());
+            telemetry.addData("webcam fps: ", robot.webcam.getFps());
 
-
+            if (robot.webcam.getFps() == 0.0) {
+                sleep(1000);
+                robot.webcam.closeCameraDevice();
+                sleep(1000);
+                robot.initEasyOpenCV();
+                telemetry.addData("webcam reset", "Reset");
+                telemetry.update();
+                sleep(1000);
+            }
             if (robot.visionPortal.getFps() == 0.0) {
                 sleep(1000);
                 robot.visionPortal.close();
                 sleep(1000);
                 robot.initAprilTag();
-                telemetry.addData("reset", "Reset");
+                telemetry.addData("arducam reset", "Reset");
                 telemetry.update();
                 sleep(1000);
             }
@@ -41,6 +50,16 @@ public class RedLeft2_3 extends AutoControlsCombined {
 
         //waitForStart();
         switchToContourPipeline();
+
+        if (robot.webcam.getFps() == 0.0) {
+            sleep(1000);
+            robot.webcam.closeCameraDevice();
+            sleep(1000);
+            robot.initEasyOpenCV();
+            telemetry.addData("webcam reset", "Reset");
+            telemetry.update();
+            sleep(1000);
+        }
 
         Motion driveOne = new Motion();
         if (spikeLocation == 1) {
@@ -191,6 +210,9 @@ public class RedLeft2_3 extends AutoControlsCombined {
         sleep(500);
         lift.SetPosition(lift.liftLow + 6, lift.liftLow, -1);
         sleep(600);
+
+        robot.webcam.closeCameraDevice();
+        robot.visionPortal.close();
     }
 
 }
