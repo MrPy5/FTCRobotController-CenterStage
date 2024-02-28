@@ -77,7 +77,7 @@ public class GameTeleop extends LinearOpMode {
         spikeHook.ResetSpike();
 
         //---Suspension---//
-        int suspensionToggle = 0;
+        int suspensionToggle = -1;
         boolean suspensionReset = true;
 
         while (opModeIsActive()) {
@@ -102,20 +102,6 @@ public class GameTeleop extends LinearOpMode {
             // toggle suspension activation -> Left Trigger
             // raise & lower suspension -> D-Pad left & right
             // reset lift -> Start
-            /*
-
-
-
-
-
-
-
-
-
-             */
-
-
-
 
             //---Driving---//
             double leftStickY = gamepad1.left_stick_y * -1;
@@ -257,7 +243,11 @@ public class GameTeleop extends LinearOpMode {
             //---Suspension---//
             //Servo
             if (gamepad2.left_trigger > robot.triggerSensitivity && suspensionReset) {
-                if (suspensionToggle == 0) {
+                if (suspensionToggle == -1) {
+                    suspension.UnlockSuspension();
+                    suspensionToggle = 0;
+                }
+                else if (suspensionToggle == 0) {
                     suspension.ActivateSuspension();
                     suspensionToggle = 1;
                 }

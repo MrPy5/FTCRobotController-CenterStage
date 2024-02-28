@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.B_PreStateAuto.Au
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsRemastered;
+import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.B_PreStateAuto.AutoControlsRemastered;
 
 @Disabled
 @Autonomous(name = "Remastered Red Left", group = "Remastered")

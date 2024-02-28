@@ -186,8 +186,6 @@ public class BlueRight2_2 extends AutoControlsCombined {
         lift.SetPosition(lift.liftLow + 9, lift.liftLow, -1);
         sleep(600);
 
-        robot.webcam.closeCameraDevice();
-        robot.visionPortal.close();
     }
 
 }

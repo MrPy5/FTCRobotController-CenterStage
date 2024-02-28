@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.B_PreStateAuto.TestAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Hardware.Robot;
-import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
 
 
@@ -35,7 +34,12 @@ public class TestAuto extends AutoControlsCombined {
         //Distance Sensor Telemetry
         while (opModeIsActive()) {
 
-            StrafeFromDistanceSensor(0.25, 0);
+            angles = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            double currentHeading = (360 + angles.firstAngle) % 360;
+
+            telemetry.addData("heading", currentHeading);
+            telemetry.update();
 
         }
 

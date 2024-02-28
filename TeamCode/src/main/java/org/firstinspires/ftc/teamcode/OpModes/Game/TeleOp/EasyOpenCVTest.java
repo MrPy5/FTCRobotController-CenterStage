@@ -36,7 +36,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.ContourDetectionPipeline;
 import org.firstinspires.ftc.teamcode.Hardware.Robot.Lift;
-import org.firstinspires.ftc.teamcode.common.SleeveDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 

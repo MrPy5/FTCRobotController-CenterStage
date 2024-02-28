@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.B_PreStateAuto.TestAutos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.Hardware.Robot;
-import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControls;
 import org.firstinspires.ftc.teamcode.OpModes.Game.Autonomous.AutoControlsCombined;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 
 @Autonomous(name = "WhiteTest", group = "fast")

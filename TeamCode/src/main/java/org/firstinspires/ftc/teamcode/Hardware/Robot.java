@@ -39,7 +39,7 @@ import java.util.List;
 //Check for farthest right blob
 //Fix vision
 
-public class  Robot {
+public class Robot {
 
     //---Constants---//
     public double triggerSensitivity = 0.01;
@@ -57,14 +57,10 @@ public class  Robot {
     //---PIXEL SPLITTER--//
     public Servo pixelSplitter;
 
-    public enum pixelSplitterState {
-        Open,
-        Split
-    }
-
     //---SUSPENSION---//
     public DcMotor suspensionMotor;
     public Servo suspensionServo;
+    public Servo suspensionLock;
 
     //---DROPPER---//
     public Servo pixelDropper; //Delete if two droppers
@@ -75,11 +71,11 @@ public class  Robot {
     //---INTAKE HOIST---//
     public Servo intakeHoist;
 
-
     //---DISTANCE SENSORS---//
     public DistanceSensor leftDS;
     public DistanceSensor rightDS;
-    public DistanceSensor backDS;
+    public DistanceSensor backLeftDS;
+    public DistanceSensor backRightDS;
 
 
     //---DRIVING---//
@@ -100,14 +96,6 @@ public class  Robot {
 
     public double strafeTicksPerInch = 170;
 
-    //Odometer
-    public DcMotorEx odometerLeft;
-    public DcMotorEx odometerRight;
-    public double odometerCountsPerRevolution = 8192;
-    public double odometerWheelDiameter = 1.436;
-    public double odometerTicksPerInch = (odometerCountsPerRevolution) /
-            (odometerWheelDiameter * Math.PI);
-    public double workingEncoderVelocityDifference = 4;
 
     //Hardware Map
     public HardwareMap hardwareMap;
@@ -117,7 +105,6 @@ public class  Robot {
     public AprilTagProcessor aprilTag;
 
     public VisionPortal visionPortal;
-
     public boolean showCameraPreview = true;
 
     public String aprilTagWebCamName = "AprilTag";
@@ -198,33 +185,19 @@ public class  Robot {
 
         leftDS = hardwareMap.get(DistanceSensor.class, "leftDistance");
         rightDS = hardwareMap.get(DistanceSensor.class, "rightDistance");
-        backDS = hardwareMap.get(DistanceSensor.class, "backDistance");
+        backLeftDS = hardwareMap.get(DistanceSensor.class, "backLeftDS");
+        backRightDS = hardwareMap.get(DistanceSensor.class, "backRightDS");
 
-
-        //---Odometer---//
-        /*
-        odometerLeft = hardwareMap.get(DcMotorEx.class, "odometerLeft");
-        odometerRight = hardwareMap.get(DcMotorEx.class, "odometerRight");
-
-        odometerRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        odometerLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        odometerRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        odometerLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        odometerRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        odometerLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-         */
 
 
     }
 
     public void initEasyOpenCV() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName webcamNamed = null;
+        WebcamName webcamNamed;
         webcamNamed = hardwareMap.get(WebcamName.class, openCVWebCamName); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamNamed, cameraMonitorViewId);
+
         pipelineContour = new ContourDetectionPipeline();
         pipelineColor = new ColorCounter();
         webcam.setPipeline(pipelineColor);
@@ -367,20 +340,6 @@ public class  Robot {
 
 
     }
-
-    public AprilTagPoseFtc getTargetAprilTagTwo(int targetID) {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        AprilTagPoseFtc returnValue = null;
-
-        for (AprilTagDetection detection : currentDetections) {
-            if ((detection.metadata != null) && (detection.id == targetID)) {
-                returnValue =  detection.ftcPose;
-                break;  // don't look any further.
-            }
-        }
-        return returnValue;
-    }
-
 
 
     public class Intake {
@@ -575,18 +534,19 @@ public class  Robot {
 
     public class Suspension {
 
-        public int suspensionTop = 30;
-        public int suspensionBottom = 0;
+        public double suspensionUnlocked = -1;
 
         public double liftMotorTicksPerRevolution = 28;
         public double liftSpoolDiameter = 0.314961;
         public double liftTicksPerInch = liftMotorTicksPerRevolution / (liftSpoolDiameter * Math.PI);
 
-        public double liftPowerUp = 1;
-        public double liftPowerDown = 0.7;
+
 
         public double servoUpPosition = 0.50;
         public double servoDownPosition = 0.13;
+
+        public double unlockedServoPosition = 0;
+
         public Suspension() {
             suspensionMotor = hardwareMap.get(DcMotor.class, "suspension");
             suspensionMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -595,13 +555,19 @@ public class  Robot {
             suspensionMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             suspensionServo = hardwareMap.get(Servo.class, "suspensionServo");
+            suspensionLock = hardwareMap.get(Servo.class, "suspensionLock");
         }
 
         public void ActivateSuspension() {
+
             suspensionServo.setPosition(servoUpPosition);
         }
         public void DeactivateSuspension() {
             suspensionServo.setPosition(servoDownPosition);
+
+        }
+        public void UnlockSuspension() {
+            suspensionLock.setPosition(suspensionUnlocked);
         }
 
     }
